@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import sys
 from datetime import datetime, timezone
 from importlib import resources
@@ -89,6 +88,12 @@ def main(verbose: bool) -> None:
     default="json",
     help="Output format (default: json).",
 )
+@click.option(
+    "--auth",
+    "auth",
+    multiple=True,
+    help="Credentials in registry.domain=user:pass format. Can be repeated.",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -96,6 +101,7 @@ def analyze(
     pretty: bool,
     output_format: str,
     meta: tuple[str, ...],
+    auth: tuple[str, ...],
 ) -> None:
     """Analyze a Docker image registry.
 
@@ -133,12 +139,15 @@ def analyze(
     else:
         selected = all_analyzers
 
+    from regis_cli.registry.auth import resolve_credentials
+
     # Create the registry client.
+    username, password = resolve_credentials(ref.registry, list(auth) if auth else None)
     client = RegistryClient(
         registry=ref.registry,
         repository=ref.repository,
-        username=os.environ.get("REGIS_USERNAME"),
-        password=os.environ.get("REGIS_PASSWORD"),
+        username=username,
+        password=password,
     )
 
     # Run each analyzer.
@@ -263,6 +272,12 @@ def list_analyzers() -> None:
     default="json",
     help="Output format (default: json).",
 )
+@click.option(
+    "--auth",
+    "auth",
+    multiple=True,
+    help="Credentials in registry.domain=user:pass format. Can be repeated.",
+)
 def score(
     url: str,
     scorecard_path: str | None,
@@ -270,6 +285,7 @@ def score(
     output: str | None,
     output_format: str,
     meta: tuple[str, ...],
+    auth: tuple[str, ...],
 ) -> None:
     """Evaluate a scorecard against a Docker image.
 
@@ -313,12 +329,15 @@ def score(
     else:
         selected = all_analyzers
 
+    from regis_cli.registry.auth import resolve_credentials
+
     # Create the registry client.
+    username, password = resolve_credentials(ref.registry, list(auth) if auth else None)
     client = RegistryClient(
         registry=ref.registry,
         repository=ref.repository,
-        username=os.environ.get("REGIS_USERNAME"),
-        password=os.environ.get("REGIS_PASSWORD"),
+        username=username,
+        password=password,
     )
 
     # Run each analyzer.
