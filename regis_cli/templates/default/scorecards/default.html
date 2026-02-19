@@ -36,6 +36,8 @@
                         <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Status</th>
                         <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Level</th>
                         <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Rule</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Tags</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,14 +45,34 @@
                         {% set lvl = r.level|default('') %}
                         {% set lvl_icon = icons.get(lvl, '') %}
                         <tr>
-                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
-                                {{ '✅' if r.passed else '❌' }}
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;text-align:center;">
+                                {% if r.status == "incomplete" %}
+                                    <span title="Incomplete data">⚠️</span>
+                                {% elif r.passed %}
+                                    ✅
+                                {% else %}
+                                    ❌
+                                {% endif %}
                             </td>
-                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;white-space:nowrap;">
                                 {{ lvl_icon }} {{ lvl|e }}
                             </td>
                             <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
-                                {{ r.title|default(r.name)|default('')|e }}
+                                <div style="font-weight:600;">{{ r.title|default(r.name)|default('')|e }}</div>
+                            </td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                                {% if r.tags %}
+                                    <div style="display:flex;flex-wrap:wrap;gap:4px;">
+                                        {% for tag in r.tags %}
+                                            <span style="font-size:0.7rem;background:#334155;color:#f1f5f9;padding:1px 6px;border-radius:4px;text-transform:uppercase;font-weight:600;letter-spacing:0.02em;">
+                                                {{ tag|e }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.8rem;color:#94a3b8;font-family:monospace;">
+                                {{ r.details|e }}
                             </td>
                         </tr>
                     {% endfor %}

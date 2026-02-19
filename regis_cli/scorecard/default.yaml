@@ -3,13 +3,13 @@ description: Evaluate container image maturity and security posture
 
 levels:
   - name: bronze
-    label: "🥉 Bronze"
+    label: 🥉 Bronze
     order: 1
   - name: silver
-    label: "🥈 Silver"
+    label: 🥈 Silver
     order: 2
   - name: gold
-    label: "🥇 Gold"
+    label: 🥇 Gold
     order: 3
 
 rules:
@@ -17,59 +17,66 @@ rules:
   - name: has-tags
     title: Image has tags
     level: bronze
+    tags: [metadata]
     condition:
-      ">": [{ "var": "results.tags.total_tags" }, 0]
+      ">": [{ var: results.tags.total_tags }, 0]
 
   - name: no-critical-vulns
     title: Fewer than 50 vulnerabilities
     level: bronze
+    tags: [security]
     condition:
-      "<": [{ "var": "results.trivy.vulnerability_count" }, 50]
+      "<": [{ var: results.trivy.vulnerability_count }, 50]
 
   # ── Silver ────────────────────────────────────────────
   - name: semver-adoption
-    title: "SemVer adoption ≥ 50%"
+    title: SemVer adoption ≥ 50%
     level: silver
+    tags: [versioning]
     condition:
-      ">=": [{ "var": "results.versioning.semver_compliant_percentage" }, 50]
+      ">=": [{ var: results.versioning.semver_compliant_percentage }, 50]
 
   - name: has-provenance
     title: Build provenance present
     level: silver
+    tags: [security, build]
     condition:
-      "==": [{ "var": "results.provenance.has_provenance" }, true]
+      "==": [{ var: results.provenance.has_provenance }, true]
 
   - name: license-detected
     title: License detected
     level: silver
+    tags: [legal]
     condition:
-      "!=": [{ "var": "results.license.spdx_id" }, null]
+      "!=": [{ var: results.license.spdx_id }, null]
 
   # ── Gold ──────────────────────────────────────────────
   - name: not-eol
     title: Product is not end-of-life
     level: gold
+    tags: [maintenance]
     condition:
-      "!": [{ "var": "results.endoflife.is_eol" }]
+      "!": [{ var: results.endoflife.is_eol }]
 
   - name: good-scorecard
-    title: "OpenSSF Scorecard ≥ 7"
+    title: OpenSSF Scorecard ≥ 7
     level: gold
+    tags: [security, quality]
     condition:
-      ">=": [{ "var": "results.scorecarddev.score" }, 7]
+      ">=": [{ var: results.scorecarddev.score }, 7]
 
   - name: fresh-image
     title: Image younger than 90 days
     level: gold
+    tags: [maintenance]
     condition:
-      "<": [{ "var": "results.freshness.age_days" }, 90]
+      "<": [{ var: results.freshness.age_days }, 90]
 
   - name: domain-trusted
     title: Domain is trusted
     level: gold
+    tags: [security]
     condition:
-      "in":
-        [
-          { "var": "request.registry" },
-          ["registry-1.docker.io", "ghcr.io", "quay.io"],
-        ]
+      in:
+        - { var: request.registry }
+        - [registry-1.docker.io, ghcr.io, quay.io]

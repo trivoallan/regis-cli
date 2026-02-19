@@ -33,7 +33,17 @@
           "name": {"type": "string"},
           "title": {"type": "string"},
           "level": {"type": "string"},
-          "passed": {"type": "boolean"}
+          "tags": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "passed": {"type": "boolean"},
+          "status": {
+            "type": "string",
+            "enum": ["passed", "failed", "incomplete"]
+          },
+          "condition": {"type": "string"},
+          "details": {"type": "string"}
         }
       }
     }

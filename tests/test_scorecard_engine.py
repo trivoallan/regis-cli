@@ -51,6 +51,7 @@ class TestLoadScorecard:
 
     def test_load_json(self, tmp_path):
         import json
+
         custom = {
             "name": "JSON Card",
             "levels": [{"name": "bronze", "order": 1}],
@@ -90,7 +91,9 @@ class TestEvaluate:
                 "name": "has-provenance",
                 "title": "Has provenance",
                 "level": "silver",
-                "condition": {"==": [{"var": "results.provenance.has_provenance"}, True]},
+                "condition": {
+                    "==": [{"var": "results.provenance.has_provenance"}, True]
+                },
             },
             {
                 "name": "good-score",
@@ -138,6 +141,43 @@ class TestEvaluate:
         result = evaluate(self.SCORECARD, report)
         assert result["level"] == "silver"
         assert result["passed_rules"] == 2
+
+    def test_tags_propagation(self):
+        """Test that tags are correctly copied from rule defs to results."""
+        scorecard = {
+            "name": "Tags Test",
+            "rules": [
+                {
+                    "name": "rule-with-tags",
+                    "tags": ["tag1", "tag2"],
+                    "condition": {"==": [1, 1]},
+                },
+                {
+                    "name": "rule-without-tags",
+                    "condition": {"==": [1, 1]},
+                },
+            ],
+        }
+        result = evaluate(scorecard, {})
+        assert result["rules"][0]["tags"] == ["tag1", "tag2"]
+        assert result["rules"][1]["tags"] == []
+
+    def test_incomplete_status(self):
+        """Test that missing data results in an 'incomplete' status."""
+        scorecard = {
+            "name": "Missing Data Test",
+            "rules": [
+                {
+                    "name": "missing-var",
+                    "condition": {">": [{"var": "non_existent"}, 0]},
+                }
+            ],
+        }
+        # In JsonLogic, missing var returns None.
+        # My tracker should flag this as incomplete.
+        result = evaluate(scorecard, {"some_other_data": 42})
+        assert result["rules"][0]["status"] == "incomplete"
+        assert "MISSING" in result["rules"][0]["details"]
 
     def test_none_level(self):
         report = {
