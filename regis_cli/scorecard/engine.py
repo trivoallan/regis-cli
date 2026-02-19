@@ -60,9 +60,6 @@ def load_scorecard(path: str | Path | None = None) -> dict[str, Any]:
     return json.loads(text)
 
 
-from collections import UserDict
-
-
 class MissingDataTracker(UserDict):
     """A dictionary wrapper that tracks if None values were accessed."""
 
@@ -71,20 +68,21 @@ class MissingDataTracker(UserDict):
         self.missing_accessed = False
 
     def __getitem__(self, key: str) -> Any:
-        try:
-            val = self.data[key]
-            if val is None:
-                self.missing_accessed = True
-            return val
-        except KeyError:
+        val = self.data[key]
+        if val is None:
             self.missing_accessed = True
-            return None
+        return val
 
     def get(self, key: str, default: Any = None) -> Any:
         try:
             return self[key]
-        except (KeyError, IndexError):
+        except KeyError:
+            # We don't set missing_accessed here because get()
+            # is often used to check for optional keys.
             return default
+
+    def __contains__(self, key: object) -> bool:
+        return key in self.data
 
 
 def _stringify_condition(condition: Any, context: dict[str, Any]) -> str:
@@ -209,7 +207,9 @@ def evaluate(
         relevant = [
             r for r in rule_results if levels_defined.get(r["level"], 0) <= threshold
         ]
-        if relevant and all(r["passed"] for r in relevant):
+        # A level is achieved if (a) there are rules at/below it and they all pass,
+        # OR (b) there are no rules at/below it (trivially pass).
+        if all(r["passed"] for r in relevant):
             achieved = level_name
 
     passed_count = sum(1 for r in rule_results if r["passed"])

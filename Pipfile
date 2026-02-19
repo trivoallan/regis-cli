@@ -4,7 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-regis-cli = "*"
+click = "*"
+requests = "*"
+jsonschema = "*"
+semver = "*"
+json-logic-qubit = "*"
+pyyaml = "*"
+jinja2 = "*"
 
 [dev-packages]
 pytest = ">=7.4"
