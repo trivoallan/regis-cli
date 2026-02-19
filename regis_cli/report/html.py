@@ -255,31 +255,57 @@ def _render_freshness(data: dict[str, Any]) -> str:
         "🕐",
     )
 
-
-def _render_vulnerabilities(data: dict[str, Any]) -> str:
+def _render_trivy(data: dict[str, Any]) -> str:
     count = data.get("vulnerability_count", 0)
-    vulns = data.get("vulnerabilities", [])
-    if not data.get("osv_available"):
-        return _section("Vulnerabilities", "<p style='color:#94a3b8;'>OSV data not available.</p>", "🔓")
+    targets = data.get("targets", [])
+    trivy_version = data.get("trivy_version", "?")
+
     color = "#22c55e" if count == 0 else "#f59e0b" if count < 10 else "#ef4444"
-    content = (
-        f"<div style='font-size:2rem;font-weight:800;color:{color};margin-bottom:12px;'>"
+    
+    header = (
+        f"<div style='margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;'>"
+        f"<div style='font-size:2rem;font-weight:800;color:{color};'>"
         f"{count} vulnerabilit{'y' if count == 1 else 'ies'}</div>"
+        f"<div style='color:#94a3b8;font-size:0.85rem;'>Trivy v{html.escape(trivy_version)}</div></div>"
     )
-    if vulns:
+
+    counts_html = (
+        f"<div style='display:flex;gap:8px;margin-bottom:16px;'>"
+        f"{_badge('Critical', str(data.get('critical_count', 0)), '#ef4444')}"
+        f"{_badge('High', str(data.get('high_count', 0)), '#f97316')}"
+        f"{_badge('Medium', str(data.get('medium_count', 0)), '#f59e0b')}"
+        f"{_badge('Low', str(data.get('low_count', 0)), '#6366f1')}"
+        f"{_badge('Unknown', str(data.get('unknown_count', 0)), '#6b7280')}</div>"
+    )
+
+    content = header + counts_html
+
+    for target in targets:
+        vulns = target.get("Vulnerabilities", [])
+        if not vulns:
+            continue
+            
+        target_name = html.escape(target.get("Target", "Unknown Target"))
+        content += f"<h4 style='font-size:1rem;margin:12px 0 8px 0;color:#c084fc;'>{target_name}</h4>"
+        
         rows = []
-        for v in vulns[:20]:
-            sev = html.escape(str(v.get("severity", "?")))
+        for v in vulns[:10]:
+            sev = html.escape(v.get("Severity", "UNKNOWN"))
+            sev_color = "#ef4444" if sev == "CRITICAL" else "#f97316" if sev == "HIGH" else "#f59e0b" if sev == "MEDIUM" else "#6366f1" if sev == "LOW" else "#6b7280"
             rows.append([
-                html.escape(v.get("id", "")),
-                html.escape(v.get("summary", "")[:60]),
-                sev[:30],
-                html.escape(str(v.get("published", ""))[:10]),
+                html.escape(v.get("VulnerabilityID", "")),
+                html.escape(v.get("PkgName", "")),
+                html.escape(v.get("InstalledVersion", "")),
+                html.escape(v.get("FixedVersion", "")),
+                f"<span style='color:{sev_color};font-weight:600;'>{sev}</span>",
             ])
-        content += _table(["ID", "Summary", "Severity", "Published"], rows)
-        if len(vulns) > 20:
-            content += f"<p style='color:#94a3b8;margin-top:8px;'>… and {len(vulns) - 20} more</p>"
-    return _section("Vulnerabilities", content, "🔓")
+        content += _table(["ID", "Package", "Installed", "Fixed", "Severity"], rows)
+        if len(vulns) > 10:
+             content += f"<p style='color:#94a3b8;margin-top:8px;'>… and {len(vulns) - 10} more in this target</p>"
+
+    return _section("Trivy Scan", content, "🛡️")
+
+
 
 
 def _render_provenance(data: dict[str, Any]) -> str:
@@ -323,7 +349,8 @@ _RENDERERS: dict[str, Any] = {
     "size": _render_size,
     "license": _render_license,
     "freshness": _render_freshness,
-    "vulnerabilities": _render_vulnerabilities,
+    "trivy": _render_trivy,
+
     "provenance": _render_provenance,
     "deps": _render_deps,
 }

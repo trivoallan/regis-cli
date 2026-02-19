@@ -145,6 +145,7 @@ class TestEvaluate:
                 "tags": {"total_tags": 0},
                 "provenance": {"has_provenance": False},
                 "scorecarddev": {"score": 0},
+                "trivy": {"vulnerability_count": 100},
             },
         }
         result = evaluate(self.SCORECARD, report)

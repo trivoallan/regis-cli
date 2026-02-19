@@ -24,7 +24,7 @@ rules:
     title: Fewer than 50 vulnerabilities
     level: bronze
     condition:
-      "<": [{ "var": "results.vulnerabilities.vulnerability_count" }, 50]
+      "<": [{ "var": "results.trivy.vulnerability_count" }, 50]
 
   # ── Silver ────────────────────────────────────────────
   - name: semver-adoption
