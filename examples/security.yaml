@@ -16,20 +16,17 @@ rules:
   - name: no-critical-vulns
     title: No critical vulnerabilities
     level: mandatory
-    tags: [security]
     condition:
-      "==": [{ var: results.trivy.severity_counts.CRITICAL }, 0]
+      "==": [{ var: results.trivy.critical_count }, 0]
 
   - name: no-high-vulns
     title: No high vulnerabilities
     level: recommended
-    tags: [security]
     condition:
-      "==": [{ var: results.trivy.severity_counts.HIGH }, 0]
+      "==": [{ var: results.trivy.high_count }, 0]
 
   - name: has-provenance
     title: Build provenance present
     level: optional
-    tags: [security]
     condition:
       "==": [{ var: results.provenance.has_provenance }, true]
