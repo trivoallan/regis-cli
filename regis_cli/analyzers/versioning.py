@@ -36,6 +36,17 @@ _VARIANT_TOKENS: set[str] = {
     "slim", "fat", "full", "minimal", "lite",
     # Explicit OS names
     "linux", "windows", "windowsservercore",
+    # Runtime variants
+    "cli", "fpm", "zts", "apache", "nginx", "httpd",
+    # SDK/Tooling
+    "sdk", "jre", "jdk", "runtime",
+    # Build types
+    "debug", "dev", "development", "prod", "production",
+    # Other common
+    "management", "server", "desktop",
+    # RedHat UBI
+    "ubi", "ubi8", "ubi9", "redhat", "rhel",
+    "micro", "init",
 }
 
 # Regex that matches alpine3.20, alpine3.21, etc. as a single variant token.
@@ -46,6 +57,22 @@ _VARIANT_TOKEN_RE = re.compile(r"^(" + "|".join(re.escape(t) for t in _VARIANT_T
 _SEMVER_VARIANT_RE = re.compile(
     r"^v?(\d+\.\d+\.\d+)-(.+)$"
 )
+
+
+def _extract_variants(tag: str) -> list[str]:
+    """Extract variant tokens from a tag string."""
+    # Split by common separators (removed . to keep alpine3.18 intact)
+    parts = re.split(r"[-_]", tag)
+    # Filter parts that match known variant tokens
+    found = []
+    for part in parts:
+        # Check against pure tokens
+        if part in _VARIANT_TOKENS:
+            found.append(part)
+        # Check against combined tokens like alpine3.18
+        elif _VARIANT_TOKEN_RE.match(part):
+            found.append(part)
+    return found
 
 
 def _is_variant_suffix(suffix: str) -> bool:
@@ -104,11 +131,20 @@ class VersioningAnalyzer(BaseAnalyzer):
         """Classify all tags and summarize versioning patterns."""
         tags = client.list_tags()
 
-        # Classify every tag.
+        # Classify every tag and extract variants.
         classifications: dict[str, list[str]] = {}
+        variant_counts: dict[str, int] = {}
+        variant_examples: dict[str, list[str]] = {}
+
         for t in tags:
             pattern = _classify_tag(t)
             classifications.setdefault(pattern, []).append(t)
+            
+            # Extract variants
+            variants = _extract_variants(t)
+            for v in variants:
+                variant_counts[v] = variant_counts.get(v, 0) + 1
+                variant_examples.setdefault(v, []).append(t)
 
         # Sort each bucket and compute stats.
         patterns: list[dict[str, Any]] = []
@@ -139,4 +175,13 @@ class VersioningAnalyzer(BaseAnalyzer):
             "dominant_pattern": dominant,
             "semver_compliant_percentage": semver_compliant,
             "patterns": patterns,
+            "variants": [
+                {
+                    "name": v,
+                    "count": count,
+                    "percentage": round(count / len(tags) * 100, 1) if tags else 0,
+                    "examples": sorted(variant_examples[v])[:10],
+                }
+                for v, count in sorted(variant_counts.items(), key=lambda x: x[1], reverse=True)
+            ],
         }

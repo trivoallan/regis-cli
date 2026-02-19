@@ -143,3 +143,101 @@ class TestVersioningAnalyzer:
         assert report["total_tags"] == 0
         assert report["dominant_pattern"] == "unknown"
         assert report["patterns"] == []
+
+
+    def test_variant_detection(self):
+        """Test detection and counting of variants."""
+        tags = [
+            "1.0.0-alpine",
+            "1.0.1-alpine",
+            "1.0.1-alpine3.18",
+            "1.0.2-slim",
+            "1.0.3-slim-bookworm",
+            "latest",
+        ]
+        client = MockRegistryClient(tags)
+        analyzer = VersioningAnalyzer()
+        report = analyzer.analyze(client, "library/test", "latest")
+        analyzer.validate(report)
+
+        variants = report["variants"]
+        assert len(variants) > 0
+
+        # Check counts
+        # alpine: 2 (1.0.0-alpine, 1.0.1-alpine)
+        # alpine3.18: 1
+        # slim: 2 (1.0.2-slim, 1.0.3-slim-bookworm)
+        # bookworm: 1 (1.0.3-slim-bookworm)
+        
+        v_map = {v["name"]: v["count"] for v in variants}
+        assert v_map["alpine"] == 2
+        assert v_map["slim"] == 2
+        assert v_map["alpine3.18"] == 1
+        assert v_map["bookworm"] == 1
+
+        # Check examples
+        alpine_entry = next(v for v in variants if v["name"] == "alpine")
+        assert "1.0.0-alpine" in alpine_entry["examples"]
+
+
+    def test_subvariant_detection(self):
+        """Test detection of subvariants like cli, fpm, apache."""
+        tags = [
+            "8.1-fpm-alpine",
+            "8.1-cli-alpine",
+            "8.1-apache-buster",
+            "8.1-zts-bullseye",
+            "latest",
+        ]
+        client = MockRegistryClient(tags)
+        analyzer = VersioningAnalyzer()
+        report = analyzer.analyze(client, "library/php", "latest")
+        analyzer.validate(report)
+
+        variants = report["variants"]
+        v_map = {v["name"]: v["count"] for v in variants}
+
+        assert v_map["fpm"] == 1
+        assert v_map["cli"] == 1
+        assert v_map["apache"] == 1
+        assert v_map["zts"] == 1
+        assert v_map["alpine"] == 2
+        assert v_map["buster"] == 1
+        assert v_map["bullseye"] == 1
+
+
+    def test_ubi_detection(self):
+        """Test detection of RedHat UBI images."""
+        tags = [
+            "registry.access.redhat.com/ubi8/ubi:8.5",
+            "ubi8-minimal",
+            "ubi9-micro",
+            "ubi-init",
+            "rhel7",
+        ]
+        # Clean up tags to simulate simple tag names if needed, or just use diverse inputs
+        # The analyzer classifies based on the tag string itself.
+        # Let's use simpler tag names as they appear in docker hub often
+        tags = [
+            "8.5-ubi8",
+            "8.5-ubi8-minimal",
+            "9.0-ubi9-micro",
+            "latest-ubi",
+            "7-rhel",
+            "8-ubi-init",
+        ]
+        client = MockRegistryClient(tags)
+        analyzer = VersioningAnalyzer()
+        report = analyzer.analyze(client, "library/redhat", "latest")
+        analyzer.validate(report)
+
+        variants = report["variants"]
+        v_map = {v["name"]: v["count"] for v in variants}
+
+        assert v_map["ubi8"] == 2
+        assert v_map["ubi9"] == 1
+        assert v_map["ubi"] == 2
+        assert v_map["minimal"] == 1
+        assert v_map["micro"] == 1
+        assert v_map["init"] == 1
+        assert v_map["rhel"] == 1
