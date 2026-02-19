@@ -1,0 +1,28 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("Provenance", "🔏") %}
+    {{ m.badge('Provenance', 'Yes', '#22c55e') }}
+    {{ m.badge('Cosign', m.bool_icon(data.has_cosign_signature), '#818cf8') }}
+    {{ m.badge('Source tracked', m.bool_icon(data.source_tracked), '#818cf8') }}
+
+    {% if data.indicators %}
+        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Type</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Key</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in data.indicators %}
+                <tr>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ i.type|e }}</td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ i.key|e }}</td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ i.value[:80]|e }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endcall %}

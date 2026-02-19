@@ -1,0 +1,22 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("Freshness", "🕐") %}
+    {% set age = data.age_days %}
+    {% set color = "#22c55e" if (age is not none and age < 90) else "#f59e0b" if (age is not none and age < 365) else "#ef4444" %}
+    {% set age_str = (age ~ " days") if age is not none else "unknown" %}
+    
+    <div style='display:flex;gap:24px;flex-wrap:wrap;'>
+        <div>
+            <div style='font-size:2rem;font-weight:800;color:{{ color }};'>{{ age_str }}</div>
+            <div style='color:#94a3b8;font-size:0.85rem;'>Image age</div>
+        </div>
+        <div>
+            <div style='font-size:2rem;font-weight:800;color:#818cf8;'>{{ data.behind_latest_days if data.behind_latest_days is not none else '?' }} days</div>
+            <div style='color:#94a3b8;font-size:0.85rem;'>Behind latest</div>
+        </div>
+        <div>
+            <div style='font-size:2rem;font-weight:800;'>{{ m.bool_icon(data.is_latest) }}</div>
+            <div style='color:#94a3b8;font-size:0.85rem;'>Is latest</div>
+        </div>
+    </div>
+{% endcall %}

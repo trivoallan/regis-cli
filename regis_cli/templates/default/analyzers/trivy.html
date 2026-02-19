@@ -1,0 +1,58 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("Trivy Scan", "🛡️") %}
+    {% set count = data.vulnerability_count|default(0) %}
+    {% set color = "#22c55e" if count == 0 else "#f59e0b" if count < 10 else "#ef4444" %}
+    
+    <div style='margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;'>
+        <div style='font-size:2rem;font-weight:800;color:{{ color }};'>
+            {{ count }} vulnerability{{ 'y' if count == 1 else 'ies' }}
+        </div>
+        <div style='color:#94a3b8;font-size:0.85rem;'>Trivy v{{ data.trivy_version|default('?')|e }}</div>
+    </div>
+
+    <div style='display:flex;gap:8px;margin-bottom:16px;'>
+        {{ m.badge('Critical', data.critical_count|default(0), '#ef4444') }}
+        {{ m.badge('High', data.high_count|default(0), '#f97316') }}
+        {{ m.badge('Medium', data.medium_count|default(0), '#f59e0b') }}
+        {{ m.badge('Low', data.low_count|default(0), '#6366f1') }}
+        {{ m.badge('Unknown', data.unknown_count|default(0), '#6b7280') }}
+    </div>
+
+    {% for target in data.targets %}
+        {% set vulns = target.Vulnerabilities %}
+        {% if vulns %}
+            <h4 style='font-size:1rem;margin:12px 0 8px 0;color:#c084fc;'>{{ target.Target|default('Unknown Target')|e }}</h4>
+            
+            <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">ID</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Package</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Installed</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Fixed</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Severity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for v in vulns[:10] %}
+                        {% set sev = v.Severity|default("UNKNOWN") %}
+                        {% set sev_color = "#ef4444" if sev == "CRITICAL" else "#f97316" if sev == "HIGH" else "#f59e0b" if sev == "MEDIUM" else "#6366f1" if sev == "LOW" else "#6b7280" %}
+                        <tr>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ v.VulnerabilityID|default("")|e }}</td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ v.PkgName|default("")|e }}</td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ v.InstalledVersion|default("")|e }}</td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ v.FixedVersion|default("")|e }}</td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                                <span style='color:{{ sev_color }};font-weight:600;'>{{ sev|e }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if vulns|length > 10 %}
+                <p style='color:#94a3b8;margin-top:8px;'>… and {{ vulns|length - 10 }} more in this target</p>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endcall %}

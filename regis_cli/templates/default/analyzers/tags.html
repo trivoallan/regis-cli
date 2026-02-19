@@ -1,0 +1,13 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("Tags (" ~ (data.total_tags or data.tags|length) ~ ")", "🏷️") %}
+    {% set sample = data.tags[:30] %}
+    <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        {% for t in sample %}
+            {{ m.badge("tag", t, "#6366f1") }}
+        {% endfor %}
+    </div>
+    {% if data.tags|length > 30 %}
+        <p style="color:#94a3b8;margin-top:8px;">… and {{ data.tags|length - 30 }} more</p>
+    {% endif %}
+{% endcall %}

@@ -1,0 +1,61 @@
+{% import theme ~ "/macros.html" as m %}
+
+{# Scorecard result visualization #}
+{% if report.scorecard %}
+    {% set sc = report.scorecard %}
+    {% set level = sc.level|default('none') %}
+    {% set colors = {'gold': '#f59e0b', 'silver': '#94a3b8', 'bronze': '#cd7f32', 'none': '#6b7280'} %}
+    {% set icons = {'gold': '🥇', 'silver': '🥈', 'bronze': '🥉', 'none': '—'} %}
+    {% set color = colors[level] %}
+    {% set icon = icons[level] %}
+    {% set score_pct = sc.score|default(0) %}
+
+    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;padding:20px;margin-bottom:20px;border:1px solid {{ color }}44;">
+        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:16px;">
+            📊 {{ sc.scorecard_name|default("Scorecard")|e }}
+        </h2>
+        
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+            <div style="font-size:3rem;">{{ icon }}</div>
+            <div>
+                <div style="font-size:1.5rem;font-weight:800;color:{{ color }};text-transform:uppercase;letter-spacing:0.1em;">
+                    {{ level|e }}
+                </div>
+                <div style="color:#94a3b8;font-size:0.85rem;">
+                    {{ sc.passed_rules }}/{{ sc.total_rules }} rules passed · {{ score_pct }}%
+                </div>
+            </div>
+        </div>
+        
+        {{ m.score_bar(score_pct, 100) }}
+
+        <div style="margin-top:16px;">
+            <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Status</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Level</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Rule</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in sc.rules %}
+                        {% set lvl = r.level|default('') %}
+                        {% set lvl_icon = icons.get(lvl, '') %}
+                        <tr>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                                {{ '✅' if r.passed else '❌' }}
+                            </td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                                {{ lvl_icon }} {{ lvl|e }}
+                            </td>
+                            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                                {{ r.title|default(r.name)|default('')|e }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}

@@ -1,0 +1,11 @@
+{% extends theme ~ "/base.html" %}
+
+{% block scorecard %}
+    {% include theme ~ "/scorecards/default.html" %}
+{% endblock %}
+
+{% block content %}
+    {% for name, data in report.results.items()|sort %}
+        {% include [theme ~ "/analyzers/" ~ name ~ ".html", theme ~ "/analyzers/default.html"] %}
+    {% endfor %}
+{% endblock %}

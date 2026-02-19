@@ -1,0 +1,30 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("Image", "🖼️") %}
+    {% if not data.platforms %}
+        <p>No platform data available.</p>
+    {% else %}
+        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Arch</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">OS</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Variant</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Layers</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in data.platforms %}
+                <tr>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.architecture|default("")|e }}</td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.os|default("")|e }}</td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.variant|default("-")|e }}</td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.layers|default("-") }}</td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.created|default("-")|e }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endcall %}

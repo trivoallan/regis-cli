@@ -1,0 +1,25 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("Popularity", "⭐") %}
+    {% if not data.available %}
+        <p style="color:#94a3b8;">Docker Hub data not available.</p>
+    {% else %}
+        <div style='display:flex;gap:24px;flex-wrap:wrap;'>
+            <div style='text-align:center;'>
+                <div style='font-size:2rem;font-weight:800;color:#818cf8;'>{{ data.pull_count|default(0)|int|format_number }}</div>
+                <div style='color:#94a3b8;font-size:0.85rem;'>Downloads</div>
+            </div>
+            <div style='text-align:center;'>
+                <div style='font-size:2rem;font-weight:800;color:#f59e0b;'>⭐ {{ data.star_count|default(0)|int|format_number }}</div>
+                <div style='color:#94a3b8;font-size:0.85rem;'>Stars</div>
+            </div>
+            <div style='text-align:center;'>
+                <div style='font-size:2rem;font-weight:800;color:#22c55e;'>{{ m.bool_icon(data.is_official) }}</div>
+                <div style='color:#94a3b8;font-size:0.85rem;'>Official</div>
+            </div>
+        </div>
+        <div style='margin-top:12px;color:#94a3b8;font-size:0.85rem;'>
+            Last updated: {{ data.last_updated|default('?')|e }}
+        </div>
+    {% endif %}
+{% endcall %}

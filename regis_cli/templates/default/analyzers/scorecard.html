@@ -1,0 +1,41 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("OpenSSF Scorecard", "🛡️") %}
+    {% if not data.scorecard_available %}
+        <p style="color:#94a3b8;">Scorecard data not available.</p>
+    {% else %}
+        <div style="margin-bottom:16px;">
+            <div style="font-size:2.5rem;font-weight:800;color:{{ m.score_color(data.score)|trim }};">{{ data.score }}/10</div>
+            {% if data.source_repo %}
+                <div style="margin-top:4px;">
+                    <a href="{{ data.source_repo|e }}" style="color:#818cf8;">{{ data.source_repo|e }}</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+            <thead>
+                <tr>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Check</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Score</th>
+                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Reason</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in data.checks %}
+                <tr>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ c.name|e }}</td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                        {% if c.score >= 0 %}
+                            {{ m.score_bar(c.score) }}
+                        {% else %}
+                            <span style="color:#6b7280;">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ (c.reason|default(""))[:80]|e }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endcall %}

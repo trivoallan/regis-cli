@@ -1,0 +1,43 @@
+{% import theme ~ "/macros.html" as m %}
+
+{% call m.section("End-of-Life", "📅") %}
+    {% if not data.product_found %}
+        <p style="color:#94a3b8;">Product not found on endoflife.date.</p>
+    {% else %}
+        {% if data.is_eol %}
+            {{ m.badge("EOL", "Yes", "#ef4444") }}
+        {% elif data.is_eol is sameas false %}
+            {{ m.badge("Supported", "Yes", "#22c55e") }}
+        {% else %}
+            {{ m.badge("Unknown", "—", "#6b7280") }}
+        {% endif %}
+
+        {% if data.matched_cycle %}
+            <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Cycle</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Release</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">EOL</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Latest</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">LTS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ data.matched_cycle.cycle|e }}</td>
+                        <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ data.matched_cycle.release_date|e }}</td>
+                        <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ data.matched_cycle.eol|e }}</td>
+                        <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ data.matched_cycle.latest|e }}</td>
+                        <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ m.bool_icon(data.matched_cycle.lts) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+        
+        <div style='margin-top:8px;display:flex;gap:8px;'>
+            {{ m.badge('Active cycles', data.active_cycles_count|default('?'), '#22c55e') }}
+            {{ m.badge('EOL cycles', data.eol_cycles_count|default('?'), '#ef4444') }}
+        </div>
+    {% endif %}
+{% endcall %}
