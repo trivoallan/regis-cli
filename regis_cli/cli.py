@@ -141,6 +141,12 @@ def main(verbose: bool) -> None:
     help="Output format (can be repeated, default: json).",
 )
 @click.option(
+    "--theme",
+    default="default",
+    type=click.Choice(["default", "shadcn"], case_sensitive=False),
+    help="Theme to use for HTML report (default: default).",
+)
+@click.option(
     "--auth",
     "auth",
     multiple=True,
@@ -154,6 +160,7 @@ def analyze(
     output_dir_template: str | None,
     pretty: bool,
     output_formats: tuple[str, ...],
+    theme: str,
     meta: tuple[str, ...],
     auth: tuple[str, ...],
 ) -> None:
@@ -343,7 +350,7 @@ def analyze(
 
     for fmt in formats:
         if fmt == "html":
-            rendered = render_html(final_report)
+            rendered = render_html(final_report, theme=theme)
         else:
             indent = 2 if pretty else None
             rendered = json.dumps(final_report, indent=indent, ensure_ascii=False)
