@@ -8,6 +8,7 @@ import sys
 from datetime import datetime, timezone
 from importlib import resources
 from importlib.metadata import entry_points
+from pathlib import Path
 from typing import Any
 
 import click
@@ -16,7 +17,6 @@ import jsonschema
 from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis_cli.registry.client import RegistryClient, RegistryError
 from regis_cli.registry.parser import parse_image_url
-from regis_cli.report.html import render_html
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +32,44 @@ def _discover_analyzers() -> dict[str, type[BaseAnalyzer]]:
         except Exception:
             logger.warning("Failed to load analyzer '%s'", ep.name, exc_info=True)
     return discovered
+
+
+def _format_output_path(template: str, data: dict[str, Any], fmt: str) -> Path:
+    """Format an output path template using report data."""
+    req = data.get("request", {})
+    # Use first scorecard for placeholders if multiple exist
+    scorecards = data.get("scorecards", [])
+    sc = scorecards[0] if scorecards else data.get("scorecard", {})
+
+    # Sanitize repository name for filesystem
+    repo = req.get("repository", "unknown").replace("/", "-").replace(":", "-")
+
+    # Format timestamp for filesystem
+    ts_str = req.get("timestamp", "")
+    try:
+        ts = datetime.fromisoformat(ts_str)
+        timestamp = ts.strftime("%Y%m%d-%H%M%S")
+    except (ValueError, TypeError):
+        timestamp = ts_str.replace(":", "-")
+
+    context = {
+        "repository": repo,
+        "tag": req.get("tag", "latest"),
+        "registry": req.get("registry", "unknown"),
+        "timestamp": timestamp,
+        "format": fmt,
+        "level": sc.get("level", "none"),
+        "score": sc.get("score", 0),
+    }
+
+    try:
+        path_str = template.format(**context)
+    except KeyError as exc:
+        raise click.ClickException(
+            f"Invalid placeholder in output template: {exc}"
+        ) from exc
+
+    return Path(path_str)
 
 
 @click.group()
@@ -72,9 +110,14 @@ def main(verbose: bool) -> None:
 @click.option(
     "-o",
     "--output",
-    type=click.Path(dir_okay=False, writable=True),
-    default=None,
-    help="Write the JSON report to a file instead of stdout.",
+    "output_template",
+    help="Output filename template (e.g. 'report.{format}'). If not provided and one format requested, outputs to stdout.",
+)
+@click.option(
+    "-D",
+    "--output-dir",
+    "output_dir_template",
+    help="Base directory template for output files (e.g. 'reports/{repository}').",
 )
 @click.option(
     "--pretty/--no-pretty",
@@ -91,10 +134,10 @@ def main(verbose: bool) -> None:
 @click.option(
     "-f",
     "--format",
-    "output_format",
+    "output_formats",
+    multiple=True,
     type=click.Choice(["json", "html"], case_sensitive=False),
-    default="json",
-    help="Output format (default: json).",
+    help="Output format (can be repeated, default: json).",
 )
 @click.option(
     "--auth",
@@ -106,9 +149,10 @@ def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
     scorecard_paths: tuple[str, ...],
-    output: str | None,
+    output_template: str | None,
+    output_dir_template: str | None,
     pretty: bool,
-    output_format: str,
+    output_formats: tuple[str, ...],
     meta: tuple[str, ...],
     auth: tuple[str, ...],
 ) -> None:
@@ -136,6 +180,9 @@ def analyze(
         raise click.ClickException(
             "No analyzers found. Is regis-cli installed correctly?"
         )
+
+    # Select output formats.
+    formats = [f.lower() for f in output_formats] if output_formats else ["json"]
 
     # Select which analyzers to run.
     if analyzer_names:
@@ -213,7 +260,7 @@ def analyze(
             scorecard_results.append(sc_result)
 
             # Print summary for EACH scorecard if in CLI mode
-            if output_format != "html":
+            if "html" not in formats or len(formats) > 1:
                 level_labels = {
                     lv["name"]: lv.get("label", lv["name"])
                     for lv in sc_def.get("levels", [])
@@ -271,22 +318,32 @@ def analyze(
                 f"Report schema validation failed: {exc.message}"
             ) from exc
 
-    # Format output.
-    if output_format == "html":
-        rendered = render_html(final_report)
-    else:
-        indent = 2 if pretty else None
-        rendered = json.dumps(final_report, indent=indent, ensure_ascii=False)
+    # Format and write outputs.
+    from regis_cli.report.html import render_html
 
-    if output:
-        with open(output, "w", encoding="utf-8") as fh:
-            fh.write(rendered)
-            fh.write("\n")
-        click.echo(f"Report written to {output}", err=True)
-    else:
-        # In non-pretty mode, just print the JSON.
-        # click.echo is already used for pretty-printing in the original code.
-        click.echo(rendered)
+    for fmt in formats:
+        if fmt == "html":
+            rendered = render_html(final_report)
+        else:
+            indent = 2 if pretty else None
+            rendered = json.dumps(final_report, indent=indent, ensure_ascii=False)
+
+        # Determine if we should write to file or stdout
+        if output_template or output_dir_template or len(formats) > 1:
+            # Use templates or defaults
+            dir_tmpl = output_dir_template or "."
+            file_tmpl = output_template or "report.{format}"
+
+            out_dir = _format_output_path(dir_tmpl, final_report, fmt)
+            out_file = _format_output_path(file_tmpl, final_report, fmt)
+            out_path = out_dir / out_file
+
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            out_path.write_text(rendered, encoding="utf-8")
+            click.echo(f"Report ({fmt}) written to {out_path}", err=True)
+        else:
+            # Single format, no template/dir -> stdout
+            click.echo(rendered)
 
 
 @main.command(name="list")
