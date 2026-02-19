@@ -34,10 +34,14 @@ class RegistryClient:
         registry: str,
         repository: str,
         *,
+        username: str | None = None,
+        password: str | None = None,
         timeout: int = 30,
     ) -> None:
         self.registry = registry
         self.repository = repository
+        self.username = username
+        self.password = password
         self.timeout = timeout
         self._session = requests.Session()
         self._token: str | None = None
@@ -145,9 +149,14 @@ class RegistryClient:
 
         logger.debug("Authenticating: realm=%s service=%s scope=%s", realm, service, scope)
 
+        auth = None
+        if self.username and self.password:
+            auth = (self.username, self.password)
+
         token_resp = self._session.get(
             realm,
             params={"service": service, "scope": scope},
+            auth=auth,
             timeout=self.timeout,
         )
         token_resp.raise_for_status()

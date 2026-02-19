@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import sys
 from datetime import datetime, timezone
 from importlib import resources
@@ -120,7 +121,12 @@ def analyze(
         selected = all_analyzers
 
     # Create the registry client.
-    client = RegistryClient(registry=ref.registry, repository=ref.repository)
+    client = RegistryClient(
+        registry=ref.registry,
+        repository=ref.repository,
+        username=os.environ.get("REGIS_USERNAME"),
+        password=os.environ.get("REGIS_PASSWORD"),
+    )
 
     # Run each analyzer.
     reports: dict[str, Any] = {}
@@ -265,7 +271,12 @@ def score(
         selected = all_analyzers
 
     # Create the registry client.
-    client = RegistryClient(registry=ref.registry, repository=ref.repository)
+    client = RegistryClient(
+        registry=ref.registry,
+        repository=ref.repository,
+        username=os.environ.get("REGIS_USERNAME"),
+        password=os.environ.get("REGIS_PASSWORD"),
+    )
 
     # Run each analyzer.
     reports: dict[str, Any] = {}
