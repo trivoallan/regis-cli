@@ -11,9 +11,8 @@ from importlib import resources
 from importlib.metadata import entry_points
 from typing import Any
 
-import jsonschema
-
 import click
+import jsonschema
 
 from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis_cli.registry.client import RegistryClient, RegistryError
@@ -38,7 +37,8 @@ def _discover_analyzers() -> dict[str, type[BaseAnalyzer]]:
 
 @click.group()
 @click.option(
-    "-v", "--verbose",
+    "-v",
+    "--verbose",
     is_flag=True,
     default=False,
     help="Enable verbose (DEBUG) logging.",
@@ -56,13 +56,15 @@ def main(verbose: bool) -> None:
 @main.command()
 @click.argument("url")
 @click.option(
-    "-a", "--analyzer",
+    "-a",
+    "--analyzer",
     "analyzer_names",
     multiple=True,
     help="Run only the specified analyzer(s). Can be repeated. Default: all.",
 )
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     type=click.Path(dir_okay=False, writable=True),
     default=None,
     help="Write the JSON report to a file instead of stdout.",
@@ -73,7 +75,15 @@ def main(verbose: bool) -> None:
     help="Pretty-print the JSON output (default: on).",
 )
 @click.option(
-    "-f", "--format",
+    "-m",
+    "--meta",
+    "meta",
+    multiple=True,
+    help="Arbitrary metadata in key=value format. Can be repeated.",
+)
+@click.option(
+    "-f",
+    "--format",
     "output_format",
     type=click.Choice(["json", "html"], case_sensitive=False),
     default="json",
@@ -85,6 +95,7 @@ def analyze(
     output: str | None,
     pretty: bool,
     output_format: str,
+    meta: tuple[str, ...],
 ) -> None:
     """Analyze a Docker image registry.
 
@@ -105,7 +116,9 @@ def analyze(
     # Discover analyzers.
     all_analyzers = _discover_analyzers()
     if not all_analyzers:
-        raise click.ClickException("No analyzers found. Is regis-cli installed correctly?")
+        raise click.ClickException(
+            "No analyzers found. Is regis-cli installed correctly?"
+        )
 
     # Select which analyzers to run.
     if analyzer_names:
@@ -146,6 +159,14 @@ def analyze(
         raise click.ClickException("All analyzers failed.")
 
     # Build the final report with request metadata.
+    metadata_dict = {}
+    for item in meta:
+        if "=" in item:
+            k, v = item.split("=", 1)
+            metadata_dict[k] = v
+        else:
+            metadata_dict[item] = "true"
+
     final_report: dict[str, Any] = {
         "request": {
             "url": url,
@@ -157,14 +178,22 @@ def analyze(
         },
         "results": reports,
     }
+    if metadata_dict:
+        final_report["metadata"] = metadata_dict
 
     # Validate final report against its schema.
-    schema_text = resources.files("regis_cli.schemas").joinpath("report.schema.json").read_text(encoding="utf-8")
+    schema_text = (
+        resources.files("regis_cli.schemas")
+        .joinpath("report.schema.json")
+        .read_text(encoding="utf-8")
+    )
     report_schema = json.loads(schema_text)
     try:
         jsonschema.validate(instance=final_report, schema=report_schema)
     except jsonschema.ValidationError as exc:
-        raise click.ClickException(f"Report schema validation failed: {exc.message}") from exc
+        raise click.ClickException(
+            f"Report schema validation failed: {exc.message}"
+        ) from exc
 
     # Format output.
     if output_format == "html":
@@ -198,26 +227,37 @@ def list_analyzers() -> None:
 @main.command()
 @click.argument("url")
 @click.option(
-    "-s", "--scorecard",
+    "-s",
+    "--scorecard",
     "scorecard_path",
     type=click.Path(exists=True, dir_okay=False),
     default=None,
     help="Path to a custom scorecard YAML/JSON file. Default: built-in scorecard.",
 )
 @click.option(
-    "-a", "--analyzer",
+    "-a",
+    "--analyzer",
     "analyzer_names",
     multiple=True,
     help="Run only the specified analyzer(s). Can be repeated. Default: all.",
 )
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     type=click.Path(dir_okay=False, writable=True),
     default=None,
     help="Write the report to a file instead of stdout.",
 )
 @click.option(
-    "-f", "--format",
+    "-m",
+    "--meta",
+    "meta",
+    multiple=True,
+    help="Arbitrary metadata in key=value format. Can be repeated.",
+)
+@click.option(
+    "-f",
+    "--format",
     "output_format",
     type=click.Choice(["json", "html"], case_sensitive=False),
     default="json",
@@ -229,6 +269,7 @@ def score(
     analyzer_names: tuple[str, ...],
     output: str | None,
     output_format: str,
+    meta: tuple[str, ...],
 ) -> None:
     """Evaluate a scorecard against a Docker image.
 
@@ -255,7 +296,9 @@ def score(
     # Discover analyzers.
     all_analyzers = _discover_analyzers()
     if not all_analyzers:
-        raise click.ClickException("No analyzers found. Is regis-cli installed correctly?")
+        raise click.ClickException(
+            "No analyzers found. Is regis-cli installed correctly?"
+        )
 
     # Select which analyzers to run.
     if analyzer_names:
@@ -296,6 +339,14 @@ def score(
         raise click.ClickException("All analyzers failed.")
 
     # Build the analysis report.
+    metadata_dict = {}
+    for item in meta:
+        if "=" in item:
+            k, v = item.split("=", 1)
+            metadata_dict[k] = v
+        else:
+            metadata_dict[item] = "true"
+
     analysis_report: dict[str, Any] = {
         "request": {
             "url": url,
@@ -307,6 +358,8 @@ def score(
         },
         "results": reports,
     }
+    if metadata_dict:
+        analysis_report["metadata"] = metadata_dict
 
     # Load and evaluate scorecard.
     click.echo("  Evaluating scorecard...", err=True)
@@ -321,8 +374,7 @@ def score(
 
     # Render symbols for CLI output.
     level_labels = {
-        lv["name"]: lv.get("label", lv["name"])
-        for lv in sc_def.get("levels", [])
+        lv["name"]: lv.get("label", lv["name"]) for lv in sc_def.get("levels", [])
     }
     level_str = level_labels.get(sc_result["level"], sc_result["level"])
     click.echo(

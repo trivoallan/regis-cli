@@ -6,6 +6,11 @@
   "type": "object",
   "required": ["request", "results"],
   "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "Arbitrary user-provided metadata.",
+      "additionalProperties": { "type": "string" }
+    },
     "request": {
       "type": "object",
       "description": "Metadata describing the analysis request.",
