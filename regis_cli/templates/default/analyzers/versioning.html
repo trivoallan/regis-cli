@@ -1,27 +1,27 @@
 {% import theme ~ "/macros.html" as m %}
 
 {% call m.section("Versioning", "🔢") %}
-    <div style="margin-bottom:12px;">
+    <div style="margin-bottom: 12px;">
         {{ m.badge("Dominant", data.dominant_pattern|default("?"), "#8b5cf6") }}
         {{ m.badge("SemVer", (data.semver_compliant_percentage|default(0)) ~ "%", "#22c55e") }}
     </div>
     
-    <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+    <table>
         <thead>
             <tr>
-                <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Pattern</th>
-                <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Count</th>
-                <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">%</th>
-                <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Examples</th>
+                <th>Pattern</th>
+                <th>Count</th>
+                <th>%</th>
+                <th>Examples</th>
             </tr>
         </thead>
         <tbody>
             {% for p in data.patterns %}
             <tr>
-                <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.pattern|e }}</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.count }}</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.percentage }}%</td>
-                <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.examples[:5]|join(", ") }}</td>
+                <td>{{ p.pattern|e }}</td>
+                <td>{{ p.count }}</td>
+                <td>{{ p.percentage }}%</td>
+                <td>{{ p.examples[:5]|join(", ") }}</td>
             </tr>
             {% endfor %}
         </tbody>

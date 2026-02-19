@@ -2,11 +2,12 @@
 
 {% call m.section("OpenSSF Scorecard", "🛡️") %}
     {% if not data.scorecard_available %}
-        <p class="meta">Scorecard data not available.</p>
+        <p class="text-muted">Scorecard data not available.</p>
     {% else %}
-        <div class="card-title-main" style="color:{{ m.score_color(data.score)|trim }};">{{ data.score }}/10</div>
+        {% set sc_color = m.score_color(data.score)|trim %}
+        <div class="card-title-main" style="--accent-color: {{ sc_color }}; color: var(--accent-color);">{{ data.score }}/10</div>
         {% if data.source_repo %}
-            <div class="meta" style="margin-bottom: 16px;">
+            <div class="text-muted" style="margin-bottom: 16px;">
                 <a href="{{ data.source_repo|e }}">{{ data.source_repo|e }}</a>
             </div>
         {% endif %}
@@ -27,7 +28,7 @@
                         {% if c.score >= 0 %}
                             {{ m.score_bar(c.score) }}
                         {% else %}
-                            <span class="meta">N/A</span>
+                            <span class="text-muted">N/A</span>
                         {% endif %}
                     </td>
                     <td>{{ (c.reason|default(""))[:80]|e }}</td>

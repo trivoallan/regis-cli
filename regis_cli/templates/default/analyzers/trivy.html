@@ -5,13 +5,13 @@
     {% set color = "#22c55e" if count == 0 else "#f59e0b" if count < 10 else "#ef4444" %}
     
     <div class="flex-between">
-        <div class="card-title-main" style="color:{{ color }}; margin-bottom: 0;">
+        <div class="card-title-main" style="--accent-color: {{ color }}; color: var(--accent-color); margin-bottom: 0;">
             {{ count }} vulnerability{{ 'y' if count == 1 else 'ies' }}
         </div>
-        <div class="meta">Trivy v{{ data.trivy_version|default('?')|e }}</div>
+        <div class="text-muted">Trivy v{{ data.trivy_version|default('?')|e }}</div>
     </div>
 
-    <div class="flex-gap">
+    <div class="flex-gap" style="margin-top: 12px; margin-bottom: 16px;">
         {{ m.badge('Critical', data.critical_count|default(0), '#ef4444') }}
         {{ m.badge('High', data.high_count|default(0), '#f97316') }}
         {{ m.badge('Medium', data.medium_count|default(0), '#f59e0b') }}
@@ -44,14 +44,14 @@
                             <td>{{ v.InstalledVersion|default("")|e }}</td>
                             <td>{{ v.FixedVersion|default("")|e }}</td>
                             <td>
-                                <span class="sev-label" style="color:{{ sev_color }};">{{ sev|e }}</span>
+                                <span class="sev-label" style="--accent-color: {{ sev_color }}; color: var(--accent-color);">{{ sev|e }}</span>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
             {% if vulns|length > 10 %}
-                <p class="meta" style="margin-top: 8px;">… and {{ vulns|length - 10 }} more in this target</p>
+                <p class="text-muted" style="margin-top: 8px;">… and {{ vulns|length - 10 }} more in this target</p>
             {% endif %}
         {% endif %}
     {% endfor %}

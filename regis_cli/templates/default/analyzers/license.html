@@ -2,15 +2,15 @@
 
 {% call m.section("License", "📜") %}
     {% if not data.spdx_id %}
-        <p style="color:#94a3b8;">License not detected.</p>
+        <p class="text-muted">License not detected.</p>
     {% else %}
         {{ m.badge("SPDX", data.spdx_id, "#22c55e") }}
         {% if data.license_url %}
-            <div style='margin-top:8px;'>
-                <a href="{{ data.license_url|e }}" style="color:#818cf8;">{{ data.license_url|e }}</a>
+            <div style="margin-top: 8px;">
+                <a href="{{ data.license_url|e }}">{{ data.license_url|e }}</a>
             </div>
         {% endif %}
-        <div style='margin-top:4px;color:#94a3b8;font-size:0.85rem;'>
+        <div class="text-muted" style="margin-top: 4px;">
             Source: {{ data.detection_source|default('?')|e }}
         </div>
     {% endif %}

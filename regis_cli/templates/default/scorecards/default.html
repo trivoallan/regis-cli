@@ -11,18 +11,16 @@
     {% set icon = icons[level] %}
     {% set score_pct = sc.score|default(0) %}
 
-    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:12px;padding:20px;margin-bottom:20px;border:1px solid {{ color }}44;">
-        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:16px;">
-            📊 {{ sc.scorecard_name|default("Scorecard")|e }}
-        </h2>
+    <div class="sc-container" style="--accent-color: {{ color }};">
+        <div class="sc-header">
+            <h2>📊 {{ sc.scorecard_name|default("Scorecard")|e }}</h2>
+        </div>
         
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
-            <div style="font-size:3rem;">{{ icon }}</div>
+        <div class="sc-metrics">
+            <div class="sc-icon">{{ icon }}</div>
             <div>
-                <div style="font-size:1.5rem;font-weight:800;color:{{ color }};text-transform:uppercase;letter-spacing:0.1em;">
-                    {{ level|e }}
-                </div>
-                <div style="color:#94a3b8;font-size:0.85rem;">
+                <div class="sc-level-name">{{ level|e }}</div>
+                <div class="text-muted">
                     {{ sc.passed_rules }}/{{ sc.total_rules }} rules passed · {{ score_pct }}%
                 </div>
             </div>
@@ -30,7 +28,7 @@
         
         {{ m.score_bar(score_pct, 100) }}
 
-        <div style="margin-top:16px;">
+        <div style="margin-top:20px;">
             <table class="sc-table">
                 <thead>
                     <tr>

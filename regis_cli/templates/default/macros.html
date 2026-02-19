@@ -14,7 +14,7 @@
 {% endmacro %}
 
 {% macro badge(label, value, color="#6366f1") %}
-<span class="badge" style="background:{{ color }}22;color:{{ color }};border:1px solid {{ color }}44;">
+<span class="badge" style="--accent-color: {{ color }}; background: var(--accent-color)22; color: var(--accent-color); border: 1px solid var(--accent-color)44;">
     {{ label|e }}: {{ value|e }}
 </span>
 {% endmacro %}
@@ -63,10 +63,10 @@
 {% set pct = (score / max_score * 100)|round(0)|int %}
 {% set pct = 100 if pct > 100 else (0 if pct < 0 else pct) %}
 {% set color = score_color(score, max_score)|trim %}
-<div class="score-bar-container">
+<div class="score-bar-container" style="--accent-color: {{ color }};">
     <div class="score-bar-bg">
-        <div class="score-bar-fill" style="width:{{ pct }}%;background:{{ color }};"></div>
+        <div class="score-bar-fill" style="width:{{ pct }}%; background: var(--accent-color);"></div>
     </div>
-    <span class="score-value" style="color:{{ color }};">{{ score }}</span>
+    <span class="score-value" style="color: var(--accent-color);">{{ score }}</span>
 </div>
 {% endmacro %}

@@ -1,27 +1,27 @@
 {% import theme ~ "/macros.html" as m %}
 
 {% call m.section("Size", "📦") %}
-    <div style='font-size:2rem;font-weight:800;color:#818cf8;margin-bottom:12px;'>
+    <div class="card-title-main">
         {{ data.total_compressed_human|default('?')|e }}
     </div>
-    <div style='color:#94a3b8;font-size:0.85rem;margin-bottom:12px;'>
+    <div class="text-muted" style="margin-bottom: 12px;">
         {{ data.layer_count|default(0) }} layer(s)
         {% if data.multi_arch %} · multi-arch{% endif %}
     </div>
 
     {% if data.layers %}
-        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+        <table>
             <thead>
                 <tr>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Layer</th>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Size</th>
+                    <th>Layer</th>
+                    <th>Size</th>
                 </tr>
             </thead>
             <tbody>
                 {% for l in data.layers %}
                 <tr>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ l.index }}</td>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ l.size_human|e }}</td>
+                    <td>{{ l.index }}</td>
+                    <td>{{ l.size_human|e }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -29,20 +29,20 @@
     {% endif %}
 
     {% if data.platforms %}
-        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+        <table>
             <thead>
                 <tr>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Platform</th>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Size</th>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Layers</th>
+                    <th>Platform</th>
+                    <th>Size</th>
+                    <th>Layers</th>
                 </tr>
             </thead>
             <tbody>
                 {% for p in data.platforms %}
                 <tr>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.platform|e }}</td>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.compressed_human|e }}</td>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ p.layer_count }}</td>
+                    <td>{{ p.platform|e }}</td>
+                    <td>{{ p.compressed_human|e }}</td>
+                    <td>{{ p.layer_count }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -106,7 +106,121 @@ pre {
     padding: 16px;
 }
 
+/* Utilities */
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-gap {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.text-muted {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.card-title-main {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.target-heading {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin: 16px 0 8px 0;
+}
+
+.sev-label {
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.margin-top-sm {
+    margin-top: 8px;
+}
+
+.font-sm {
+    font-size: 0.85rem;
+}
+
+.color-indigo {
+    color: #818cf8;
+}
+
+.color-amber {
+    color: #f59e0b;
+}
+
+.color-green {
+    color: #22c55e;
+}
+
+.color-red {
+    color: #ef4444;
+}
+
+.color-muted {
+    color: #94a3b8;
+}
+
 /* Scorecard specific */
+.sc-container {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid var(--accent-color, #334155);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.sc-header {
+    margin-bottom: 20px;
+}
+
+.sc-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #f1f5f9;
+}
+
+.sc-metrics {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.sc-icon {
+    font-size: 3.5rem;
+    line-height: 1;
+}
+
+.sc-level-name {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    line-height: 1.1;
+}
+
 .sc-table td.status {
     text-align: center;
 }
@@ -140,6 +254,44 @@ pre {
     text-transform: uppercase;
     font-weight: 600;
     letter-spacing: 0.02em;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+}
+
+/* Macros */
+.score-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.score-bar-bg {
+    flex-grow: 1;
+    height: 8px;
+    background: #1e1e3a;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.score-value {
+    font-weight: 700;
+    font-size: 1rem;
+    min-width: 2.5rem;
+    text-align: right;
 }
 
 /* Metadata specific */

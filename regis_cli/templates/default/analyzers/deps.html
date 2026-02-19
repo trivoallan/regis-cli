@@ -2,7 +2,7 @@
 
 {% call m.section("Dependencies", "🔗") %}
     {% if not data.dependencies %}
-        <p style='color:#94a3b8;'>No base image detected.</p>
+        <p class="text-muted">No base image detected.</p>
     {% else %}
         {% if data.has_eol_dependency %}
             {{ m.badge("EOL dependency", "Yes", "#ef4444") }}
@@ -10,23 +10,23 @@
             {{ m.badge("All supported", "✓", "#22c55e") }}
         {% endif %}
 
-        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+        <table>
             <thead>
                 <tr>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Image</th>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Tag</th>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Product</th>
-                    <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">Supported</th>
+                    <th>Image</th>
+                    <th>Tag</th>
+                    <th>Product</th>
+                    <th>Supported</th>
                 </tr>
             </thead>
             <tbody>
                 {% for d in data.dependencies %}
                 {% set eol = d.eol_check|default({}) %}
                 <tr>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ d.image|default("")|e }}</td>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ d.tag|default("") or "—"|e }}</td>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ eol.product|default("")|e }}</td>
-                    <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">
+                    <td>{{ d.image|default("")|e }}</td>
+                    <td>{{ d.tag|default("") or "—"|e }}</td>
+                    <td>{{ eol.product|default("")|e }}</td>
+                    <td>
                         {% if eol.is_eol is not none %}
                             {{ m.bool_icon(not eol.is_eol) }}
                         {% else %}

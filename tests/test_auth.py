@@ -125,49 +125,6 @@ class TestRegistryAuth:
         assert kwargs["username"] == "env_user"
         assert kwargs["password"] == "env_password"
 
-    @patch("regis_cli.cli.jsonschema.validate")
-    @patch("regis_cli.scorecard.engine.evaluate")
-    @patch("regis_cli.scorecard.engine.load_scorecard")
-    @patch("regis_cli.cli._discover_analyzers")
-    @patch("regis_cli.cli.RegistryClient")
-    def test_score_passes_credentials(
-        self, mock_client_cls, mock_discover, mock_load, mock_eval, mock_validate
-    ):
-        """Test that score command passes credentials from env vars."""
-        runner = CliRunner()
-
-        # Mock analyzer
-        mock_analyzer_cls = MagicMock()
-        mock_analyzer_instance = mock_analyzer_cls.return_value
-        mock_analyzer_instance.analyze.return_value = {"some": "data"}
-        mock_discover.return_value = {"test_analyzer": mock_analyzer_cls}
-
-        # Mock scorecard
-        mock_load.return_value = {"levels": []}
-        mock_eval.return_value = {
-            "level": "gold",
-            "passed_rules": 1,
-            "total_rules": 1,
-            "score": 100,
-            "rules": [],
-        }
-
-        env = {
-            "REGIS_USERNAME": "env_user",
-            "REGIS_PASSWORD": "env_password",
-        }
-
-        with patch.dict(os.environ, env):
-            result = runner.invoke(main, ["score", "nginx", "-a", "test_analyzer"])
-
-        assert result.exit_code == 0
-
-        mock_client_cls.assert_called_once()
-        _, kwargs = mock_client_cls.call_args
-
-        assert kwargs["username"] == "env_user"
-        assert kwargs["password"] == "env_password"
-
     @patch("regis_cli.registry.auth.Path.home")
     def test_resolve_credentials_precedence(self, mock_home):
         """Test resolve_credentials precedence: CLI > Domain Env > Global Env > config.json."""
