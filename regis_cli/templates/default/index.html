@@ -1,7 +1,9 @@
 {% extends theme ~ "/base.html" %}
 
 {% block scorecard %}
-    {% include theme ~ "/scorecards/default.html" %}
+    {% for sc in report.scorecards %}
+        {% include theme ~ "/scorecards/default.html" %}
+    {% endfor %}
 {% endblock %}
 
 {% block content %}

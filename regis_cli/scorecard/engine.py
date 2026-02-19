@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import json
 import logging
-from collections import UserDict
-from importlib import resources
 from pathlib import Path
 from typing import Any
 
@@ -40,19 +38,8 @@ def _flatten(data: dict[str, Any], prefix: str = "") -> dict[str, Any]:
     return flat
 
 
-def load_scorecard(path: str | Path | None = None) -> dict[str, Any]:
-    """Load a scorecard definition from a YAML or JSON file.
-
-    If *path* is ``None`` the built-in default scorecard is loaded.
-    """
-    if path is None:
-        default = (
-            resources.files("regis_cli.scorecard")
-            .joinpath("default.yaml")
-            .read_text(encoding="utf-8")
-        )
-        return yaml.safe_load(default)
-
+def load_scorecard(path: str | Path) -> dict[str, Any]:
+    """Load a scorecard definition from a YAML or JSON file."""
     path = Path(path)
     text = path.read_text(encoding="utf-8")
     if path.suffix in (".yaml", ".yml"):
@@ -60,7 +47,7 @@ def load_scorecard(path: str | Path | None = None) -> dict[str, Any]:
     return json.loads(text)
 
 
-class MissingDataTracker(UserDict):
+class MissingDataTracker(dict):
     """A dictionary wrapper that tracks if None values were accessed."""
 
     def __init__(self, data: dict[str, Any]):
@@ -68,7 +55,11 @@ class MissingDataTracker(UserDict):
         self.missing_accessed = False
 
     def __getitem__(self, key: str) -> Any:
-        val = self.data[key]
+        try:
+            val = super().__getitem__(key)
+        except KeyError:
+            self.missing_accessed = True
+            raise
         if val is None:
             self.missing_accessed = True
         return val
@@ -77,12 +68,14 @@ class MissingDataTracker(UserDict):
         try:
             return self[key]
         except KeyError:
-            # We don't set missing_accessed here because get()
-            # is often used to check for optional keys.
+            self.missing_accessed = True
             return default
 
     def __contains__(self, key: object) -> bool:
-        return key in self.data
+        if not super().__contains__(key):
+            self.missing_accessed = True
+            return False
+        return True
 
 
 def _stringify_condition(condition: Any, context: dict[str, Any]) -> str:
@@ -100,7 +93,7 @@ def _stringify_condition(condition: Any, context: dict[str, Any]) -> str:
 
     # Handle var specifically: "key (value)"
     if op == "var":
-        val = context.get(args, "None")
+        val = context.get(args)
         if val is None:
             return f"{args} (MISSING)"
         return f"{args} ({val})"

@@ -51,6 +51,15 @@
       "additionalProperties": {
         "type": "object"
       }
+    },
+    "scorecards": {
+      "type": "array",
+      "description": "List of evaluated scorecard results.",
+      "items": { "$ref": "scorecard_result.schema.json" }
+    },
+    "scorecard": {
+      "description": "Primary scorecard result (shorthand for scorecards[0]).",
+      "$ref": "scorecard_result.schema.json"
     }
   },
   "additionalProperties": false

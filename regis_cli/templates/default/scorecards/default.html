@@ -1,8 +1,9 @@
 {% import theme ~ "/macros.html" as m %}
 
 {# Scorecard result visualization #}
-{% if report.scorecard %}
-    {% set sc = report.scorecard %}
+{% set sc_val = sc|default(report.scorecard) %}
+{% if sc_val %}
+    {% set sc = sc_val %}
     {% set level = sc.level|default('none') %}
     {% set colors = {'gold': '#f59e0b', 'silver': '#94a3b8', 'bronze': '#cd7f32', 'none': '#6b7280'} %}
     {% set icons = {'gold': '🥇', 'silver': '🥈', 'bronze': '🥉', 'none': '—'} %}

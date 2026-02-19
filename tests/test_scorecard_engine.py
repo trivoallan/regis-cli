@@ -22,12 +22,6 @@ class TestFlatten:
 class TestLoadScorecard:
     """Test scorecard loading."""
 
-    def test_load_default(self):
-        sc = load_scorecard()
-        assert sc["name"] == "Image Health"
-        assert len(sc["rules"]) == 9
-        assert len(sc["levels"]) == 3
-
     def test_load_from_file(self, tmp_path):
         custom = {
             "name": "Custom",
