@@ -1,7 +1,6 @@
 import os
 from unittest.mock import MagicMock, patch
 
-import pytest
 from click.testing import CliRunner
 
 from regis_cli.cli import main
@@ -10,6 +9,28 @@ from regis_cli.registry.client import RegistryClient
 
 class TestRegistryAuth:
     """Test registry authentication logic."""
+
+    @patch("regis_cli.registry.auth.Path.home")
+    def test_resolve_credentials_aliases(self, mock_home):
+        """Test resolve_credentials handles Docker Hub aliases."""
+        from regis_cli.registry.auth import resolve_credentials
+
+        # Test CLI override with alias
+        user, pwd = resolve_credentials(
+            "registry-1.docker.io", cli_auths=["docker.io=alias_user:alias_pass"]
+        )
+        assert user == "alias_user"
+        assert pwd == "alias_pass"
+
+        # Test Env Var with alias
+        env = {
+            "REGIS_AUTH_DOCKER_IO_USERNAME": "env_alias_user",
+            "REGIS_AUTH_DOCKER_IO_PASSWORD": "env_alias_pass",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            user, pwd = resolve_credentials("registry-1.docker.io")
+            assert user == "env_alias_user"
+            assert pwd == "env_alias_pass"
 
     def test_client_init_with_credentials(self):
         """Test RegistryClient initialization with credentials."""
