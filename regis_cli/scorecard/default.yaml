@@ -1,0 +1,65 @@
+name: Image Health
+description: Evaluate container image maturity and security posture
+
+levels:
+  - name: bronze
+    label: "🥉 Bronze"
+    order: 1
+  - name: silver
+    label: "🥈 Silver"
+    order: 2
+  - name: gold
+    label: "🥇 Gold"
+    order: 3
+
+rules:
+  # ── Bronze ────────────────────────────────────────────
+  - name: has-tags
+    title: Image has tags
+    level: bronze
+    condition:
+      ">": [{ "var": "results.tags.total_tags" }, 0]
+
+  - name: no-critical-vulns
+    title: Fewer than 50 vulnerabilities
+    level: bronze
+    condition:
+      "<": [{ "var": "results.vulnerabilities.vulnerability_count" }, 50]
+
+  # ── Silver ────────────────────────────────────────────
+  - name: semver-adoption
+    title: "SemVer adoption ≥ 50%"
+    level: silver
+    condition:
+      ">=": [{ "var": "results.versioning.semver_compliant_percentage" }, 50]
+
+  - name: has-provenance
+    title: Build provenance present
+    level: silver
+    condition:
+      "==": [{ "var": "results.provenance.has_provenance" }, true]
+
+  - name: license-detected
+    title: License detected
+    level: silver
+    condition:
+      "!=": [{ "var": "results.license.spdx_id" }, null]
+
+  # ── Gold ──────────────────────────────────────────────
+  - name: not-eol
+    title: Product is not end-of-life
+    level: gold
+    condition:
+      "!": [{ "var": "results.endoflife.is_eol" }]
+
+  - name: good-scorecard
+    title: "OpenSSF Scorecard ≥ 7"
+    level: gold
+    condition:
+      ">=": [{ "var": "results.scorecard.score" }, 7]
+
+  - name: fresh-image
+    title: Image younger than 90 days
+    level: gold
+    condition:
+      "<": [{ "var": "results.freshness.age_days" }, 90]

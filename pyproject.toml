@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68.0", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "regis-cli"
+version = "0.1.0"
+description = "CLI tool to analyze Docker image registries and produce JSON reports"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "TTC"},
+]
+dependencies = [
+    "click>=8.1",
+    "requests>=2.31",
+    "jsonschema>=4.20",
+    "semver>=3.0",
+    "json-logic>=0.6",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+regis-cli = "regis_cli.cli:main"
+
+[project.entry-points."regis_cli.analyzers"]
+tags = "regis_cli.analyzers.tags:TagsAnalyzer"
+image = "regis_cli.analyzers.image:ImageAnalyzer"
+versioning = "regis_cli.analyzers.versioning:VersioningAnalyzer"
+scorecard = "regis_cli.analyzers.scorecard:ScorecardAnalyzer"
+endoflife = "regis_cli.analyzers.endoflife:EndOfLifeAnalyzer"
+popularity = "regis_cli.analyzers.popularity:PopularityAnalyzer"
+size = "regis_cli.analyzers.size:SizeAnalyzer"
+license = "regis_cli.analyzers.license:LicenseAnalyzer"
+freshness = "regis_cli.analyzers.freshness:FreshnessAnalyzer"
+vulnerabilities = "regis_cli.analyzers.vulnerabilities:VulnerabilitiesAnalyzer"
+provenance = "regis_cli.analyzers.provenance:ProvenanceAnalyzer"
+deps = "regis_cli.analyzers.deps:DepsAnalyzer"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "responses>=0.24",
+]
+
+[tool.setuptools.packages.find]
+include = ["regis_cli*"]
+
+[tool.setuptools.package-data]
+regis_cli = ["schemas/*.json", "scorecard/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

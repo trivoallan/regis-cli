@@ -1,0 +1,15 @@
+{
+  "$schema": "https://gitlab.com/apricote/releaser-pleaser/-/raw/main/schema.json",
+  "packages": {
+    ".": {
+      "package-name": "regis-cli",
+      "release-type": "python",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        "pyproject.toml"
+      ]
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://regis-cli/schemas/image.schema.json",
+  "title": "Image Analyzer Report",
+  "description": "Report containing metadata for a specific Docker image tag.",
+  "type": "object",
+  "required": ["analyzer", "repository", "tag", "platforms"],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "image"
+    },
+    "repository": {
+      "type": "string",
+      "description": "Full repository path."
+    },
+    "tag": {
+      "type": "string",
+      "description": "Image tag that was inspected."
+    },
+    "platforms": {
+      "type": "array",
+      "description": "List of platform variants available for this tag.",
+      "items": {
+        "type": "object",
+        "required": ["architecture", "os"],
+        "properties": {
+          "architecture": {
+            "type": "string"
+          },
+          "os": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string"
+          },
+          "created": {
+            "type": ["string", "null"]
+          },
+          "labels": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "layers_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

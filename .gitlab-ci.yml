@@ -1,0 +1,45 @@
+stages:
+  - test
+  - release
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PIPENV_VENV_IN_PROJECT: "1"
+
+cache:
+  key: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+  paths:
+    - .cache/pip
+    - .venv
+
+# ---------------------------------------------------------------------------
+# Test
+# ---------------------------------------------------------------------------
+test:
+  stage: test
+  image: python:${PYTHON_VERSION}-slim
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ["3.10", "3.11", "3.12"]
+  before_script:
+    - pip install pipenv
+    - pipenv install --dev --deploy
+  script:
+    - pipenv run pytest -v --tb=short
+
+# ---------------------------------------------------------------------------
+# Release management via releaser-pleaser
+# https://gitlab.com/apricote/releaser-pleaser
+# ---------------------------------------------------------------------------
+releaser-pleaser:
+  stage: release
+  image:
+    name: ghcr.io/apricote/releaser-pleaser:latest
+    entrypoint: [""]
+  variables:
+    RELEASER_PLEASER_PLATFORM: gitlab
+    RELEASER_PLEASER_TOKEN: $RELEASER_PLEASER_TOKEN
+  script:
+    - releaser-pleaser update
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://regis-cli/schemas/report.schema.json",
+  "title": "regis-cli Analysis Report",
+  "description": "Final report envelope produced by regis-cli, containing request metadata and analyzer results.",
+  "type": "object",
+  "required": ["request", "results"],
+  "properties": {
+    "request": {
+      "type": "object",
+      "description": "Metadata describing the analysis request.",
+      "required": ["url", "registry", "repository", "tag", "analyzers", "timestamp"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Original URL or image reference provided by the user."
+        },
+        "registry": {
+          "type": "string",
+          "description": "Resolved registry hostname (e.g. registry-1.docker.io)."
+        },
+        "repository": {
+          "type": "string",
+          "description": "Full repository path (e.g. library/nginx)."
+        },
+        "tag": {
+          "type": "string",
+          "description": "Image tag that was analyzed."
+        },
+        "analyzers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of analyzer names that were executed."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 UTC timestamp of the analysis."
+        }
+      },
+      "additionalProperties": false
+    },
+    "results": {
+      "type": "object",
+      "description": "Analyzer results keyed by analyzer name.",
+      "additionalProperties": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://regis-cli/schemas/tags.schema.json",
+  "title": "Tags Analyzer Report",
+  "description": "Report listing all tags available for a Docker image repository.",
+  "type": "object",
+  "required": ["analyzer", "repository", "tags", "count"],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "const": "tags"
+    },
+    "repository": {
+      "type": "string",
+      "description": "Full repository path (e.g. library/nginx)."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Sorted list of available tags."
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of tags."
+    }
+  },
+  "additionalProperties": false
+}
