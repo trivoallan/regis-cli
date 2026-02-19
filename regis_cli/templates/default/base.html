@@ -5,51 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>regis-cli Report — {{ report.request.repository }}:{{ report.request.tag }}</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family:'Inter',system-ui,-apple-system,sans-serif;
-    background:#0f0f1a;
-    color:#e2e8f0;
-    padding:24px;
-    line-height:1.6;
-  }
-  a { color:#818cf8; text-decoration:none; }
-  a:hover { text-decoration:underline; }
-  .container {
-    max-width:960px;
-    margin:0 auto;
-  }
-  .header {
-    background:linear-gradient(135deg,#1e1b4b,#312e81);
-    border-radius:16px;
-    padding:32px;
-    margin-bottom:24px;
-    border:1px solid #3730a3;
-    box-shadow:0 4px 24px rgba(99,102,241,0.15);
-  }
-  .header h1 {
-    font-size:1.8rem;
-    font-weight:800;
-    background:linear-gradient(90deg,#818cf8,#c084fc);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
-  .header .meta {
-    margin-top:8px;
-    color:#94a3b8;
-    font-size:0.85rem;
-  }
-  .card {
-    background:#16162a;
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:16px;
-    border:1px solid #1e1e3a;
-  }
-  details > summary::marker { color:#6366f1; }
-  table { font-variant-numeric:tabular-nums; }
-  pre { white-space:pre-wrap; word-break:break-word; }
+  {% include theme ~ "/style.css" %}
 </style>
 </head>
 <body>

@@ -6,14 +6,14 @@
 
 {% block content %}
     {% if report.metadata %}
-    <div style="margin-bottom: 24px; padding: 16px; background: #1e1e3a; border-radius: 8px; border: 1px solid #3730a3;">
-        <h2 style="font-size: 1.2rem; color: #818cf8; margin-bottom: 12px; border-bottom: 1px solid #3730a3; padding-bottom: 8px;">Metadata</h2>
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+    <div class="card meta-section">
+        <h2 class="card-title">Metadata</h2>
+        <table class="meta-table">
             <tbody>
                 {% for key, value in report.metadata.items() %}
                 <tr>
-                    <td style="padding: 6px 0; color: #a5b4fc; font-weight: 600; width: 30%;">{{ key|e }}</td>
-                    <td style="padding: 6px 0;">{{ value|e }}</td>
+                    <td class="label">{{ key|e }}</td>
+                    <td class="value">{{ value|e }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

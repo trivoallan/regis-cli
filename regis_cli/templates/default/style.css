@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #0f0f1a;
+    color: #e2e8f0;
+    padding: 24px;
+    line-height: 1.6;
+}
+
+a {
+    color: #818cf8;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.header {
+    background: linear-gradient(135deg, #1e1b4b, #312e81);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    border: 1px solid #3730a3;
+    box-shadow: 0 4px 24px rgba(99, 102, 241, 0.15);
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header .meta {
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.card {
+    background: #16162a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #1e1e3a;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    color: #818cf8;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #3730a3;
+    padding-bottom: 8px;
+}
+
+details>summary::marker {
+    color: #6366f1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+
+th {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 2px solid #444;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+
+td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #2a2a2a;
+    font-size: 0.9rem;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.footer {
+    text-align: center;
+    color: #475569;
+    font-size: 0.8rem;
+    padding: 16px;
+}
+
+/* Scorecard specific */
+.sc-table td.status {
+    text-align: center;
+}
+
+.sc-table td.level {
+    white-space: nowrap;
+}
+
+.sc-table .rule-title {
+    font-weight: 600;
+}
+
+.sc-table .details {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-family: monospace;
+}
+
+.sc-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.sc-tag {
+    font-size: 0.7rem;
+    background: #334155;
+    color: #f1f5f9;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* Metadata specific */
+.meta-table td.label {
+    color: #a5b4fc;
+    font-weight: 600;
+    width: 30%;
+    padding: 6px 0;
+    border-bottom: none;
+}
+
+.meta-table td.value {
+    padding: 6px 0;
+    border-bottom: none;
+}

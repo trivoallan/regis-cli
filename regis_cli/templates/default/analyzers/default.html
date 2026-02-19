@@ -1,5 +1,5 @@
 {% import theme ~ "/macros.html" as m %}
 
 {% call m.section(name, "📋") %}
-    <pre style="background:#1e1e2e;padding:12px;border-radius:8px;overflow-x:auto;font-size:0.85rem;">{{ data|tojson(indent=2)|e }}</pre>
+    <pre class="code-block">{{ data|tojson(indent=2)|e }}</pre>
 {% endcall %}

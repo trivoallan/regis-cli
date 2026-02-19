@@ -14,7 +14,7 @@
 {% endmacro %}
 
 {% macro badge(label, value, color="#6366f1") %}
-<span style="display:inline-flex;align-items:center;gap:4px;background:{{ color }}22;color:{{ color }};border:1px solid {{ color }}44;border-radius:6px;padding:2px 8px;font-size:0.8rem;font-weight:600;">
+<span class="badge" style="background:{{ color }}22;color:{{ color }};border:1px solid {{ color }}44;">
     {{ label|e }}: {{ value|e }}
 </span>
 {% endmacro %}
@@ -30,20 +30,20 @@
 {% endmacro %}
 
 {% macro section(title, icon="📦") %}
-<details open>
-    <summary style="cursor:pointer;font-size:1.15rem;font-weight:700;padding:12px 0;border-bottom:1px solid #333;margin-bottom:12px;">{{ icon }} {{ title|e }}</summary>
-    <div style="padding:0 0 16px 0;">
+<details class="report-section" open>
+    <summary>{{ icon }} {{ title|e }}</summary>
+    <div class="section-content">
         {{ caller() }}
     </div>
 </details>
 {% endmacro %}
 
 {% macro table(headers, rows) %}
-<table style="width:100%;border-collapse:collapse;margin:8px 0;">
+<table>
     <thead>
         <tr>
             {% for h in headers %}
-            <th style="text-align:left;padding:8px 12px;border-bottom:2px solid #444;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;">{{ h|e }}</th>
+            <th>{{ h|e }}</th>
             {% endfor %}
         </tr>
     </thead>
@@ -51,7 +51,7 @@
         {% for row in rows %}
         <tr>
             {% for cell in row %}
-            <td style="padding:8px 12px;border-bottom:1px solid #2a2a2a;font-size:0.9rem;">{{ cell }}</td>
+            <td>{{ cell }}</td>
             {% endfor %}
         </tr>
         {% endfor %}
@@ -63,10 +63,10 @@
 {% set pct = (score / max_score * 100)|round(0)|int %}
 {% set pct = 100 if pct > 100 else (0 if pct < 0 else pct) %}
 {% set color = score_color(score, max_score)|trim %}
-<div style="display:flex;align-items:center;gap:8px;">
-    <div style="flex:1;height:8px;background:#1e1e2e;border-radius:4px;overflow:hidden;">
-        <div style="width:{{ pct }}%;height:100%;background:{{ color }};border-radius:4px;transition:width 0.3s;"></div>
+<div class="score-bar-container">
+    <div class="score-bar-bg">
+        <div class="score-bar-fill" style="width:{{ pct }}%;background:{{ color }};"></div>
     </div>
-    <span style="font-weight:700;color:{{ color }};min-width:36px;text-align:right;">{{ score }}</span>
+    <span class="score-value" style="color:{{ color }};">{{ score }}</span>
 </div>
 {% endmacro %}
