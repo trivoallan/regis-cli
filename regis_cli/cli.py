@@ -118,6 +118,7 @@ def main(verbose: bool) -> None:
     "--output-dir",
     "output_dir_template",
     help="Base directory template for output files (e.g. 'reports/{repository}').",
+    default="reports/{repository}/{tag}",
 )
 @click.option(
     "--pretty/--no-pretty",
