@@ -11,19 +11,25 @@
     {% set icon = icons[level] %}
     {% set score_pct = sc.score|default(0) %}
 
-    <div class="sc-container" style="--accent-color: {{ color }};">
+    <div class="sc-container">
         <div class="sc-header">
             <h2>📊 {{ sc.scorecard_name|default("Scorecard")|e }}</h2>
         </div>
         
-        <div class="sc-metrics">
-            <div class="sc-icon">{{ icon }}</div>
-            <div>
-                <div class="sc-level-name">{{ level|e }}</div>
-                <div class="text-muted">
-                    {{ sc.passed_rules }}/{{ sc.total_rules }} rules passed · {{ score_pct }}%
+        <div class="sc-metrics-summary" style="display: flex; flex-wrap: wrap; gap: 16px; margin: 16px 0;">
+            {% for level_name, stats in sc.levels_summary.items() %}
+                {% set level_color = colors.get(level_name, '#6b7280') %}
+                {% set level_icon = icons.get(level_name, '') %}
+                <div class="sc-level-metric" style="flex: 1; min-width: 120px; padding: 12px; background: {{ level_color }}11; border: 1px solid {{ level_color }}33; border-radius: 8px;">
+                    <div style="font-size: 1.2rem; margin-bottom: 4px;">{{ level_icon }} {{ level_name|capitalize }}</div>
+                    <div style="font-weight: 600; font-size: 1.1rem; color: {{ level_color }};">
+                        {{ stats.passed }}/{{ stats.total }} passed
+                    </div>
+                    <div class="text-muted" style="font-size: 0.85rem; margin-top: 4px;">
+                        {{ stats.percentage }}% success rate
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
         
         {{ m.score_bar(score_pct, 100) }}

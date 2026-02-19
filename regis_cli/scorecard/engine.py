@@ -216,8 +216,7 @@ def evaluate(
             }
         )
 
-    # Determine achieved level: a level is achieved when ALL rules at
-    # that level *and all lower levels* pass.
+    # Determine summary by level.
     levels_defined = {
         lv["name"]: lv.get("order", _LEVEL_ORDER.get(lv["name"], 0))
         for lv in scorecard.get("levels", [])
@@ -225,26 +224,25 @@ def evaluate(
     if not levels_defined:
         levels_defined = dict(_LEVEL_ORDER)
 
-    achieved = "none"
+    levels_summary = {}
     for level_name in sorted(levels_defined, key=lambda n: levels_defined[n]):
-        # All rules at this level or below must pass.
-        threshold = levels_defined[level_name]
-        relevant = [
-            r for r in rule_results if levels_defined.get(r["level"], 0) <= threshold
-        ]
-        # A level is achieved if (a) there are rules at/below it and they all pass,
-        # OR (b) there are no rules at/below it (trivially pass).
-        if all(r["passed"] for r in relevant):
-            achieved = level_name
+        level_rules = [r for r in rule_results if r["level"] == level_name]
+        if level_rules:
+            passed_level = sum(1 for r in level_rules if r["passed"])
+            levels_summary[level_name] = {
+                "total": len(level_rules),
+                "passed": passed_level,
+                "percentage": round(passed_level / len(level_rules) * 100),
+            }
 
     passed_count = sum(1 for r in rule_results if r["passed"])
     total = len(rule_results)
 
     return {
         "scorecard_name": scorecard.get("name", "unnamed"),
-        "level": achieved,
         "score": round(passed_count / total * 100) if total else 0,
         "total_rules": total,
         "passed_rules": passed_count,
+        "levels_summary": levels_summary,
         "rules": rule_results,
     }

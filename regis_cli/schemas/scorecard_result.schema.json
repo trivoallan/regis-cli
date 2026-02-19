@@ -2,14 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Scorecard Result",
   "type": "object",
-  "required": ["scorecard_name", "level", "score", "total_rules", "passed_rules", "rules"],
+  "required": ["scorecard_name", "score", "total_rules", "passed_rules", "levels_summary", "rules"],
   "properties": {
     "scorecard_name": {
       "type": "string"
-    },
-    "level": {
-      "type": "string",
-      "enum": ["none", "bronze", "silver", "gold"]
     },
     "score": {
       "type": "integer",
@@ -23,6 +19,18 @@
     "passed_rules": {
       "type": "integer",
       "minimum": 0
+    },
+    "levels_summary": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["total", "passed", "percentage"],
+        "properties": {
+          "total": { "type": "integer", "minimum": 0 },
+          "passed": { "type": "integer", "minimum": 0 },
+          "percentage": { "type": "integer", "minimum": 0, "maximum": 100 }
+        }
+      }
     },
     "rules": {
       "type": "array",

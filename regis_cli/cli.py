@@ -279,9 +279,14 @@ def analyze(
                     lv["name"]: lv.get("label", lv["name"])
                     for lv in sc_def.get("levels", [])
                 }
-                level_str = level_labels.get(sc_result["level"], sc_result["level"])
+                summary_parts = []
+                for lv_name, stats in sc_result["levels_summary"].items():
+                    label = level_labels.get(lv_name, lv_name)
+                    summary_parts.append(f"{label}: {stats['passed']}/{stats['total']}")
+
+                summary_str = " · ".join(summary_parts)
                 click.echo(
-                    f"    Level: {level_str}  "
+                    f"    {summary_str}  "
                     f"({sc_result['passed_rules']}/{sc_result['total_rules']} rules passed, "
                     f"{sc_result['score']}%)\n",
                     err=True,

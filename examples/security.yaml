@@ -1,0 +1,35 @@
+name: Image Security
+description: Evaluate container image security posture
+
+levels:
+  - name: mandatory
+    label: Mandatory
+    order: 1
+  - name: recommended
+    label: Recommended
+    order: 2
+  - name: optional
+    label: Optional
+    order: 3
+
+rules:
+  - name: no-critical-vulns
+    title: No critical vulnerabilities
+    level: mandatory
+    tags: [security]
+    condition:
+      "==": [{ var: results.trivy.severity_counts.CRITICAL }, 0]
+
+  - name: no-high-vulns
+    title: No high vulnerabilities
+    level: recommended
+    tags: [security]
+    condition:
+      "==": [{ var: results.trivy.severity_counts.HIGH }, 0]
+
+  - name: has-provenance
+    title: Build provenance present
+    level: optional
+    tags: [security]
+    condition:
+      "==": [{ var: results.provenance.has_provenance }, true]
