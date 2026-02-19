@@ -63,3 +63,13 @@ rules:
     level: gold
     condition:
       "<": [{ "var": "results.freshness.age_days" }, 90]
+
+  - name: domain-trusted
+    title: Domain is trusted
+    level: gold
+    condition:
+      "in":
+        [
+          { "var": "request.registry" },
+          ["registry-1.docker.io", "ghcr.io", "quay.io"],
+        ]
