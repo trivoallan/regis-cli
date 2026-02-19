@@ -48,32 +48,54 @@ def load_scorecard(path: str | Path) -> dict[str, Any]:
 
 
 class MissingDataTracker(dict):
-    """A dictionary wrapper that tracks if None values were accessed."""
+    """A dictionary wrapper that tracks which keys were accessed and if they were missing."""
 
-    def __init__(self, data: dict[str, Any]):
+    def __init__(
+        self,
+        data: dict[str, Any],
+        path: str = "",
+        root_tracker: MissingDataTracker | None = None,
+    ):
         super().__init__(data)
         self.missing_accessed = False
+        self.path = path
+        # If this is a nested tracker, use the root tracker's accessed_keys set
+        if root_tracker:
+            self.root = root_tracker
+            self.accessed_keys = root_tracker.accessed_keys
+        else:
+            self.root = self
+            self.accessed_keys: set[str] = set()
 
     def __getitem__(self, key: str) -> Any:
+        full_key = f"{self.path}.{key}" if self.path else key
+        self.accessed_keys.add(full_key)
         try:
             val = super().__getitem__(key)
         except KeyError:
-            self.missing_accessed = True
+            self.root.missing_accessed = True
             raise
+
         if val is None:
-            self.missing_accessed = True
+            self.root.missing_accessed = True
+            return None
+
+        if isinstance(val, dict):
+            return MissingDataTracker(val, full_key, self.root)
         return val
 
     def get(self, key: str, default: Any = None) -> Any:
         try:
             return self[key]
         except KeyError:
-            self.missing_accessed = True
             return default
 
     def __contains__(self, key: object) -> bool:
+        if isinstance(key, str):
+            full_key = f"{self.path}.{key}" if self.path else key
+            self.accessed_keys.add(full_key)
         if not super().__contains__(key):
-            self.missing_accessed = True
+            self.root.missing_accessed = True
             return False
         return True
 
@@ -171,12 +193,22 @@ def evaluate(
 
         status = "incomplete" if incomplete else ("passed" if passed else "failed")
 
+        # Extract involved analyzers from accessed keys.
+        # Dot-paths like "results.trivy.vulnerabilities" point to "trivy".
+        involved_analyzers = set()
+        for key in tracker.accessed_keys:
+            if key.startswith("results."):
+                parts = key.split(".")
+                if len(parts) > 1:
+                    involved_analyzers.add(parts[1])
+
         rule_results.append(
             {
                 "name": rule.get("name", ""),
                 "title": rule.get("title", rule.get("name", "")),
                 "level": rule.get("level", "bronze"),
                 "tags": rule.get("tags", []),
+                "analyzers": sorted(involved_analyzers),
                 "passed": passed,
                 "status": status,
                 "condition": json.dumps(condition),

@@ -37,6 +37,10 @@
             "type": "array",
             "items": {"type": "string"}
           },
+          "analyzers": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
           "passed": {"type": "boolean"},
           "status": {
             "type": "string",

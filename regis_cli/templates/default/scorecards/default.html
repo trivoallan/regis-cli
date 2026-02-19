@@ -35,6 +35,7 @@
                         <th class="status">Status</th>
                         <th class="level">Level</th>
                         <th class="rule">Rule</th>
+                        <th class="analyzers">Analyzers</th>
                         <th class="tags">Tags</th>
                         <th class="details">Details</th>
                     </tr>
@@ -58,6 +59,17 @@
                             </td>
                             <td class="rule">
                                 <div class="rule-title">{{ r.title|default(r.name)|default('')|e }}</div>
+                            </td>
+                            <td class="analyzers">
+                                {% if r.analyzers %}
+                                    <div class="sc-tag-list">
+                                        {% for analyzer in r.analyzers %}
+                                            <span class="sc-tag analyzer-tag" style="background-color: #f3f4f6; color: #374151; font-weight: 500;">
+                                                🔍 {{ analyzer|e }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </td>
                             <td class="tags">
                                 {% if r.tags %}
