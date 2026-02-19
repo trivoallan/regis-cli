@@ -70,3 +70,12 @@
     <span class="score-value" style="color: var(--accent-color);">{{ score }}</span>
 </div>
 {% endmacro %}
+{% macro error_card(name, error) %}
+<div class="card error-card" style="border-left: 4px solid #ef4444;">
+    <h3 class="card-title" style="color: #ef4444;">⚠️ {{ name|e }} Analyzer Error</h3>
+    <div class="error-details">
+        <p><strong>Type:</strong> {{ error.type|e }}</p>
+        <p><strong>Message:</strong> {{ error.message|e }}</p>
+    </div>
+</div>
+{% endmacro %}

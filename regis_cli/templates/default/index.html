@@ -1,4 +1,5 @@
 {% extends theme ~ "/base.html" %}
+{% import theme ~ "/macros.html" as m %}
 
 {% block scorecard %}
     {% for sc in report.scorecards %}
@@ -24,6 +25,10 @@
     {% endif %}
 
     {% for name, data in report.results.items()|sort %}
-        {% include [theme ~ "/analyzers/" ~ name ~ ".html", theme ~ "/analyzers/default.html"] %}
+        {% if data.error %}
+            {{ m.error_card(name, data.error) }}
+        {% else %}
+            {% include [theme ~ "/analyzers/" ~ name ~ ".html", theme ~ "/analyzers/default.html"] %}
+        {% endif %}
     {% endfor %}
 {% endblock %}

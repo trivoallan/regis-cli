@@ -219,8 +219,22 @@ def analyze(
             reports[name] = report
         except RegistryError as exc:
             click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
+            reports[name] = {
+                "analyzer": name,
+                "error": {"type": "registry", "message": str(exc)},
+            }
         except AnalyzerError as exc:
             click.echo(f"  ✗ {name}: validation error — {exc}", err=True)
+            reports[name] = {
+                "analyzer": name,
+                "error": {"type": "validation", "message": str(exc)},
+            }
+        except Exception as exc:
+            click.echo(f"  ✗ {name}: unexpected error — {exc}", err=True)
+            reports[name] = {
+                "analyzer": name,
+                "error": {"type": "unexpected", "message": str(exc)},
+            }
 
     if not reports:
         raise click.ClickException("All analyzers failed.")
