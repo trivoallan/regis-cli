@@ -110,6 +110,7 @@ class VulnerabilitiesAnalyzer(BaseAnalyzer):
 
             vulns.append({
                 "id": v.get("id", ""),
+                "osv_url": f"https://osv.dev/vulnerability/{v.get('id', '')}",
                 "summary": v.get("summary", "")[:200],
                 "cve_ids": cve_ids,
                 "severity": severity,

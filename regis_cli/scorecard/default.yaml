@@ -56,7 +56,7 @@ rules:
     title: "OpenSSF Scorecard ≥ 7"
     level: gold
     condition:
-      ">=": [{ "var": "results.scorecard.score" }, 7]
+      ">=": [{ "var": "results.scorecarddev.score" }, 7]
 
   - name: fresh-image
     title: Image younger than 90 days

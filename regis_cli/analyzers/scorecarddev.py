@@ -124,11 +124,11 @@ def _fetch_scorecard(platform: str, owner: str, repo: str) -> dict[str, Any] | N
     return None
 
 
-class ScorecardAnalyzer(BaseAnalyzer):
+class ScorecardDevAnalyzer(BaseAnalyzer):
     """Fetch OpenSSF Scorecard security assessment for the image source repository."""
 
-    name = "scorecard"
-    schema_file = "scorecard.schema.json"
+    name = "scorecarddev"
+    schema_file = "scorecarddev.schema.json"
 
     def analyze(
         self,

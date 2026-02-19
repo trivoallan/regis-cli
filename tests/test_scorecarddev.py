@@ -2,8 +2,8 @@
 
 import pytest
 
-from regis_cli.analyzers.scorecard import (
-    ScorecardAnalyzer,
+from regis_cli.analyzers.scorecarddev import (
+    ScorecardDevAnalyzer,
     _parse_git_url,
 )
 
@@ -83,11 +83,11 @@ class TestScorecardAnalyzerNoSource:
             manifest=manifest,
             blobs={"sha256:cfg1": config},
         )
-        analyzer = ScorecardAnalyzer()
+        analyzer = ScorecardDevAnalyzer()
         report = analyzer.analyze(client, "fakens/nonexistent-image-xyz", "latest")
         analyzer.validate(report)
 
-        assert report["analyzer"] == "scorecard"
+        assert report["analyzer"] == "scorecarddev"
         assert report["scorecard_available"] is False
         assert report["source_repo"] is None
         assert report["score"] is None
@@ -115,7 +115,7 @@ class TestScorecardAnalyzerWithSource:
             manifest=manifest,
             blobs={"sha256:cfg1": config},
         )
-        analyzer = ScorecardAnalyzer()
+        analyzer = ScorecardDevAnalyzer()
         report = analyzer.analyze(client, "library/nginx", "latest")
         analyzer.validate(report)
 

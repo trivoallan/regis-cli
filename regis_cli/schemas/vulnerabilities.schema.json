@@ -17,9 +17,10 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "summary", "cve_ids", "severity", "published", "modified"],
+        "required": ["id", "summary", "cve_ids", "severity", "published", "modified", "osv_url"],
         "properties": {
           "id": { "type": "string" },
+          "osv_url": { "type": "string" },
           "summary": { "type": "string" },
           "cve_ids": { "type": "array", "items": { "type": "string" } },
           "severity": { "type": "string" },

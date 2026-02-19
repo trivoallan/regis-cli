@@ -25,7 +25,7 @@ class TestLoadScorecard:
     def test_load_default(self):
         sc = load_scorecard()
         assert sc["name"] == "Image Health"
-        assert len(sc["rules"]) == 8
+        assert len(sc["rules"]) == 9
         assert len(sc["levels"]) == 3
 
     def test_load_from_file(self, tmp_path):
@@ -96,7 +96,7 @@ class TestEvaluate:
                 "name": "good-score",
                 "title": "Good scorecard",
                 "level": "gold",
-                "condition": {">=": [{"var": "results.scorecard.score"}, 7]},
+                "condition": {">=": [{"var": "results.scorecarddev.score"}, 7]},
             },
         ],
     }
@@ -106,7 +106,7 @@ class TestEvaluate:
             "results": {
                 "tags": {"total_tags": 100},
                 "provenance": {"has_provenance": True},
-                "scorecard": {"score": 8},
+                "scorecarddev": {"score": 8},
             },
         }
         result = evaluate(self.SCORECARD, report)
@@ -120,7 +120,7 @@ class TestEvaluate:
             "results": {
                 "tags": {"total_tags": 50},
                 "provenance": {"has_provenance": False},
-                "scorecard": {"score": 2},
+                "scorecarddev": {"score": 2},
             },
         }
         result = evaluate(self.SCORECARD, report)
@@ -132,7 +132,7 @@ class TestEvaluate:
             "results": {
                 "tags": {"total_tags": 50},
                 "provenance": {"has_provenance": True},
-                "scorecard": {"score": 3},
+                "scorecarddev": {"score": 3},
             },
         }
         result = evaluate(self.SCORECARD, report)
@@ -144,7 +144,7 @@ class TestEvaluate:
             "results": {
                 "tags": {"total_tags": 0},
                 "provenance": {"has_provenance": False},
-                "scorecard": {"score": 0},
+                "scorecarddev": {"score": 0},
             },
         }
         result = evaluate(self.SCORECARD, report)
@@ -161,7 +161,7 @@ class TestEvaluate:
             "results": {
                 "tags": {"total_tags": 10},
                 "provenance": {"has_provenance": True},
-                "scorecard": {"score": 3},
+                "scorecarddev": {"score": 3},
             },
         }
         result = evaluate(self.SCORECARD, report)

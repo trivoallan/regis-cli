@@ -6,10 +6,7 @@
   "type": "object",
   "required": ["analyzer", "repository", "source_repo", "scorecard_available", "score", "checks"],
   "properties": {
-    "analyzer": {
-      "type": "string",
-      "const": "scorecard"
-    },
+    "analyzer": { "type": "string", "const": "scorecarddev" },
     "repository": {
       "type": "string",
       "description": "Docker image repository path."
