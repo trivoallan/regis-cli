@@ -148,8 +148,7 @@ def main(verbose: bool) -> None:
     "--playbook",
     "playbook_paths",
     multiple=True,
-    type=click.Path(exists=True, dir_okay=False),
-    help="Path to custom playbook YAML/JSON file(s). Can be repeated. Default: built-in playbook.",
+    help="Path or URL to custom playbook YAML/JSON file(s). Can be repeated. Default: built-in playbook.",
 )
 @click.option(
     "-o",
@@ -376,7 +375,11 @@ def analyze(
 
         if playbook_paths:
             for pb_path in playbook_paths:
-                click.echo(f"  Evaluating playbook: {pb_path}...", err=True)
+                is_remote = isinstance(pb_path, str) and (
+                    pb_path.startswith("http://") or pb_path.startswith("https://")
+                )
+                action = "Downloading" if is_remote else "Evaluating"
+                click.echo(f"  {action} playbook: {pb_path}...", err=True)
                 pb_def = load_playbook(pb_path)
                 pb_result = evaluate(
                     pb_def, analysis_report, source_name=Path(pb_path).stem

@@ -4,5 +4,7 @@
     "repository_owner": "username",
     "author_name": "RegiS",
     "description": "Image analysis and security scorecards for {{ cookiecutter.project_name }}",
-    "regis_cli_image_url": "ghcr.io/trivoallan/regis-cli:0.4.0"
+    "regis_cli_image_url": "ghcr.io/trivoallan/regis-cli:0.4.0",
+    "regis_playbook_url": "https://raw.githubusercontent.com/trivoallan/regis-cli/refs/tags/v0.4.0/regis_cli/playbooks/default.yaml"
+
 }
