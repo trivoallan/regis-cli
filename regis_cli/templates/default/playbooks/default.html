@@ -28,13 +28,15 @@
                         {% set w_opts = w.options or {} %}
                         {% set w_title = w_opts.get('title') %}
                         {% set w_collapsed = w_opts.get('collapsed', false) %}
+                        {% set w_align = w_opts.get('align', 'left') %}
+                        {% set w_class = w_opts.get('class', '') %}
 
                         {% if w.template is defined %}
                             {% if ns.in_grid %}
                                 </div>
                                 {% set ns.in_grid = false %}
                             {% endif %}
-                            <div class="widget-template" style="margin-bottom: calc(3 * var(--pico-spacing));">
+                            <div class="widget-template {{ w_class }}" style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: {{ w_align }}; margin-bottom: calc(3 * var(--pico-spacing));">
                                 {% if w_collapsed %}
                                 <details>
                                     <summary style="font-weight: bold; color: var(--pico-secondary); margin-bottom: 0.5rem; font-size: 1.125rem;">{{ w_title|default(w.label)|e }}</summary>
@@ -56,12 +58,12 @@
                                 {% endif %}
                                 <div style="margin-bottom: calc(4 * var(--pico-spacing));">
                                     {% if w_collapsed %}
-                                    <details>
+                                    <details {% if w_class %}class="{{ w_class }}"{% endif %}>
                                         <summary style="font-weight: bold; color: var(--pico-secondary); font-size: 1.125rem;">{{ w_title|default(w.label)|e }}</summary>
                                     {% elif w_title %}
                                         <h6 style="margin-bottom: 0.5rem; color: var(--pico-secondary);">{{ w_title|e }}</h6>
                                     {% endif %}
-                                    <div style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); {% if w.resolved_url %}cursor: pointer;{% endif %}">
+                                    <div class="{{ w_class }}" style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: {{ w_align }}; {% if w.resolved_url %}cursor: pointer;{% endif %}">
                                         {%- if w.resolved_url -%}<a href="{{ w.resolved_url }}" style="text-decoration: none; color: inherit; display: block;">{%- endif -%}
                                         {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
                                         <strong>{{ w.label|e }}</strong><br>
@@ -72,6 +74,9 @@
                                             {%- else -%}{{ w.resolved_value }}
                                             {%- endif -%}
                                         </span>
+                                        {% if w.resolved_subvalue is defined and w.resolved_subvalue is not none %}
+                                        <br><small style="opacity: 0.8; font-size: 0.9rem;">{{ w.resolved_subvalue }}</small>
+                                        {% endif %}
                                         {%- if w.resolved_url -%}</a>{%- endif -%}
                                     </div>
                                     {% if w_collapsed %}
@@ -83,7 +88,7 @@
                                     <div class="grid" style="margin-bottom: calc(4 * var(--pico-spacing));">
                                     {% set ns.in_grid = true %}
                                 {% endif %}
-                                <div>
+                                <div class="{{ w_class }}" style="text-align: {{ w_align }};">
                                     {%- if w.resolved_url -%}<a href="{{ w.resolved_url }}" style="text-decoration: none; color: inherit; display: block;">{%- endif -%}
                                     {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
                                     <strong>{{ w.label|e }}</strong><br>
@@ -94,6 +99,9 @@
                                         {%- else -%}{{ w.resolved_value }}
                                         {%- endif -%}
                                     </span>
+                                    {% if w.resolved_subvalue is defined and w.resolved_subvalue is not none %}
+                                    <br><small style="opacity: 0.8; font-size: 0.9rem;">{{ w.resolved_subvalue }}</small>
+                                    {% endif %}
                                     {%- if w.resolved_url -%}</a>{%- endif -%}
                                 </div>
                             {% endif %}

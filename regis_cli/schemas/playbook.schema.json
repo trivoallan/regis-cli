@@ -152,6 +152,10 @@
           "items": {
             "$ref": "#/$defs/widget"
           }
+        },
+        "condition": {
+          "type": "object",
+          "description": "Optional jsonLogic expression to conditionally display this section. If it evaluates to falsy, the section is hidden."
         }
       },
       "additionalProperties": false
@@ -213,8 +217,27 @@
               "type": "boolean",
               "description": "If true, the widget will be collapsible and closed by default.",
               "default": false
+            },
+            "align": {
+              "type": "string",
+              "enum": ["left", "center", "right"],
+              "description": "Text alignment for the widget (left, center, or right)",
+              "default": "left"
+            },
+            "subvalue": {
+              "type": "string",
+              "description": "Additional text/value to display below the main value. Follows identical resolution logic as value."
+            },
+            "class": {
+              "type": "string",
+              "description": "Additional CSS class(es) to apply to the widget container.",
+              "default": ""
             }
           }
+        },
+        "condition": {
+          "type": "object",
+          "description": "Optional jsonLogic expression to conditionally display this widget. If it evaluates to falsy, the widget is hidden."
         }
       },
       "additionalProperties": false

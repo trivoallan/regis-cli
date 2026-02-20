@@ -321,6 +321,8 @@ def _evaluate_section(
     }
     if "hint" in section:
         section_result["hint"] = section["hint"]
+    if "condition" in section:
+        section_result["condition"] = section["condition"]
 
     # Resolve display preferences and widget values.
     display = section.get("display")
@@ -334,11 +336,35 @@ def _evaluate_section(
     if raw_widgets:
         resolved_widgets = []
         for widget in raw_widgets:
+            # Check condition early
+            condition = widget.get("condition")
+            if condition:
+                tracker = MissingDataTracker(raw_context)
+                try:
+                    is_active = jsonLogic(condition, tracker)
+                    if not is_active and not tracker.missing_accessed:
+                        continue
+                except Exception as exc:
+                    logger.warning(
+                        "Widget '%s' condition evaluation error: %s",
+                        widget.get("label", widget.get("template", "unknown")),
+                        exc,
+                    )
+                    if not tracker.missing_accessed:
+                        continue
+
             resolved = dict(widget)
             value_path = widget.get("value")
             if value_path:
                 resolved["resolved_value"] = _resolve_path(
                     value_path, raw_context, nested_context
+                )
+
+            # Support for optional subvalue in options
+            subvalue_path = widget.get("options", {}).get("subvalue")
+            if subvalue_path:
+                resolved["resolved_subvalue"] = _resolve_path(
+                    subvalue_path, raw_context, nested_context
                 )
 
             # Support for optional links on widgets
@@ -417,6 +443,22 @@ def evaluate(
         page_passed_scorecards = 0
 
         for section_def in page_sections_defs:
+            condition = section_def.get("condition")
+            if condition:
+                tracker = MissingDataTracker(raw_context)
+                try:
+                    is_active = jsonLogic(condition, tracker)
+                    if not is_active and not tracker.missing_accessed:
+                        continue
+                except Exception as exc:
+                    logger.warning(
+                        "Section '%s' condition evaluation error: %s",
+                        section_def.get("name", "unknown"),
+                        exc,
+                    )
+                    if not tracker.missing_accessed:
+                        continue
+
             section_result = _evaluate_section(
                 section_def,
                 raw_context,
@@ -489,8 +531,26 @@ def evaluate(
         "score": result.get("score", 0),
     }
     for page in result["pages"]:
+        filtered_sections = []
         for section in page["sections"]:
+            condition = section.get("condition")
+            if condition:
+                try:
+                    if not jsonLogic(condition, full_context):
+                        continue
+                except Exception:
+                    continue
+
+            filtered_widgets = []
             for widget in section.get("widgets", []):
+                w_condition = widget.get("condition")
+                if w_condition:
+                    try:
+                        if not jsonLogic(w_condition, full_context):
+                            continue
+                    except Exception:
+                        continue
+
                 # Only re-resolve if we didn't find a value in the first pass
                 # OR if it starts with 'playbook' or 'page' or 'score'
                 val_path = widget.get("value")
@@ -505,6 +565,19 @@ def evaluate(
                         val_path, full_context, nested_context=full_context
                     )
 
+                # Resolve subvalue as well
+                subvalue_path = widget.get("options", {}).get("subvalue")
+                if subvalue_path and (
+                    widget.get("resolved_subvalue") is None
+                    or any(
+                        subvalue_path.startswith(p)
+                        for p in ["playbook", "score", "pages", "{{"]
+                    )
+                ):
+                    widget["resolved_subvalue"] = _resolve_path(
+                        subvalue_path, full_context, nested_context=full_context
+                    )
+
                 # Final pass for URLs too
                 url_tmpl = widget.get("url")
                 if url_tmpl and (
@@ -517,6 +590,12 @@ def evaluate(
                     widget["resolved_url"] = _resolve_template(
                         url_tmpl, full_context, nested_context=full_context
                     )
+                filtered_widgets.append(widget)
+
+            section["widgets"] = filtered_widgets
+            filtered_sections.append(section)
+
+        page["sections"] = filtered_sections
 
     sidebar = playbook.get("sidebar")
     if sidebar:

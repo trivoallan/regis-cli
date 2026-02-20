@@ -352,6 +352,15 @@ def analyze(
         from regis_cli.playbook.engine import evaluate, load_playbook
 
         playbook_results = []
+        if not playbook_paths:
+            import importlib.resources
+
+            default_pb = (
+                importlib.resources.files("regis_cli") / "playbooks" / "default.yaml"
+            )
+            if default_pb.exists():
+                playbook_paths = (str(default_pb),)
+
         if playbook_paths:
             for pb_path in playbook_paths:
                 click.echo(f"  Evaluating playbook: {pb_path}...", err=True)
