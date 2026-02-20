@@ -29,6 +29,20 @@ analyze:
         --meta "gitlab.project=$CI_PROJECT_PATH" \
         --meta "gitlab.job_id=$CI_JOB_ID" \
         --meta "gitlab.pipeline_url=$CI_PIPELINE_URL"
+    - |
+      if [ -n "$GITLAB_TOKEN" ]; then
+        echo "  Versioning reports in Git..."
+        git config --global user.name "GitLab CI"
+        git config --global user.email "gitlab-ci@example.com"
+        git add public/
+        if git commit -m "chore: update analysis reports [skip ci]"; then
+          git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:${CI_COMMIT_BRANCH}
+        else
+          echo "  No changes to commit."
+        fi
+      else
+        echo "  [WARNING] GITLAB_TOKEN not found. Skipping report versioning."
+      fi
   artifacts:
     paths:
       - public

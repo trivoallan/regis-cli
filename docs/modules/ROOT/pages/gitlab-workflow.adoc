@@ -48,6 +48,18 @@ Once pushed, you can trigger an analysis manually from the GitLab UI:
 
 The analysis results will be published to **GitLab Pages**.
 
-== GitLab Pages Setup
-
 Ensure GitLab Pages is enabled for your project. The reports are automatically written to the `public/` directory, which is the default for GitLab Pages.
+
+== Report Versioning
+
+To keep a history of your analysis reports directly in the Git repository, you need to configure a **Project Access Token**:
+
+1. Go to **Settings > Access Tokens**.
+2. Create a new token with:
+   * **Name**: `GITLAB_TOKEN`
+   * **Scopes**: `write_repository`
+3. Copy the token.
+4. Go to **Settings > CI/CD > Variables**.
+5. Add a variable named `GITLAB_TOKEN`, paste the token value, and ensure it is **masked**.
+
+When this variable is present, the CI pipeline will automatically commit and push new reports to your branch.
