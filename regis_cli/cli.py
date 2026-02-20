@@ -564,5 +564,41 @@ def list_analyzers() -> None:
         click.echo(f"  {name:12s}  {analyzer.__class__.__doc__ or ''}")
 
 
+@main.command(name="generate")
+@click.argument(
+    "template_path", type=click.Path(exists=True, file_okay=False, dir_okay=True)
+)
+@click.argument(
+    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
+)
+@click.option(
+    "--no-input",
+    is_flag=True,
+    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
+)
+def generate(template_path: str, output_dir: str, no_input: bool) -> None:
+    """Generate a new project from a Cookiecutter template."""
+    try:
+        from cookiecutter.main import cookiecutter
+    except ImportError:
+        raise click.ClickException(
+            "cookiecutter not found. Please install it with 'pip install cookiecutter'."
+        ) from None
+
+    click.echo(
+        f"Generating project from {template_path} into {output_dir}...", err=True
+    )
+    try:
+        cookiecutter(
+            template_path,
+            no_input=no_input,
+            output_dir=output_dir,
+            overwrite_if_exists=True,
+        )
+        click.echo("Success!", err=True)
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
 if __name__ == "__main__":
     main()
