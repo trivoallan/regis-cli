@@ -1,0 +1,58 @@
+= regis-cli in GitHub Actions
+
+You can use `regis-cli` in your GitHub workflows to analyze your container images and generate security scorecards.
+
+== Example Usage
+
+Below is a basic example of how to use `regis-cli` to analyze a Docker image and upload the report as an artifact.
+
+[source,yaml]
+----
+name: Image Analysis
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python_version: '3.10'
+
+      - name: Install Pipenv and dependencies
+        run: |
+          pip install pipenv
+          pipenv install --deploy
+
+      - name: Run regis-cli
+        run: |
+          pipenv run regis-cli analyze my-image:latest -f html -f json
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: regis-report
+          path: reports/
+----
+
+== Analysis with Scorecards
+
+To evaluate your image against a specific scorecard:
+
+[source,yaml]
+----
+      - name: Run regis-cli with Scorecard
+        run: |
+          pipenv run regis-cli analyze my-image:latest -s examples/all-reports.yaml
+----
+
+== Using the Docker Image
+
+You can also run `regis-cli` directly via Docker if the project provides a containerized version (see the `Dockerfile` in the root).

@@ -1,0 +1,15 @@
+site:
+  title: Regis CLI
+  url: https://trivoallan.github.io/regis-cli/
+  start_page: regis-cli::index.adoc
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: docs
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+output:
+  dir: ./build/site
