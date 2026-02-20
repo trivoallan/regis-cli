@@ -4,7 +4,8 @@ name: all-reports
 slug: index
 
 sections:
-  - name: All Reports
+  - name: All Analyzers
+    hint: Display all analyzers in one place.
     display:
       analyzers:
         - endoflife

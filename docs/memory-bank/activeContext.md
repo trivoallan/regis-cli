@@ -8,6 +8,7 @@ Initialize the project's documentation and fix security-related workflow permiss
 - Resolved `(MISSING)` scorecard values by exposing analyzer results at the root of the evaluation context in `engine.py`.
 - Implemented dynamic filename logic for reports: prioritized by `html.filename` in scorecard, then scorecard basename, then fallback to `report.html`.
 - Updated CLI to unconditionally generate a unified `report.json`, but generate distinct HTML files for each scorecard (e.g., `security.html`, `maturity.html`).
+- Added support for a `hint` field on scorecard sections to display explanatory text under section titles.
 - Integrated GitHub Actions metadata (requester, workflow, run ID) into the template workflow for better traceability.
 - Enhanced scorecard reports to display rule descriptions instead of technical names, improving readability.
 - Created comprehensive Cookiecutter usage guide in `docs/modules/ROOT/pages/cookiecutter.adoc`.

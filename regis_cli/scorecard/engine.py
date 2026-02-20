@@ -238,6 +238,8 @@ def _evaluate_section(
         "tags_summary": tags_summary,
         "rules": rule_results,
     }
+    if "hint" in section:
+        section_result["hint"] = section["hint"]
 
     # Resolve display preferences and widget values.
     display = section.get("display")

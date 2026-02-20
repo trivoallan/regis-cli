@@ -60,6 +60,7 @@
         "required": ["name", "score", "total_rules", "passed_rules", "rules"],
         "properties": {
           "name": { "type": "string" },
+          "hint": { "type": "string" },
           "score": {
             "type": "integer",
             "minimum": 0,

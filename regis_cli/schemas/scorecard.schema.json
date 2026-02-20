@@ -81,6 +81,10 @@
           "type": "string",
           "description": "Display name of the section."
         },
+        "hint": {
+          "type": "string",
+          "description": "Optional informative text displayed below the section name."
+        },
         "display": {
           "$ref": "#/$defs/display"
         },

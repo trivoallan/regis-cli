@@ -12,9 +12,12 @@
         {% for section in page.sections %}
             <div class="scorecard-section">
                 <h4>{{ section.name|e }}</h4>
+                {% if section.hint %}
+                <p class="section-hint">{{ section.hint|e }}</p>
+                {% endif %}
 
             {% for block in section.render_order %}
-
+`
                 {# ── Widgets ─────────────────────────────── #}
                 {% if block == "widgets" and section.display is defined and section.display.widgets is defined %}
                 <div class="grid">
