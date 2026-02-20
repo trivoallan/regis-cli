@@ -1,6 +1,7 @@
 """Tests for the analyzers — uses mocked registry data."""
 
 import json
+from unittest.mock import patch
 
 import jsonschema
 import pytest
@@ -20,6 +21,9 @@ class MockRegistryClient:
         self._tags = tags or []
         self._manifest = manifest or {}
         self._blobs = blobs or {}
+        self.registry = "registry-1.docker.io"
+        self.username = None
+        self.password = None
 
     def list_tags(self):
         return sorted(self._tags)
@@ -71,22 +75,36 @@ class TestTagsAnalyzer:
 class TestImageAnalyzer:
     """Test the image analyzer."""
 
-    def test_single_platform_manifest(self):
-        manifest = {
-            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-            "config": {"digest": "sha256:abc123"},
-            "layers": [{"digest": "sha256:layer1"}, {"digest": "sha256:layer2"}],
-        }
-        config_blob = {
-            "architecture": "amd64",
-            "os": "linux",
-            "created": "2024-01-15T10:00:00Z",
-            "config": {"Labels": {"maintainer": "test"}},
-        }
-        client = MockRegistryClient(
-            manifest=manifest,
-            blobs={"sha256:abc123": config_blob},
-        )
+    @patch("regis_cli.analyzers.image.subprocess.run")
+    def test_single_platform_manifest(self, mock_run):
+        def side_effect(cmd, **kwargs):
+            class MockResponse:
+                def __init__(self, stdout):
+                    self.stdout = stdout
+
+            if "--raw" in cmd:
+                return MockResponse(
+                    json.dumps(
+                        {
+                            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+                            "layers": [{}, {}],
+                        }
+                    )
+                )
+            else:
+                return MockResponse(
+                    json.dumps(
+                        {
+                            "architecture": "amd64",
+                            "os": "linux",
+                            "created": "2024-01-15T10:00:00Z",
+                            "config": {"Labels": {"maintainer": "test"}},
+                        }
+                    )
+                )
+
+        mock_run.side_effect = side_effect
+        client = MockRegistryClient()  # Only needed for the interface, no data required
 
         analyzer = ImageAnalyzer()
         report = analyzer.analyze(client, "library/nginx", "latest")
@@ -102,47 +120,69 @@ class TestImageAnalyzer:
         assert plat["os"] == "linux"
         assert plat["layers_count"] == 2
 
-    def test_multi_arch_manifest(self):
-        manifest = {
-            "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
-            "manifests": [
-                {
-                    "digest": "sha256:amd64digest",
-                    "platform": {"architecture": "amd64", "os": "linux"},
-                },
-                {
-                    "digest": "sha256:arm64digest",
-                    "platform": {"architecture": "arm64", "os": "linux", "variant": "v8"},
-                },
-            ],
-        }
-        amd64_manifest = {
-            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-            "config": {"digest": "sha256:amd64config"},
-            "layers": [{"digest": "sha256:l1"}],
-        }
-        arm64_manifest = {
-            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-            "config": {"digest": "sha256:arm64config"},
-            "layers": [{"digest": "sha256:l1"}, {"digest": "sha256:l2"}],
-        }
-        blobs = {
-            "manifest:sha256:amd64digest": amd64_manifest,
-            "manifest:sha256:arm64digest": arm64_manifest,
-            "sha256:amd64config": {
-                "architecture": "amd64",
-                "os": "linux",
-                "created": "2024-01-15T10:00:00Z",
-                "config": {"Labels": {}},
-            },
-            "sha256:arm64config": {
-                "architecture": "arm64",
-                "os": "linux",
-                "created": "2024-01-15T11:00:00Z",
-                "config": {"Labels": {}},
-            },
-        }
-        client = MockRegistryClient(manifest=manifest, blobs=blobs)
+    @patch("regis_cli.analyzers.image.subprocess.run")
+    def test_multi_arch_manifest(self, mock_run):
+        def side_effect(cmd, **kwargs):
+            class MockResponse:
+                def __init__(self, stdout):
+                    self.stdout = stdout
+
+            target = cmd[-1]
+            if "--raw" in cmd:
+                if "sha256:amd64digest" in target:
+                    return MockResponse(json.dumps({"layers": [{}]}))
+                if "sha256:arm64digest" in target:
+                    return MockResponse(json.dumps({"layers": [{}, {}]}))
+                # Otherwise, return index
+                return MockResponse(
+                    json.dumps(
+                        {
+                            "mediaType": "application/vnd.docker.distribution.manifest.list.v2+json",
+                            "manifests": [
+                                {
+                                    "digest": "sha256:amd64digest",
+                                    "platform": {
+                                        "architecture": "amd64",
+                                        "os": "linux",
+                                    },
+                                },
+                                {
+                                    "digest": "sha256:arm64digest",
+                                    "platform": {
+                                        "architecture": "arm64",
+                                        "os": "linux",
+                                        "variant": "v8",
+                                    },
+                                },
+                            ],
+                        }
+                    )
+                )
+            else:
+                if "sha256:amd64digest" in target:
+                    return MockResponse(
+                        json.dumps(
+                            {
+                                "architecture": "amd64",
+                                "os": "linux",
+                                "created": "2024-01-15T10:00:00Z",
+                            }
+                        )
+                    )
+                if "sha256:arm64digest" in target:
+                    return MockResponse(
+                        json.dumps(
+                            {
+                                "architecture": "arm64",
+                                "os": "linux",
+                                "created": "2024-01-15T11:00:00Z",
+                            }
+                        )
+                    )
+            return MockResponse("{}")
+
+        mock_run.side_effect = side_effect
+        client = MockRegistryClient()
 
         analyzer = ImageAnalyzer()
         report = analyzer.analyze(client, "library/nginx", "latest")

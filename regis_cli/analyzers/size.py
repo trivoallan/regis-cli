@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import subprocess
 from typing import Any
 
-from regis_cli.analyzers.base import BaseAnalyzer
+from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis_cli.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
@@ -26,23 +28,45 @@ class SizeAnalyzer(BaseAnalyzer):
     name = "size"
     schema_file = "size.schema.json"
 
+    @staticmethod
+    def _run_skopeo(client: RegistryClient, args: list[str]) -> str:
+        """Run skopeo with the given arguments, injecting credentials if present."""
+        cmd = ["skopeo"] + args
+        if client.username and client.password:
+            cmd.extend(["--creds", f"{client.username}:{client.password}"])
+
+        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        return res.stdout
+
     def analyze(
         self,
         client: RegistryClient,
         repository: str,
         tag: str,
     ) -> dict[str, Any]:
+        registry = client.registry
+        if registry == "registry-1.docker.io":
+            registry = "docker.io"
+
+        target = f"docker://{registry}/{repository}:{tag}"
+
         try:
-            manifest = client.get_manifest(tag)
-        except Exception:
-            logger.debug("Could not fetch manifest", exc_info=True)
-            return self._empty(repository, tag)
+            raw_stdout = self._run_skopeo(client, ["inspect", "--raw", target])
+            manifest = json.loads(raw_stdout)
+        except subprocess.CalledProcessError as e:
+            msg = f"Skopeo inspect failed for {target}: {e.stderr}"
+            logger.error(msg)
+            raise AnalyzerError(msg) from e
+        except Exception as e:
+            msg = f"Failed to parse skopeo output for {target}: {e}"
+            logger.error(msg)
+            raise AnalyzerError(msg) from e
 
         media_type = manifest.get("mediaType", "")
 
         # Handle manifest list / OCI index.
         if "list" in media_type or "index" in media_type:
-            return self._analyze_multiarch(client, repository, tag, manifest)
+            return self._analyze_multiarch(client, registry, repository, tag, manifest)
 
         return self._analyze_single(repository, tag, manifest)
 
@@ -81,6 +105,7 @@ class SizeAnalyzer(BaseAnalyzer):
     def _analyze_multiarch(
         self,
         client: RegistryClient,
+        registry: str,
         repository: str,
         tag: str,
         manifest_list: dict[str, Any],
@@ -98,8 +123,16 @@ class SizeAnalyzer(BaseAnalyzer):
                 platform_label += f"/{variant}"
 
             # Fetch size for this platform.
+            digest = entry.get("digest")
+            if not digest:
+                continue
+
+            target = f"docker://{registry}/{repository}@{digest}"
+
             try:
-                plat_manifest = client.get_manifest(entry["digest"])
+                raw_stdout = self._run_skopeo(client, ["inspect", "--raw", target])
+                plat_manifest = json.loads(raw_stdout)
+
                 plat_layers = plat_manifest.get("layers", [])
                 plat_config_size = plat_manifest.get("config", {}).get("size", 0)
                 plat_layer_sizes = [l.get("size", 0) for l in plat_layers]
@@ -109,12 +142,14 @@ class SizeAnalyzer(BaseAnalyzer):
                 plat_layer_sizes = []
                 plat_config_size = 0
 
-            platforms.append({
-                "platform": platform_label,
-                "compressed_bytes": plat_total,
-                "compressed_human": _human_size(plat_total),
-                "layer_count": len(plat_layer_sizes),
-            })
+            platforms.append(
+                {
+                    "platform": platform_label,
+                    "compressed_bytes": plat_total,
+                    "compressed_human": _human_size(plat_total),
+                    "layer_count": len(plat_layer_sizes),
+                }
+            )
 
         # Use first platform as representative total.
         total = platforms[0]["compressed_bytes"] if platforms else 0
