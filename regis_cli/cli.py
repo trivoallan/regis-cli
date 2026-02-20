@@ -34,12 +34,12 @@ def _discover_analyzers() -> dict[str, type[BaseAnalyzer]]:
     return discovered
 
 
-def _format_output_path(template: str, data: dict[str, Any], fmt: str) -> Path:
-    """Format an output path template using report data."""
-    req = data.get("request", {})
-    # Use first scorecard for placeholders if multiple exist
-    scorecards = data.get("scorecards", [])
-    sc = scorecards[0] if scorecards else data.get("scorecard", {})
+def _format_output_path(template: str, report: dict[str, Any], fmt: str) -> Path:
+    """Format an output path template using data from the report."""
+    req = report.get("request", {})
+    # Provide a 'scorecard' variable if not present directly.
+    scorecards = report.get("scorecards", [])
+    sc = report.get("scorecard") or (scorecards[0] if scorecards else {})
 
     # Sanitize repository name for filesystem
     repo = req.get("repository", "unknown").replace("/", "-").replace(":", "-")
@@ -63,13 +63,47 @@ def _format_output_path(template: str, data: dict[str, Any], fmt: str) -> Path:
     }
 
     try:
-        path_str = template.format(**context)
+        resolved = template.format(**context)
     except KeyError as exc:
-        raise click.ClickException(
-            f"Invalid placeholder in output template: {exc}"
-        ) from exc
+        logger.warning(f"Could not format output path '{template}': missing key {exc}")
+        resolved = template
 
-    return Path(path_str)
+    # Sanitize characters strictly to prevent generating invalid filenames
+    sanitized = resolved  # re.sub(r"[^\w\-./\\]+", "_", resolved)
+
+    return Path(sanitized)
+
+
+def _write_report(
+    dir_tmpl: str,
+    file_tmpl: str,
+    report: dict[str, Any],
+    fmt: str,
+    rendered: str,
+) -> None:
+    """Write the rendered report to disk, or fallback if permissions fail."""
+    out_dir = _format_output_path(dir_tmpl, report, fmt)
+    out_file = _format_output_path(file_tmpl, report, fmt)
+    out_path = (out_dir / out_file).resolve()
+
+    try:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(rendered, encoding="utf-8")
+        click.echo(f"  Report ({fmt}) written to {out_path}", err=True)
+    except PermissionError as exc:
+        # If we can't write to the template dir, try current dir as fallback
+        fallback_path = Path.cwd() / f"report.{fmt}"
+        click.echo(
+            f"  Warning: Failed to write to {out_path} ({exc}). Trying fallback to {fallback_path}",
+            err=True,
+        )
+        try:
+            fallback_path.write_text(rendered, encoding="utf-8")
+            click.echo(f"  Report ({fmt}) written to {fallback_path}", err=True)
+        except PermissionError as inner_exc:
+            raise click.ClickException(
+                f"Failed to write report: Permission denied for both {out_path} and fallback."
+            ) from inner_exc
 
 
 @click.group()
@@ -188,8 +222,11 @@ def analyze(
         err=True,
     )
 
-    # Select output formats.
-    formats = [f.lower() for f in output_formats] if output_formats else ["json"]
+    # Select output formats, ensuring 'json' is always generated.
+    formats_set = {f.lower() for f in output_formats} if output_formats else set()
+    formats_set.add("json")
+    # Put json first, then others
+    formats = ["json"] + sorted(list(formats_set - {"json"}))
 
     # 1. Check for cache if requested.
     final_report = None
@@ -318,7 +355,9 @@ def analyze(
             for sc_path in scorecard_paths:
                 click.echo(f"  Evaluating scorecard: {sc_path}...", err=True)
                 sc_def = load_scorecard(sc_path)
-                sc_result = evaluate(sc_def, analysis_report)
+                sc_result = evaluate(
+                    sc_def, analysis_report, source_name=Path(sc_path).stem
+                )
                 scorecard_results.append(sc_result)
 
                 # Print summary for EACH scorecard if in CLI mode
@@ -398,42 +437,62 @@ def analyze(
 
     for fmt in formats:
         if fmt == "html":
-            rendered = render_html(final_report, theme=theme)
+            # For HTML, generate one file per scorecard if scorecards exist.
+            # If no scorecards, generate a single report using fallback logic.
+            if scorecard_results:
+                for sc in scorecard_results:
+                    # Render HTML focusing on this single scorecard.
+                    # We pass the full report, but we might want to tell the template which SC to focus on,
+                    # or temporarily set 'scorecards' to just this one for rendering.
+                    single_sc_report = {
+                        **final_report,
+                        "scorecards": [sc],
+                        "scorecard": sc,
+                    }
+                    rendered = render_html(single_sc_report, theme=theme)
+
+                    # Determine filename for this scorecard
+                    file_tmpl = output_template
+                    if not file_tmpl:
+                        if sc.get("slug"):
+                            file_tmpl = f"{sc['slug']}.{fmt}"
+                        elif "_meta" in sc and sc["_meta"].get("source_name"):
+                            file_tmpl = f"{sc['_meta']['source_name']}.{fmt}"
+                        else:
+                            file_tmpl = (
+                                f"report_{sc.get('scorecard_name', 'unnamed')}.{fmt}"
+                            )
+
+                    _write_report(
+                        dir_tmpl=output_dir_template or ".",
+                        file_tmpl=file_tmpl,
+                        report=single_sc_report,
+                        fmt=fmt,
+                        rendered=rendered,
+                    )
+            else:
+                # No scorecards, just render the base report
+                rendered = render_html(final_report, theme=theme)
+                file_tmpl = output_template or f"report.{fmt}"
+                _write_report(
+                    dir_tmpl=output_dir_template or ".",
+                    file_tmpl=file_tmpl,
+                    report=final_report,
+                    fmt=fmt,
+                    rendered=rendered,
+                )
         else:
+            # JSON (and other formats): Single unified report file
             indent = 2 if pretty else None
             rendered = json.dumps(final_report, indent=indent, ensure_ascii=False)
-
-        # Determine if we should write to file or stdout
-        if output_template or output_dir_template or len(formats) > 1:
-            # Use templates or defaults
-            dir_tmpl = output_dir_template or "."
-            file_tmpl = output_template or "report.{format}"
-
-            out_dir = _format_output_path(dir_tmpl, final_report, fmt)
-            out_file = _format_output_path(file_tmpl, final_report, fmt)
-            out_path = (out_dir / out_file).resolve()
-
-            try:
-                out_path.parent.mkdir(parents=True, exist_ok=True)
-                out_path.write_text(rendered, encoding="utf-8")
-                click.echo(f"Report ({fmt}) written to {out_path}", err=True)
-            except PermissionError as exc:
-                # If we can't write to the template dir, try current dir as fallback
-                fallback_path = Path.cwd() / f"report.{fmt}"
-                click.echo(
-                    f"Warning: Failed to write to {out_path} ({exc}). Trying fallback to {fallback_path}",
-                    err=True,
-                )
-                try:
-                    fallback_path.write_text(rendered, encoding="utf-8")
-                    click.echo(f"Report ({fmt}) written to {fallback_path}", err=True)
-                except PermissionError:
-                    raise click.ClickException(
-                        f"Failed to write report: Permission denied for both {out_path} and fallback."
-                    )
-        else:
-            # Single format, no template/dir -> stdout
-            click.echo(rendered)
+            file_tmpl = output_template or f"report.{fmt}"
+            _write_report(
+                dir_tmpl=output_dir_template or ".",
+                file_tmpl=file_tmpl,
+                report=final_report,
+                fmt=fmt,
+                rendered=rendered,
+            )
 
 
 @main.command(name="list")

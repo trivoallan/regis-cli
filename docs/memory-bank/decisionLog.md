@@ -14,5 +14,5 @@
 
 ## 2026-02-20: Fix Missing Scorecard Values
 - **Decision**: Update `evaluate` in `engine.py` to add type checking and safety guards for scorecard links.
-- **Decision**: Integrate GitHub Actions metadata into the template workflow using `regis-cli --metadata`.
+- **Decision**: Integrate GitHub Actions metadata into the template workflow using `regis-cli --meta`.
 - **Rationale**: Prevent `AttributeError` crashes when link URLs are null or missing in scorecard definitions. Improved metadata integration ensures better traceability in CI/CD.

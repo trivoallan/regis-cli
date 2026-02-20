@@ -282,6 +282,7 @@ def _evaluate_section(
 def evaluate(
     scorecard: dict[str, Any],
     report: dict[str, Any],
+    source_name: str | None = None,
 ) -> dict[str, Any]:
     """Evaluate a scorecard against an analysis report.
 
@@ -370,7 +371,14 @@ def evaluate(
         "total_rules": total_rules_all,
         "passed_rules": total_passed_all,
         "pages": pages_results,
+        "slug": scorecard.get("slug"),
     }
+
+    meta = {}
+    if source_name:
+        meta["source_name"] = source_name
+    if meta:
+        result["_meta"] = meta
 
     if resolved_links:
         result["links"] = resolved_links

@@ -2,6 +2,8 @@
 name: Security
 description: Evaluate container image security posture
 
+slug: security
+
 sections:
   - name: Security
     display:

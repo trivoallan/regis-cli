@@ -1,6 +1,8 @@
 # yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
 name: all-reports
 
+slug: index
+
 sections:
   - name: All Reports
     display:
