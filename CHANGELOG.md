@@ -1,5 +1,26 @@
 # Changelog
 
+## [v0.2.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.2.0)
+
+### Features
+
+- **cookiecutter**: introduce Cookiecutter template for bootstrapping new image analysis projects with documentation, workflows, and default scorecards.
+- **cookiecutter**: Introduce Cookiecutter template for project bootstrapping and add its comprehensive usage guide, refining the template's analysis workflow input.
+- **cookiecutter**: integrate GitHub Actions metadata into analysis reports for improved traceability and remove unused scorecard levels.
+- enhance report output with per-scorecard HTML files, `slug` support, and improved file writing logic.
+- Refine scorecard reporting by updating schemas, engine logic, templates, and removing old report files.
+- **ui**: Introduce new analyzer display templates and enhance the playbook engine to support section widgets.
+- **ui**: Implement a new report rendering engine with a sidebar layout and dedicated pages for various analysis results.
+- Implement conditional widget rendering, add new widget styling options including alignment and subvalues, and introduce new CSS for recommendations and header elements.
+- enhance default playbook overview with new recommendation and compliance widgets and update widget styling.
+
+### Bug Fixes
+
+- **docker**: Resolve Docker container permission issues by creating a home directory for the `regis` user and setting report directory permissions, and update the analysis workflow.
+- **docker**: address permission denied errors in Docker by setting user UID/GID, ensuring directory writability, and adding a report output fallback.
+- **analyzers**: Expose analyzer results at the root of the scorecard evaluation context and update default Trivy rules.
+- Prevent `AttributeError` in scorecard link processing by adding type checks and update `regis-cli` workflow flags to long form.
+
 ## [v0.1.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.1.0)
 
 ### Features
