@@ -3,9 +3,9 @@
 import json
 from unittest.mock import patch
 
-import jsonschema
 import pytest
 
+from regis_cli.analyzers.base import AnalyzerError
 from regis_cli.analyzers.image import ImageAnalyzer
 from regis_cli.analyzers.tags import TagsAnalyzer
 
@@ -45,8 +45,12 @@ class MockRegistryClient:
 class TestTagsAnalyzer:
     """Test the tags analyzer."""
 
-    def test_produces_valid_report(self):
-        client = MockRegistryClient(tags=["latest", "1.0", "2.0", "alpine"])
+    @patch("regis_cli.analyzers.tags.subprocess.run")
+    def test_produces_valid_report(self, mock_run):
+        mock_run.return_value.stdout = json.dumps(
+            {"Repository": "library/nginx", "Tags": ["latest", "1.0", "2.0", "alpine"]}
+        )
+        client = MockRegistryClient()
         analyzer = TagsAnalyzer()
         report = analyzer.analyze(client, "library/nginx", "latest")
 
@@ -58,8 +62,12 @@ class TestTagsAnalyzer:
         assert report["count"] == 4
         assert "alpine" in report["tags"]
 
-    def test_empty_tags(self):
-        client = MockRegistryClient(tags=[])
+    @patch("regis_cli.analyzers.tags.subprocess.run")
+    def test_empty_tags(self, mock_run):
+        mock_run.return_value.stdout = json.dumps(
+            {"Repository": "library/nginx", "Tags": []}
+        )
+        client = MockRegistryClient()
         analyzer = TagsAnalyzer()
         report = analyzer.analyze(client, "library/nginx", "latest")
         analyzer.validate(report)
@@ -204,7 +212,7 @@ class TestSchemaValidation:
     def test_tags_report_missing_field(self):
         analyzer = TagsAnalyzer()
         bad_report = {"analyzer": "tags", "repository": "test"}
-        with pytest.raises(Exception):
+        with pytest.raises(AnalyzerError):
             analyzer.validate(bad_report)
 
     def test_image_report_wrong_analyzer_name(self):
@@ -215,5 +223,5 @@ class TestSchemaValidation:
             "tag": "latest",
             "platforms": [],
         }
-        with pytest.raises(Exception):
+        with pytest.raises(AnalyzerError):
             analyzer.validate(bad_report)

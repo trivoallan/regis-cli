@@ -144,4 +144,5 @@ class HadolintAnalyzer(BaseAnalyzer):
             "issues_count": len(mapped_issues),
             "issues_by_level": issues_by_level,
             "issues": mapped_issues,
+            "dockerfile": pseudo_dockerfile,
         }

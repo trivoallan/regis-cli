@@ -65,6 +65,13 @@
                 </tbody>
             </table>
         {% endif %}
+
+        {% if data.dockerfile %}
+        <details>
+            <summary>Reconstructed Dockerfile</summary>
+            <pre><code>{{ data.dockerfile }}</code></pre>
+        </details>
+        {% endif %}
     </div>
 </article>
 {% endif %}

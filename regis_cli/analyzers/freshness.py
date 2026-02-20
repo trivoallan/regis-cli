@@ -2,34 +2,48 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import subprocess
 from datetime import datetime, timezone
 from typing import Any
 
-from regis_cli.analyzers.base import BaseAnalyzer
+from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis_cli.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
 
 
-def _get_created_date(client: RegistryClient, tag_or_digest: str) -> str | None:
-    """Extract the creation date from an image config."""
-    try:
-        manifest = client.get_manifest(tag_or_digest)
-        media_type = manifest.get("mediaType", "")
-        if "list" in media_type or "index" in media_type:
-            entries = manifest.get("manifests", [])
-            if not entries:
-                return None
-            manifest = client.get_manifest(entries[0]["digest"])
+def _get_created_date(client: RegistryClient, repository: str, tag: str) -> str | None:
+    """Extract the creation date from an image config using skopeo."""
+    registry = client.registry
+    target = f"docker://{registry}/{repository}:{tag}"
 
-        config_digest = manifest.get("config", {}).get("digest")
-        if not config_digest:
-            return None
-        config = client.get_blob(config_digest)
-        return config.get("created")  # type: ignore[no-any-return]
+    cmd = [
+        "skopeo",
+        "inspect",
+        "--config",
+        "--override-os",
+        "linux",
+        "--override-arch",
+        "amd64",
+        target,
+    ]
+
+    if client.username and client.password:
+        cmd.extend(["--creds", f"{client.username}:{client.password}"])
+
+    try:
+        res = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        data = json.loads(res.stdout)
+        return data.get("created")  # type: ignore[no-any-return]
     except Exception:
-        logger.debug("Could not fetch image config", exc_info=True)
+        logger.debug("Skopeo inspect --config failed for %s", target, exc_info=True)
         return None
 
 
@@ -46,12 +60,12 @@ class FreshnessAnalyzer(BaseAnalyzer):
         tag: str,
     ) -> dict[str, Any]:
         # Get creation date for the analyzed tag.
-        tag_created = _get_created_date(client, tag)
+        tag_created = _get_created_date(client, repository, tag)
 
         # Get creation date for "latest".
         latest_created = None
         if tag != "latest":
-            latest_created = _get_created_date(client, "latest")
+            latest_created = _get_created_date(client, repository, "latest")
 
         # Compute age and delta.
         age_days: int | None = None
@@ -68,7 +82,9 @@ class FreshnessAnalyzer(BaseAnalyzer):
         if tag_created and latest_created:
             try:
                 tag_dt = datetime.fromisoformat(tag_created.replace("Z", "+00:00"))
-                latest_dt = datetime.fromisoformat(latest_created.replace("Z", "+00:00"))
+                latest_dt = datetime.fromisoformat(
+                    latest_created.replace("Z", "+00:00")
+                )
                 behind_days = (latest_dt - tag_dt).days
                 if behind_days < 0:
                     behind_days = 0

@@ -2,13 +2,18 @@
 
 from __future__ import annotations
 
+import json
+import logging
 import re
+import subprocess
 from typing import Any
 
 import semver
 
-from regis_cli.analyzers.base import BaseAnalyzer
+from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
 from regis_cli.registry.client import RegistryClient
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Pattern classifiers — order matters (first match wins for each tag).
@@ -30,33 +35,68 @@ _HASH_RE = re.compile(r"^[0-9a-f]{7,}$")
 # rather than ``semver-prerelease``.
 _VARIANT_TOKENS: set[str] = {
     # Debian / Ubuntu code-names
-    "alpine", "bookworm", "bullseye", "buster", "focal", "jammy", "jessie",
-    "noble", "stretch", "trixie", "trusty", "xenial",
+    "alpine",
+    "bookworm",
+    "bullseye",
+    "buster",
+    "focal",
+    "jammy",
+    "jessie",
+    "noble",
+    "stretch",
+    "trixie",
+    "trusty",
+    "xenial",
     # Generic qualifiers
-    "slim", "fat", "full", "minimal", "lite",
+    "slim",
+    "fat",
+    "full",
+    "minimal",
+    "lite",
     # Explicit OS names
-    "linux", "windows", "windowsservercore",
+    "linux",
+    "windows",
+    "windowsservercore",
     # Runtime variants
-    "cli", "fpm", "zts", "apache", "nginx", "httpd",
+    "cli",
+    "fpm",
+    "zts",
+    "apache",
+    "nginx",
+    "httpd",
     # SDK/Tooling
-    "sdk", "jre", "jdk", "runtime",
+    "sdk",
+    "jre",
+    "jdk",
+    "runtime",
     # Build types
-    "debug", "dev", "development", "prod", "production",
+    "debug",
+    "dev",
+    "development",
+    "prod",
+    "production",
     # Other common
-    "management", "server", "desktop",
+    "management",
+    "server",
+    "desktop",
     # RedHat UBI
-    "ubi", "ubi8", "ubi9", "redhat", "rhel",
-    "micro", "init",
+    "ubi",
+    "ubi8",
+    "ubi9",
+    "redhat",
+    "rhel",
+    "micro",
+    "init",
 }
 
 # Regex that matches alpine3.20, alpine3.21, etc. as a single variant token.
-_VARIANT_TOKEN_RE = re.compile(r"^(" + "|".join(re.escape(t) for t in _VARIANT_TOKENS) + r")(\d[\w.]*)?$")
+_VARIANT_TOKEN_RE = re.compile(
+    r"^(" + "|".join(re.escape(t) for t in _VARIANT_TOKENS) + r")(\d[\w.]*)?$"
+)
 
 # Semver + variant pattern:  1.88.0-slim-bookworm, v2.0.0-alpine3.21
 # Captures (optional v prefix)(semver digits)-(variant suffix)
-_SEMVER_VARIANT_RE = re.compile(
-    r"^v?(\d+\.\d+\.\d+)-(.+)$"
-)
+_SEMVER_VARIANT_RE = re.compile(r"^v?(\d+\.\d+\.\d+)-(.+)$")
 
 
 def _extract_variants(tag: str) -> list[str]:
@@ -128,8 +168,28 @@ class VersioningAnalyzer(BaseAnalyzer):
         repository: str,
         tag: str,
     ) -> dict[str, Any]:
-        """Classify all tags and summarize versioning patterns."""
-        tags = client.list_tags()
+        """Classify all tags and summarize versioning patterns using skopeo."""
+        registry = client.registry
+        target = f"docker://{registry}/{repository}"
+
+        cmd = ["skopeo", "list-tags", target]
+
+        if client.username and client.password:
+            cmd.extend(["--creds", f"{client.username}:{client.password}"])
+
+        try:
+            res = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            data = json.loads(res.stdout)
+            tags = data.get("Tags", [])
+        except Exception as e:
+            msg = f"Failed to list tags via skopeo for {target}: {e}"
+            logger.error(msg)
+            raise AnalyzerError(msg) from e
 
         # Classify every tag and extract variants.
         classifications: dict[str, list[str]] = {}
@@ -139,7 +199,7 @@ class VersioningAnalyzer(BaseAnalyzer):
         for t in tags:
             pattern = _classify_tag(t)
             classifications.setdefault(pattern, []).append(t)
-            
+
             # Extract variants
             variants = _extract_variants(t)
             for v in variants:
@@ -150,15 +210,23 @@ class VersioningAnalyzer(BaseAnalyzer):
         patterns: list[dict[str, Any]] = []
         for pattern_name in sorted(classifications):
             tag_list = sorted(classifications[pattern_name])
-            patterns.append({
-                "pattern": pattern_name,
-                "count": len(tag_list),
-                "percentage": round(len(tag_list) / len(tags) * 100, 1) if tags else 0,
-                "examples": tag_list[:10],
-            })
+            patterns.append(
+                {
+                    "pattern": pattern_name,
+                    "count": len(tag_list),
+                    "percentage": (
+                        round(len(tag_list) / len(tags) * 100, 1) if tags else 0
+                    ),
+                    "examples": tag_list[:10],
+                }
+            )
 
         # Determine the dominant pattern.
-        dominant = max(patterns, key=lambda p: p["count"])["pattern"] if patterns else "unknown"
+        dominant = (
+            max(patterns, key=lambda p: p["count"])["pattern"]
+            if patterns
+            else "unknown"
+        )
 
         # SemVer-specific summary (semver + prerelease + variant all count).
         semver_count = (
@@ -182,6 +250,8 @@ class VersioningAnalyzer(BaseAnalyzer):
                     "percentage": round(count / len(tags) * 100, 1) if tags else 0,
                     "examples": sorted(variant_examples[v])[:10],
                 }
-                for v, count in sorted(variant_counts.items(), key=lambda x: x[1], reverse=True)
+                for v, count in sorted(
+                    variant_counts.items(), key=lambda x: x[1], reverse=True
+                )
             ],
         }

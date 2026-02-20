@@ -1,7 +1,8 @@
-"""Tags analyzer — lists available tags for a repository."""
+"""Skopeo analyzer — provides raw image metadata using skopeo inspect."""
 
 from __future__ import annotations
 
+import json
 import logging
 import subprocess
 from typing import Any
@@ -12,11 +13,11 @@ from regis_cli.registry.client import RegistryClient
 logger = logging.getLogger(__name__)
 
 
-class TagsAnalyzer(BaseAnalyzer):
-    """List all tags available for a Docker image repository."""
+class SkopeoAnalyzer(BaseAnalyzer):
+    """Fetch raw metadata for a Docker image using skopeo inspect."""
 
-    name = "tags"
-    schema_file = "tags.schema.json"
+    name = "skopeo"
+    schema_file = "skopeo.schema.json"
 
     def analyze(
         self,
@@ -24,15 +25,17 @@ class TagsAnalyzer(BaseAnalyzer):
         repository: str,
         tag: str,
     ) -> dict[str, Any]:
-        """Return a report with all available tags using skopeo.
-
-        The *tag* argument is ignored — this analyzer lists every tag
-        in the repository.
-        """
+        """Return the raw JSON from skopeo inspect."""
         registry = client.registry
-        target = f"docker://{registry}/{repository}"
+        target = f"docker://{registry}/{repository}:{tag}"
 
-        cmd = ["skopeo", "list-tags", target]
+        cmd = [
+            "skopeo",
+            "inspect",
+            "--override-os", "linux",
+            "--override-arch", "amd64",
+            target,
+        ]
 
         if client.username and client.password:
             cmd.extend(["--creds", f"{client.username}:{client.password}"])
@@ -46,27 +49,23 @@ class TagsAnalyzer(BaseAnalyzer):
                 text=True,
                 check=True,
             )
-            # skopeo list-tags returns { "Repository": "...", "Tags": [...] }
-            import json
-
-            data = json.loads(res.stdout)
-            tags = data.get("Tags", [])
+            inspect_data = json.loads(res.stdout)
         except subprocess.CalledProcessError as e:
-            msg = f"Skopeo list-tags failed for {target}: {e.stderr}"
+            msg = f"Skopeo inspect failed for {target}: {e.stderr}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
         except FileNotFoundError as e:
             msg = "skopeo not found. Ensure it is installed and in PATH."
             logger.error(msg)
             raise AnalyzerError(msg) from e
-        except Exception as e:
-            msg = f"Failed to list tags for {target}: {e}"
+        except json.JSONDecodeError as e:
+            msg = f"Failed to parse skopeo output for {target}: {res.stdout}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
 
         return {
             "analyzer": self.name,
             "repository": repository,
-            "tags": tags,
-            "count": len(tags),
+            "tag": tag,
+            "inspect": inspect_data,
         }

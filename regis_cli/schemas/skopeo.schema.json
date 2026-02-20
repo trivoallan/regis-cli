@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skopeo Analyzer Report",
+  "type": "object",
+  "required": [
+    "analyzer",
+    "repository",
+    "tag"
+  ],
+  "properties": {
+    "analyzer": {
+      "type": "string",
+      "enum": ["skopeo"]
+    },
+    "repository": {
+      "type": "string"
+    },
+    "tag": {
+      "type": "string"
+    },
+    "inspect": {
+      "type": "object",
+      "description": "Raw output from skopeo inspect"
+    }
+  },
+  "additionalProperties": false
+}
