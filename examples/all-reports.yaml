@@ -8,9 +8,9 @@ sections:
         - endoflife
         - freshness
         - image
-        - license
         - popularity
         - provenance
+        - sbom
         - scorecarddev
         - size
         - tags

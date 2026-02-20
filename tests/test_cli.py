@@ -56,30 +56,34 @@ class TestCliBasics:
         mock_discover.return_value = {"dummy": DummyAnalyzer}
 
         runner = CliRunner()
-        result = runner.invoke(
-            main,
-            [
-                "analyze",
-                "nginx:latest",
-                "--meta",
-                "build=123",
-                "--meta",
-                "env=prod",
-                "--meta",
-                "flag_only",
-            ],
-        )
-        assert result.exit_code == 0
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                [
+                    "analyze",
+                    "nginx:latest",
+                    "--meta",
+                    "build=123",
+                    "--meta",
+                    "env=prod",
+                    "--meta",
+                    "flag_only",
+                ],
+            )
+            assert result.exit_code == 0
 
-        import json
+            import json
+            from pathlib import Path
 
-        output = result.output
-        json_str = output[output.find("{") :]
-        report = json.loads(json_str)
-        assert "metadata" in report
-        assert report["metadata"]["build"] == "123"
-        assert report["metadata"]["env"] == "prod"
-        assert report["metadata"]["flag_only"] == "true"
+            report_file = Path(
+                "reports/registry-1.docker.io/library-nginx/latest/report.json"
+            )
+            report = json.loads(report_file.read_text(encoding="utf-8"))
+
+            assert "metadata" in report
+            assert report["metadata"]["build"] == "123"
+            assert report["metadata"]["env"] == "prod"
+            assert report["metadata"]["flag_only"] == "true"
 
     @patch("regis_cli.cli.RegistryClient")
     @patch("regis_cli.cli._discover_analyzers")
@@ -96,22 +100,31 @@ class TestCliBasics:
         mock_discover.return_value = {"dummy": DummyAnalyzer}
 
         runner = CliRunner()
-        result = runner.invoke(
-            main,
-            [
-                "analyze",
-                "nginx:latest",
-                "--format",
-                "html",
-                "--meta",
-                "build=123",
-                "--meta",
-                "env=prod",
-            ],
-        )
-        assert result.exit_code == 0
-        assert "Metadata" in result.output
-        assert "build" in result.output
-        assert "123" in result.output
-        assert "env" in result.output
-        assert "prod" in result.output
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                [
+                    "analyze",
+                    "nginx:latest",
+                    "--format",
+                    "html",
+                    "--meta",
+                    "build=123",
+                    "--meta",
+                    "env=prod",
+                ],
+            )
+            assert result.exit_code == 0
+
+            from pathlib import Path
+
+            report_file = Path(
+                "reports/registry-1.docker.io/library-nginx/latest/report.html"
+            )
+            html_content = report_file.read_text(encoding="utf-8")
+
+            assert "metadata-badges" in html_content
+            assert "build" in html_content
+            assert "123" in html_content
+            assert "env" in html_content
+            assert "prod" in html_content
