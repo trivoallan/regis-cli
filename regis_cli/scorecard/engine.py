@@ -294,14 +294,6 @@ def evaluate(
     raw_context = _flatten(report)
     raw_context.update(report)
 
-    # Also add results at the root level so rules can use 'trivy.xxx' instead of 'results.trivy.xxx'
-    results = report.get("results", {})
-    for name, data in results.items():
-        if name not in raw_context:
-            raw_context[name] = data
-        # Flat keys like 'trivy.critical_count' are already in raw_context from _flatten(report)
-        # But having the dict 'trivy' allows jsonLogic to handle nested access if needed.
-
     pages_defs = scorecard.get("pages")
     sections_defs = scorecard.get("sections")
 

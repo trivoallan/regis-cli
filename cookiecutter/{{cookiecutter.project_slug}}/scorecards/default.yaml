@@ -16,13 +16,13 @@ sections:
         description: Image should not run as root.
         level: critical
         condition:
-          "!=": [{ var: skopeo.platforms.0.user }, root]
+          "!=": [{ var: results.skopeo.platforms.0.user }, root]
 
       - name: freshness
         description: Image should be less than 30 days old.
         level: warning
         condition:
-          "<": [{ var: freshness.age_days }, 30]
+          "<": [{ var: results.freshness.age_days }, 30]
 
   - name: Vulnerabilities
     rules:
@@ -30,10 +30,10 @@ sections:
         description: No critical vulnerabilities found by Trivy.
         level: critical
         condition:
-          "==": [{ var: trivy.critical_count }, 0]
+          "==": [{ var: results.trivy.critical_count }, 0]
 
       - name: no-high
         description: No high vulnerabilities found by Trivy.
         level: critical
         condition:
-          "==": [{ var: trivy.high_count }, 0]
+          "==": [{ var: results.trivy.high_count }, 0]
