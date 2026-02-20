@@ -2,10 +2,52 @@
 name: RegiS Default Playbook
 
 pages:
-  - title: Scorecards
-    slug: scorecards
+  - title: Overview
+    slug: overview
     sections:
-      - name: Mandatory
+      - name: Status
+        widgets:
+          - label: Created on
+            value: "{{ request.timestamp | format_datetime }}"
+          - label: By
+            value: "{{ request.metadata.user | default('Unknown') }}"
+      - name: Image
+        widgets:
+          - label: Registry
+            value: "{{ request.registry }}"
+          - label: Repository
+            value: "{{ request.repository }}"
+          - label: Tag
+            value: "{{ request.tag }}"
+      - name: Compliance
+        widgets:
+          - label: Overall Compliance
+            value: "{{ playbooks.0.score }}%"
+            url: compliance.html
+          - label: Mandatory Requirements
+            value: "{{ playbooks.0.pages.1.sections.1.passed_scorecards }} / {{ playbooks.0.pages.1.sections.1.total_scorecards }}"
+            url: compliance.html
+          - label: Recommended Requirements
+            value: "{{ playbooks.0.pages.1.sections.2.passed_scorecards }} / {{ playbooks.0.pages.1.sections.2.total_scorecards }}"
+            url: compliance.html
+      - name: Request Parameters
+        widgets:
+          - template: request/table.html
+      - name: Additional Metadata
+        widgets:
+          - template: metadata/table.html
+  - title: Compliance
+    slug: compliance
+    sections:
+      - name: Progress
+        widgets:
+          - label: Overall Compliance
+            value: "{{ playbooks.0.score }}%"
+          - label: Mandatory Requirements
+            value: "{{ playbooks.0.pages.1.sections.1.score }}%"
+          - label: Recommended Requirements
+            value: "{{ playbooks.0.pages.1.sections.2.score }}%"
+      - name: Mandatory Requirements
         scorecards:
           - name: no-root
             title: Image should not run as root.
@@ -29,7 +71,7 @@ pages:
                   [docker.io, registry-1.docker.io, quay.io, ghcr.io],
                 ]
 
-      - name: Recommended
+      - name: Recommended Requirements
         scorecards:
           - name: no-high
             title: No HIGH vulnerabilities found by Trivy.
@@ -47,7 +89,7 @@ pages:
   - title: Security
     slug: security
     sections:
-      - name: Vulnerabilities Scan
+      - name: Vulnerabilities
         widgets:
           - template: analyzers/trivy/cards.html
           - template: analyzers/trivy/table.html
@@ -55,6 +97,13 @@ pages:
               title: Top HIGH and CRITICAL vulnerabilities
               collapsed: true
               limit: 25
+      - name: Provenance
+        widgets:
+          - template: analyzers/provenance/cards.html
+          - template: analyzers/provenance/table.html
+            options:
+              title: Provenance Details
+              collapsed: true
 
   - title: Supply Chain & Quality
     slug: supply-chain
@@ -64,7 +113,7 @@ pages:
           - template: analyzers/sbom/cards.html
           - template: analyzers/sbom/table.html
             options:
-              title: Detailed Component Inventory
+              title: Component Inventory Preview
               collapsed: true
               limit: 50
 
@@ -85,7 +134,7 @@ pages:
           - template: analyzers/hadolint/table.html
             options:
               title: Linting Issues & Recommendations
-              collapsed: false
+              collapsed: true
 
   - title: Insights & Lifecycle
     slug: insights

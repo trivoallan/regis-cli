@@ -50,6 +50,46 @@
       "items": {
         "$ref": "#/$defs/section"
       }
+    },
+    "sidebar": {
+      "type": "object",
+      "description": "Optional sidebar navigation configuration.",
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["links"],
+            "properties": {
+              "title": { "type": "string" },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["label", "url"],
+                  "properties": {
+                    "label": { "type": "string" },
+                    "url": { "type": "string" },
+                    "icon": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "properties": {
+              "label": { "type": "string" },
+              "url": { "type": "string" },
+              "icon": { "type": "string" }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
@@ -148,6 +188,10 @@
         "value": {
           "type": "string",
           "description": "Dot-separated path into the report data, e.g. 'results.trivy.critical_count'."
+        },
+        "url": {
+          "type": "string",
+          "description": "Optional URL for the widget. Supports Jinja2 templates."
         },
         "icon": {
           "type": "string",

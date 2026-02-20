@@ -12,12 +12,92 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from jinja2 import BaseLoader, ChainableUndefined, Environment
 from json_logic import jsonLogic
 
 logger = logging.getLogger(__name__)
 
 # Ordered from lowest to highest.
 _LEVEL_ORDER = {"bronze": 1, "silver": 2, "gold": 3}
+
+
+def _format_date(v: str) -> str:
+    from datetime import datetime
+
+    try:
+        return datetime.fromisoformat(v).strftime("%Y-%m-%d")
+    except (ValueError, TypeError):
+        return v
+
+
+def _format_datetime(v: str) -> str:
+    from datetime import datetime
+
+    try:
+        return datetime.fromisoformat(v).strftime("%Y-%m-%d %H:%M:%S")
+    except (ValueError, TypeError):
+        return v
+
+
+_WIDGET_ENV = Environment(loader=BaseLoader(), undefined=ChainableUndefined)
+_WIDGET_ENV.filters["format_date"] = _format_date
+_WIDGET_ENV.filters["format_datetime"] = _format_datetime
+
+
+def _resolve_template(
+    template_str: Any, context: dict[str, Any], nested_context: dict[str, Any] = None
+) -> Any:
+    """Evaluate a string strictly as a Jinja2 template."""
+    if not isinstance(template_str, str):
+        return template_str
+    try:
+        render_ctx = nested_context if nested_context is not None else context
+        template = _WIDGET_ENV.from_string(template_str)
+        return template.render(**render_ctx)
+    except Exception as exc:
+        logger.debug("Failed to resolve Jinja2 template '%s': %s", template_str, exc)
+        return template_str
+
+
+def _resolve_path(
+    path: Any, context: dict[str, Any], nested_context: dict[str, Any] = None
+) -> Any:
+    """Resolve a dot-separated path in a nested context.
+    Supports list indexing with integers (e.g. 'playbooks.0.score').
+    """
+    if not isinstance(path, str):
+        return path
+
+    # If it contains | or is wrapped in {{ }}, use Jinja2
+    if "|" in path or ("{{" in path and "}}" in path):
+        try:
+            # Use nested_context for Jinja2 if available, fallback to context
+            render_ctx = nested_context if nested_context is not None else context
+            template = _WIDGET_ENV.from_string(path)
+            return template.render(**render_ctx)
+        except Exception as exc:
+            logger.debug("Failed to resolve Jinja2 path '%s': %s", path, exc)
+            return path
+
+    # Basic cleanup if user used Jinja-like braces or bracket indexing
+    clean_path = path.strip("{} ").replace("[", ".").replace("]", "")
+
+    parts = clean_path.split(".")
+    val = context
+    for part in parts:
+        if not part:
+            continue
+        if isinstance(val, dict):
+            val = val.get(part)
+        elif isinstance(val, list):
+            try:
+                idx = int(part)
+                val = val[idx] if 0 <= idx < len(val) else None
+            except ValueError:
+                return None
+        else:
+            return None
+    return val
 
 
 def _flatten(data: dict[str, Any], prefix: str = "") -> dict[str, Any]:
@@ -146,6 +226,7 @@ def _stringify_condition(condition: Any, context: dict[str, Any]) -> str:
 def _evaluate_section(
     section: dict[str, Any],
     raw_context: dict[str, Any],
+    nested_context: dict[str, Any] = None,
 ) -> dict[str, Any]:
     """Evaluate a single playbook section against an already-flattened report context.
 
@@ -256,7 +337,17 @@ def _evaluate_section(
             resolved = dict(widget)
             value_path = widget.get("value")
             if value_path:
-                resolved["resolved_value"] = raw_context.get(value_path)
+                resolved["resolved_value"] = _resolve_path(
+                    value_path, raw_context, nested_context
+                )
+
+            # Support for optional links on widgets
+            url_tmpl = widget.get("url")
+            if url_tmpl:
+                resolved["resolved_url"] = _resolve_template(
+                    url_tmpl, raw_context, nested_context
+                )
+
             resolved_widgets.append(resolved)
         section_result["widgets"] = resolved_widgets
 
@@ -326,7 +417,11 @@ def evaluate(
         page_passed_scorecards = 0
 
         for section_def in page_sections_defs:
-            section_result = _evaluate_section(section_def, raw_context)
+            section_result = _evaluate_section(
+                section_def,
+                raw_context,
+                nested_context=report,
+            )
             page_sections_results.append(section_result)
             page_total_scorecards += section_result["total_scorecards"]
             page_passed_scorecards += section_result["passed_scorecards"]
@@ -383,6 +478,49 @@ def evaluate(
         "pages": pages_results,
         "slug": playbook.get("slug"),
     }
+
+    # Final pass to resolve widgets that might need the final score or result object
+    # We build a 'full' context that includes the results of this playbook evaluation.
+    full_context = {
+        **report,
+        **result,
+        "playbook": result,
+        "playbooks": [result],
+        "score": result.get("score", 0),
+    }
+    for page in result["pages"]:
+        for section in page["sections"]:
+            for widget in section.get("widgets", []):
+                # Only re-resolve if we didn't find a value in the first pass
+                # OR if it starts with 'playbook' or 'page' or 'score'
+                val_path = widget.get("value")
+                if val_path and (
+                    widget.get("resolved_value") is None
+                    or any(
+                        val_path.startswith(p)
+                        for p in ["playbook", "score", "pages", "{{"]
+                    )
+                ):
+                    widget["resolved_value"] = _resolve_path(
+                        val_path, full_context, nested_context=full_context
+                    )
+
+                # Final pass for URLs too
+                url_tmpl = widget.get("url")
+                if url_tmpl and (
+                    widget.get("resolved_url") is None
+                    or any(
+                        url_tmpl.startswith(p)
+                        for p in ["playbook", "score", "pages", "{{"]
+                    )
+                ):
+                    widget["resolved_url"] = _resolve_template(
+                        url_tmpl, full_context, nested_context=full_context
+                    )
+
+    sidebar = playbook.get("sidebar")
+    if sidebar:
+        result["sidebar"] = sidebar
 
     meta = {}
     if source_name:

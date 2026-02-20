@@ -1,16 +1,6 @@
 {% extends theme ~ "/base.html" %}
 {% import theme ~ "/macros.html" as m with context %}
 
-{% block metadata %}
-    {% if report.metadata %}
-        <div class="metadata-badges" style="margin-bottom: 2rem;">
-            {% for key, value in report.metadata.items() %}
-                {{ m.badge(key, value) }}
-            {% endfor %}
-        </div>
-    {% endif %}
-{% endblock %}
-
 {% block body %}
     {# Track which analyzers are claimed by scorecards #}
     {% set ns = namespace(claimed_analyzers=[]) %}

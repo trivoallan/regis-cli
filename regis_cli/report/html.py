@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import logging
+from datetime import datetime
 from typing import Any
 
 from jinja2 import Environment, PackageLoader, select_autoescape
+
+logger = logging.getLogger(__name__)
 
 
 def render_html(report: dict[str, Any], theme: str = "default") -> str:
@@ -16,6 +20,21 @@ def render_html(report: dict[str, Any], theme: str = "default") -> str:
 
     # Add custom filters
     env.filters["format_number"] = lambda v: f"{v:,}"
+
+    def _format_date(v: str) -> str:
+        try:
+            return datetime.fromisoformat(v).strftime("%Y-%m-%d")
+        except (ValueError, TypeError):
+            return v
+
+    def _format_datetime(v: str) -> str:
+        try:
+            return datetime.fromisoformat(v).strftime("%Y-%m-%d %H:%M:%S")
+        except (ValueError, TypeError):
+            return v
+
+    env.filters["format_date"] = _format_date
+    env.filters["format_datetime"] = _format_datetime
 
     template = env.get_template(f"{theme}/index.html")
     return template.render(report=report, theme=theme)

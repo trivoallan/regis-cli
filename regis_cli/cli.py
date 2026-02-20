@@ -346,6 +346,7 @@ def analyze(
         }
         if metadata_dict:
             analysis_report["metadata"] = metadata_dict
+            analysis_report["request"]["metadata"] = metadata_dict
 
         # Load and evaluate playbooks.
         from regis_cli.playbook.engine import evaluate, load_playbook
@@ -442,7 +443,43 @@ def analyze(
             playbook_results = final_report.get("playbooks", [])
             if playbook_results:
                 for pb in playbook_results:
+                    # Pre-calculate filenames for all pages in this playbook to build navigation
+                    page_navigation = []
                     for page in pb.get("pages", []):
+                        pb_slug = pb.get("slug")
+                        pg_slug = page.get("slug")
+                        source_name = pb.get("_meta", {}).get("source_name")
+
+                        if output_template:
+                            # If a template is provided, we can't easily pre-calculate
+                            # unique filenames for multiple pages unless the template
+                            # includes page-specific vars. For now, assume default logic
+                            # if multiple pages exist.
+                            filename = output_template
+                        elif pg_slug:
+                            filename = f"{pg_slug}.{fmt}"
+                        elif pb_slug:
+                            filename = (
+                                f"{pb_slug}-{page.get('title', 'page').lower()}.{fmt}"
+                            )
+                        elif source_name:
+                            filename = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
+                        else:
+                            filename = f"report_{pb.get('playbook_name', 'unnamed')}_{page.get('title', 'page').lower()}.{fmt}"
+
+                        page_navigation.append(
+                            {
+                                "title": page.get("title"),
+                                "url": filename,
+                                "active": False,
+                            }
+                        )
+
+                    for i, page in enumerate(pb.get("pages", [])):
+                        # Mark current page as active in navigation
+                        current_nav = [dict(n) for n in page_navigation]
+                        current_nav[i]["active"] = True
+
                         # Render HTML focusing on this single page of the playbook.
                         single_page_report = {
                             **final_report,
@@ -454,29 +491,13 @@ def analyze(
                             ],
                             "playbook": pb,
                             "page": page,
+                            "navigation": current_nav,
                         }
                         rendered = render_html(single_page_report, theme=theme)
 
-                        # Determine filename for this page
-                        file_tmpl = output_template
-                        if not file_tmpl:
-                            # Prefer page slug -> playbook slug -> default name
-                            pb_slug = pb.get("slug")
-                            pg_slug = page.get("slug")
-                            source_name = pb.get("_meta", {}).get("source_name")
-
-                            if pg_slug:
-                                file_tmpl = f"{pg_slug}.{fmt}"
-                            elif pb_slug:
-                                file_tmpl = f"{pb_slug}-{page.get('title', 'page').lower()}.{fmt}"
-                            elif source_name:
-                                file_tmpl = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
-                            else:
-                                file_tmpl = f"report_{pb.get('playbook_name', 'unnamed')}_{page.get('title', 'page').lower()}.{fmt}"
-
                         _write_report(
                             dir_tmpl=output_dir_template or ".",
-                            file_tmpl=file_tmpl,
+                            file_tmpl=page_navigation[i]["url"],
                             report=single_page_report,
                             fmt=fmt,
                             rendered=rendered,
@@ -517,3 +538,7 @@ def list_analyzers() -> None:
     for name, cls in sorted(all_analyzers.items()):
         analyzer = cls()
         click.echo(f"  {name:12s}  {analyzer.__class__.__doc__ or ''}")
+
+
+if __name__ == "__main__":
+    main()
