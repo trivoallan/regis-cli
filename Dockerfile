@@ -36,6 +36,9 @@ RUN chown regis:regis /app && chmod 777 /app
 # Copy project files and ensure ownership
 COPY --chown=regis:regis . .
 
+# Install packages
+RUN apt-get update && apt-get install -y git
+
 # Install regis-cli
 RUN pip install --no-cache-dir .
 
