@@ -285,3 +285,37 @@ class TestEvaluate:
         result = evaluate(playbook, {})
         order = result["pages"][0]["sections"][0]["render_order"]
         assert order == ["scorecards", "widgets", "analyzers", "levels"]
+
+    def test_section_widgets(self):
+        """Test that section widgets are resolved correctly (merging section vs display)."""
+        playbook = {
+            "name": "Widgets Test",
+            "sections": [
+                {
+                    "name": "Widgets",
+                    "widgets": [
+                        {"label": "W1", "value": "results.w1"},
+                        {
+                            "template": "analyzers/custom.html",
+                            "options": {"foo": "bar"},
+                        },
+                    ],
+                    "display": {"widgets": [{"label": "W2", "value": "results.w2"}]},
+                }
+            ],
+        }
+        report = {"results": {"w1": "A", "w2": "B"}}
+        result = evaluate(playbook, report)
+
+        section = result["pages"][0]["sections"][0]
+        assert "widgets" in section["render_order"]
+        widgets = section["widgets"]
+        assert len(widgets) == 3
+        # Direct section widgets
+        assert widgets[0]["label"] == "W1"
+        assert widgets[0]["resolved_value"] == "A"
+        assert widgets[1]["template"] == "analyzers/custom.html"
+        assert widgets[1]["options"] == {"foo": "bar"}
+        # Display widgets merged at end
+        assert widgets[2]["label"] == "W2"
+        assert widgets[2]["resolved_value"] == "B"

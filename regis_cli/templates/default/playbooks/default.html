@@ -4,6 +4,7 @@
 
 <article>
 
+
     {% for page in pb.pages %}
         {% if pb.pages|length > 1 %}
             <h3 style="margin-top: 1rem; color: var(--secondary);">{{ page.title|e }}</h3>
@@ -17,35 +18,102 @@
                 {% endif %}
 
             {% for block in section.render_order %}
-`
+
                 {# ── Widgets ─────────────────────────────── #}
-                {% if block == "widgets" and section.display is defined and section.display.widgets is defined %}
-                <div class="grid">
-                    {% for w in section.display.widgets %}
-                        <div>
-                            {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
-                            <strong>{{ w.label|e }}</strong><br>
-                            <span style="font-size: 1.4rem; font-weight: bold;">
-                                {%- if w.resolved_value is sameas true -%}✅
-                                {%- elif w.resolved_value is sameas false -%}❌
-                                {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>
-                                {%- else -%}{{ w.resolved_value }}
-                                {%- endif -%}
-                            </span>
-                        </div>
+                <!-- prettier-ignore-start -->
+                {% if block == "widgets" and section.widgets is defined %}
+                <div style="margin-bottom: calc(2 * var(--pico-spacing));">
+                    {% set ns = namespace(in_grid=false) %}
+                    {% for w in section.widgets %}
+                        {% set w_opts = w.options or {} %}
+                        {% set w_title = w_opts.get('title') %}
+                        {% set w_collapsed = w_opts.get('collapsed', false) %}
+
+                        {% if w.template is defined %}
+                            {% if ns.in_grid %}
+                                </div>
+                                {% set ns.in_grid = false %}
+                            {% endif %}
+                            <div class="widget-template" style="margin-bottom: calc(3 * var(--pico-spacing));">
+                                {% if w_collapsed %}
+                                <details>
+                                    <summary style="font-weight: bold; color: var(--pico-secondary); margin-bottom: 0.5rem; font-size: 1.125rem;">{{ w_title|default(w.label)|e }}</summary>
+                                {% elif w_title %}
+                                    <h5 style="margin-bottom: 0.5rem; color: var(--pico-secondary);">{{ w_title|e }}</h5>
+                                {% endif %}
+
+                                {% include [theme ~ "/" ~ w.template, w.template] %}
+
+                                {% if w_collapsed %}
+                                </details>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            {% if w_collapsed or w_title %}
+                                {% if ns.in_grid %}
+                                    </div>
+                                    {% set ns.in_grid = false %}
+                                {% endif %}
+                                <div style="margin-bottom: calc(4 * var(--pico-spacing));">
+                                    {% if w_collapsed %}
+                                    <details>
+                                        <summary style="font-weight: bold; color: var(--pico-secondary); font-size: 1.125rem;">{{ w_title|default(w.label)|e }}</summary>
+                                    {% elif w_title %}
+                                        <h6 style="margin-bottom: 0.5rem; color: var(--pico-secondary);">{{ w_title|e }}</h6>
+                                    {% endif %}
+                                    <div style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+                                        {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
+                                        <strong>{{ w.label|e }}</strong><br>
+                                        <span style="font-size: 1.4rem; font-weight: bold;">
+                                            {%- if w.resolved_value is sameas true -%}✅
+                                            {%- elif w.resolved_value is sameas false -%}❌
+                                            {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>
+                                            {%- else -%}{{ w.resolved_value }}
+                                            {%- endif -%}
+                                        </span>
+                                    </div>
+                                    {% if w_collapsed %}
+                                    </details>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                {% if not ns.in_grid %}
+                                    <div class="grid" style="margin-bottom: calc(4 * var(--pico-spacing));">
+                                    {% set ns.in_grid = true %}
+                                {% endif %}
+                                <div>
+                                    {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
+                                    <strong>{{ w.label|e }}</strong><br>
+                                    <span style="font-size: 1.4rem; font-weight: bold;">
+                                        {%- if w.resolved_value is sameas true -%}✅
+                                        {%- elif w.resolved_value is sameas false -%}❌
+                                        {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>
+                                        {%- else -%}{{ w.resolved_value }}
+                                        {%- endif -%}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
+                    {% if ns.in_grid %}
+                        </div>
+                    {% endif %}
                 </div>
+                <!-- prettier-ignore-end -->
                 <hr>
                 {% endif %}
 
                 {# ── Levels summary ──────────────────────── #}
                 {% if block == "levels" and section.levels_summary %}
-                <div class="grid">
+                <div class="grid" style="margin-bottom: calc(3 * var(--pico-spacing));">
                     {% for level_name, stats in section.levels_summary.items() %}
                         {% set level_icon = icons.get(level_name, '') %}
-                        <div>
-                            <strong>{{ level_icon }} {{ level_name|capitalize }}</strong><br>
-                            {{ stats.passed }}/{{ stats.total }} passed ({{ stats.percentage }}%)
+                        <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+                            <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">{{ level_icon }} {{ level_name }}</strong><br>
+                            <span style="font-size: 1.8rem; font-weight: bold; line-height: 1.2;">
+                                {{ stats.passed }}<small style="font-size: 1rem; opacity: 0.5;">/{{ stats.total }}</small>
+                            </span>
+                            <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.7;">{{ stats.percentage }}% pass</div>
                         </div>
                     {% endfor %}
                 </div>
@@ -54,11 +122,14 @@
 
                 {# ── Tags summary ────────────────────────── #}
                 {% if block == "tags" and section.tags_summary %}
-                <div class="grid">
+                <div class="grid" style="margin-bottom: calc(3 * var(--pico-spacing));">
                     {% for tag_name, stats in section.tags_summary.items() %}
-                        <div>
-                            <strong>🏷️ {{ tag_name|capitalize }}</strong><br>
-                            {{ stats.passed }}/{{ stats.total }} passed ({{ stats.percentage }}%)
+                        <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+                            <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">{{ tag_name }}</strong><br>
+                            <span style="font-size: 1.8rem; font-weight: bold; line-height: 1.2;">
+                                {{ stats.passed }}<small style="font-size: 1rem; opacity: 0.5;">/{{ stats.total }}</small>
+                            </span>
+                            <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.7;">{{ stats.percentage }}% pass</div>
                         </div>
                     {% endfor %}
                 </div>

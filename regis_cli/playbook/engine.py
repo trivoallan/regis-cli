@@ -244,18 +244,21 @@ def _evaluate_section(
     # Resolve display preferences and widget values.
     display = section.get("display")
     if display:
-        display_result = dict(display)
-        widgets = display_result.get("widgets", [])
-        if widgets:
-            resolved_widgets = []
-            for widget in widgets:
-                resolved = dict(widget)
-                value_path = widget.get("value")
-                if value_path:
-                    resolved["resolved_value"] = raw_context.get(value_path)
-                resolved_widgets.append(resolved)
-            display_result["widgets"] = resolved_widgets
-        section_result["display"] = display_result
+        section_result["display"] = dict(display)
+
+    raw_widgets = list(section.get("widgets", []))
+    if display and "widgets" in display:
+        raw_widgets.extend(display["widgets"])
+
+    if raw_widgets:
+        resolved_widgets = []
+        for widget in raw_widgets:
+            resolved = dict(widget)
+            value_path = widget.get("value")
+            if value_path:
+                resolved["resolved_value"] = raw_context.get(value_path)
+            resolved_widgets.append(resolved)
+        section_result["widgets"] = resolved_widgets
 
     # Build render_order from the YAML key order.
     # Python 3.7+ dicts preserve insertion order, so iterating
@@ -266,9 +269,11 @@ def _evaluate_section(
             display_def = section.get("display", {})
             for display_key in display_def:
                 if display_key in ("analyzers", "widgets"):
-                    render_order.append(display_key)
-        elif key in ("levels", "scorecards"):
-            render_order.append(key)
+                    if display_key not in render_order:
+                        render_order.append(display_key)
+        elif key in ("levels", "scorecards", "widgets"):
+            if key not in render_order:
+                render_order.append(key)
 
     if tags_summary and "scorecards" in render_order:
         idx = render_order.index("scorecards")

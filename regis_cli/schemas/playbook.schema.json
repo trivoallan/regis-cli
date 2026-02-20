@@ -105,6 +105,13 @@
           "items": {
             "$ref": "#/$defs/scorecard"
           }
+        },
+        "widgets": {
+          "type": "array",
+          "description": "KPI and Template widgets displayed in the section.",
+          "items": {
+            "$ref": "#/$defs/widget"
+          }
         }
       },
       "additionalProperties": false
@@ -132,8 +139,7 @@
     },
     "widget": {
       "type": "object",
-      "description": "A key-value widget displaying a metric from the analysis report.",
-      "required": ["label", "value"],
+      "description": "A key-value widget displaying a metric from the analysis report, or a custom HTML template widget.",
       "properties": {
         "label": {
           "type": "string",
@@ -146,6 +152,25 @@
         "icon": {
           "type": "string",
           "description": "Emoji or icon displayed alongside the widget."
+        },
+        "template": {
+          "type": "string",
+          "description": "Path to a Jinja2 HTML template within the theme, e.g. analyzers/trivy/table.html."
+        },
+        "options": {
+          "type": "object",
+          "description": "Arbitrary options passed directly to the Jinja2 template.",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Optional title for the widget. If provided, the widget will be displayed with a header."
+            },
+            "collapsed": {
+              "type": "boolean",
+              "description": "If true, the widget will be collapsible and closed by default.",
+              "default": false
+            }
+          }
         }
       },
       "additionalProperties": false

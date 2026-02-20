@@ -1,0 +1,21 @@
+{% set data = report.results.get('versioning', {}) %}
+{% if data %}
+<div class="grid">
+    <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+        <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">DOMINANT PATTERN</strong><br>
+        <span style="font-size: 1.5rem; font-weight: bold; line-height: 1;">{{ data.dominant_pattern | default('N/A') | e }}</span>
+    </div>
+    <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+        <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">SEMVER COMPLIANCE</strong><br>
+        <span style="font-size: 2rem; font-weight: bold; line-height: 1; {% if data.semver_compliant_percentage >= 80 %}color: var(--pico-ins-color);{% elif data.semver_compliant_percentage < 50 %}color: var(--pico-del-color);{% endif %}">
+            {{ data.semver_compliant_percentage }}%
+        </span>
+    </div>
+    <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+        <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">TOTAL TAGS</strong><br>
+        <span style="font-size: 2rem; font-weight: bold; line-height: 1;">{{ data.total_tags | default(0) }}</span>
+    </div>
+</div>
+{% else %}
+    <p><em>No Versioning data available.</em></p>
+{% endif %}

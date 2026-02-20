@@ -3,6 +3,7 @@ name: RegiS Default Playbook
 
 pages:
   - title: Scorecards
+    slug: scorecards
     sections:
       - name: Mandatory
         scorecards:
@@ -18,7 +19,7 @@ pages:
             tags: [security]
             condition:
               "==": [{ var: results.trivy.critical_count }, 0]
-          - name: trusted-domaon
+          - name: trusted-domain
             title: Image should be from a trusted domain.
             tags: [security]
             condition:
@@ -46,15 +47,96 @@ pages:
   - title: Security
     slug: security
     sections:
-      - name: Trivy
+      - name: Vulnerabilities Scan
         widgets:
+          - template: analyzers/trivy/cards.html
           - template: analyzers/trivy/table.html
             options:
-              columns:
-                - name
-                - severity
-              query:
-                severity: [CRITICAL, HIGH]
-              sort:
-                - severity
-              limit: 10
+              title: Top HIGH and CRITICAL vulnerabilities
+              collapsed: true
+              limit: 25
+
+  - title: Supply Chain & Quality
+    slug: supply-chain
+    sections:
+      - name: Software Bill of Materials (SBOM)
+        widgets:
+          - template: analyzers/sbom/cards.html
+          - template: analyzers/sbom/table.html
+            options:
+              title: Detailed Component Inventory
+              collapsed: true
+              limit: 50
+
+      - name: OpenSSF Scorecard
+        widgets:
+          - template: analyzers/scorecarddev/cards.html
+          - template: analyzers/scorecarddev/table.html
+            options:
+              title: Detailed Check Results
+              collapsed: true
+
+  - title: Best Practices
+    slug: best-practices
+    sections:
+      - name: Dockerfile Linting
+        widgets:
+          - template: analyzers/hadolint/cards.html
+          - template: analyzers/hadolint/table.html
+            options:
+              title: Linting Issues & Recommendations
+              collapsed: false
+
+  - title: Insights & Lifecycle
+    slug: insights
+    sections:
+      - name: Image Freshness
+        widgets:
+          - template: analyzers/freshness/cards.html
+          - template: analyzers/freshness/table.html
+            options:
+              title: Release Details
+              collapsed: true
+
+      - name: Popularity & Community
+        widgets:
+          - template: analyzers/popularity/cards.html
+          - template: analyzers/popularity/table.html
+            options:
+              title: Registry Stats
+              collapsed: true
+
+      - name: Lifecycle (EndOfLife)
+        widgets:
+          - template: analyzers/endoflife/cards.html
+          - template: analyzers/endoflife/table.html
+            options:
+              title: Version Support Status
+              collapsed: true
+
+  - title: Technical Details
+    slug: metadata
+    sections:
+      - name: Size & Layers
+        widgets:
+          - template: analyzers/size/cards.html
+          - template: analyzers/size/table.html
+            options:
+              title: Layer Distribution
+              collapsed: true
+
+      - name: Registry Metadata
+        widgets:
+          - template: analyzers/skopeo/cards.html
+          - template: analyzers/skopeo/table.html
+            options:
+              title: Inspect Details
+              collapsed: true
+
+      - name: Versioning Analysis
+        widgets:
+          - template: analyzers/versioning/cards.html
+          - template: analyzers/versioning/table.html
+            options:
+              title: Tag Logic & Patterns
+              collapsed: true
