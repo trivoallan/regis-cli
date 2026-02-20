@@ -411,11 +411,26 @@ def analyze(
 
             out_dir = _format_output_path(dir_tmpl, final_report, fmt)
             out_file = _format_output_path(file_tmpl, final_report, fmt)
-            out_path = out_dir / out_file
+            out_path = (out_dir / out_file).resolve()
 
-            out_path.parent.mkdir(parents=True, exist_ok=True)
-            out_path.write_text(rendered, encoding="utf-8")
-            click.echo(f"Report ({fmt}) written to {out_path}", err=True)
+            try:
+                out_path.parent.mkdir(parents=True, exist_ok=True)
+                out_path.write_text(rendered, encoding="utf-8")
+                click.echo(f"Report ({fmt}) written to {out_path}", err=True)
+            except PermissionError as exc:
+                # If we can't write to the template dir, try current dir as fallback
+                fallback_path = Path.cwd() / f"report.{fmt}"
+                click.echo(
+                    f"Warning: Failed to write to {out_path} ({exc}). Trying fallback to {fallback_path}",
+                    err=True,
+                )
+                try:
+                    fallback_path.write_text(rendered, encoding="utf-8")
+                    click.echo(f"Report ({fmt}) written to {fallback_path}", err=True)
+                except PermissionError:
+                    raise click.ClickException(
+                        f"Failed to write report: Permission denied for both {out_path} and fallback."
+                    )
         else:
             # Single format, no template/dir -> stdout
             click.echo(rendered)

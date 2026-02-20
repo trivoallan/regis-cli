@@ -14,8 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     skopeo \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user with a home directory
-RUN groupadd -r regis && useradd -r -g regis -m -d /home/regis regis
+# Create a non-root user with a home directory and ensure it's writable
+RUN groupadd -g 1001 regis && \
+    useradd -u 1001 -g regis -m -d /home/regis regis && \
+    chmod 755 /home/regis
 ENV HOME=/home/regis
 
 # Install Trivy
@@ -27,9 +29,9 @@ RUN arch=$(uname -m) && \
     curl -sSfL "https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}" -o /usr/local/bin/hadolint && \
     chmod +x /usr/local/bin/hadolint
 
-# Set work directory
+# Set work directory and ensure it's owned by regis
 WORKDIR /app
-RUN chown regis:regis /app
+RUN chown regis:regis /app && chmod 777 /app
 
 # Copy project files and ensure ownership
 COPY --chown=regis:regis . .

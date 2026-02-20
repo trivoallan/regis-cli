@@ -13,6 +13,7 @@
 - **Rationale**: Facilitate adoption and standardize the setup for image analysis projects, including CI/CD and security policies.
 
 ## 2026-02-20: Fix Docker Permission Issues
-- **Decision**: Update `Dockerfile` to create a home directory for the `regis` user and set `HOME`.
+- **Decision**: Fixed Docker permission issues by creating a home directory for the `regis` user (UID 1001), adjusting volume permissions in the workflow, and adding a fallback output mechanism in `cli.py`.
+- **Decision**: Created comprehensive Cookiecutter usage guide in `docs/modules/ROOT/pages/cookiecutter.adoc`.
 - **Decision**: Update template workflow to `chmod 777 reports` before analysis.
-- **Rationale**: Fix "permission denied" errors when running analyzers like Trivy (which need a home dir for cache) and when writing reports to host-mounted volumes in CI/CD.
+- **Rationale**: Address "permission denied" errors on both `/home/regis` (due to missing home/UID mismatch) and on host-mounted `reports` volumes. UID 1001 matches standard GitHub Actions runners.
