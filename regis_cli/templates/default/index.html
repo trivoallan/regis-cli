@@ -15,13 +15,13 @@
     {# Track which analyzers are claimed by scorecards #}
     {% set ns = namespace(claimed_analyzers=[]) %}
 
-    {% for sc in report.scorecards %}
-        <section id="scorecard-{{ loop.index0 }}">
-            {% include theme ~ "/scorecards/default.html" %}
+    {% for pb in report.playbooks %}
+        <section id="playbook-{{ loop.index0 }}">
+            {% include theme ~ "/playbooks/default.html" with context %}
         </section>
 
         {# Track claimed analyzers from all sections across all pages #}
-        {% for page in sc.pages %}
+        {% for page in pb.pages %}
             {% for section in page.sections %}
                 {% if section.display is defined and section.display.analyzers is defined %}
                     {% for analyzer_name in section.display.analyzers %}

@@ -1,6 +1,6 @@
 = regis-cli in GitHub Actions
 
-You can use `regis-cli` in your GitHub workflows to analyze your container images and generate security scorecards.
+You can use `regis-cli` in your GitHub workflows to analyze your container images and generate security playbooks.
 
 == Example Usage
 
@@ -42,13 +42,13 @@ jobs:
           path: reports/
 ----
 
-== Analysis with Scorecards
+== Analysis with Playbooks
 
-To evaluate your image against a specific scorecard:
+To evaluate your image against a specific playbook:
 
 [source,yaml]
 ----
-      - name: Run regis-cli with Scorecard
+      - name: Run regis-cli with Playbook
         run: |
           pipenv run regis-cli analyze my-image:latest -s examples/all-reports.yaml
 ----

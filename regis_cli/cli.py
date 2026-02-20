@@ -134,12 +134,12 @@ def main(verbose: bool) -> None:
     help="Run only the specified analyzer(s). Can be repeated. Default: all.",
 )
 @click.option(
-    "-s",
-    "--scorecard",
-    "scorecard_paths",
+    "-p",
+    "--playbook",
+    "playbook_paths",
     multiple=True,
     type=click.Path(exists=True, dir_okay=False),
-    help="Path to custom scorecard YAML/JSON file(s). Can be repeated. Default: built-in scorecard.",
+    help="Path to custom playbook YAML/JSON file(s). Can be repeated. Default: built-in playbook.",
 )
 @click.option(
     "-o",
@@ -194,7 +194,7 @@ def main(verbose: bool) -> None:
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
-    scorecard_paths: tuple[str, ...],
+    playbook_paths: tuple[str, ...],
     output_template: str | None,
     output_dir_template: str | None,
     pretty: bool,
@@ -204,12 +204,12 @@ def analyze(
     auth: tuple[str, ...],
     cache: bool,
 ) -> None:
-    """Analyze a Docker image and evaluate scorecards.
+    """Analyze a Docker image and evaluate playbooks.
 
     URL can be a Docker Hub URL (e.g. https://hub.docker.com/r/library/nginx),
     a bare image reference (nginx:latest), or a private registry URL.
 
-    Runs analyzers and evaluates one or more scorecards against the results.
+    Runs analyzers and evaluates one or more playbooks against the results.
     """
     # Parse the image URL.
     try:
@@ -256,8 +256,8 @@ def analyze(
             logger.debug("Cache lookup failed: %s", exc)
 
     if final_report:
-        # If we have a cached report, we skip analysis and scorecard evaluation.
-        # We might want to re-run scorecards eventually, but for now we follow the "cache report" intent.
+        # If we have a cached report, we skip analysis and playbook evaluation.
+        # We might want to re-run playbooks eventually, but for now we follow the "cache report" intent.
         pass
     else:
         # Discover analyzers.
@@ -347,23 +347,23 @@ def analyze(
         if metadata_dict:
             analysis_report["metadata"] = metadata_dict
 
-        # Load and evaluate scorecards.
-        from regis_cli.scorecard.engine import evaluate, load_scorecard
+        # Load and evaluate playbooks.
+        from regis_cli.playbook.engine import evaluate, load_playbook
 
-        scorecard_results = []
-        if scorecard_paths:
-            for sc_path in scorecard_paths:
-                click.echo(f"  Evaluating scorecard: {sc_path}...", err=True)
-                sc_def = load_scorecard(sc_path)
-                sc_result = evaluate(
-                    sc_def, analysis_report, source_name=Path(sc_path).stem
+        playbook_results = []
+        if playbook_paths:
+            for pb_path in playbook_paths:
+                click.echo(f"  Evaluating playbook: {pb_path}...", err=True)
+                pb_def = load_playbook(pb_path)
+                pb_result = evaluate(
+                    pb_def, analysis_report, source_name=Path(pb_path).stem
                 )
-                scorecard_results.append(sc_result)
+                playbook_results.append(pb_result)
 
-                # Print summary for EACH scorecard if in CLI mode
+                # Print summary for EACH playbook if in CLI mode
                 if "html" not in formats or len(formats) > 1:
                     summary_parts = []
-                    for section in sc_result.get("sections", []):
+                    for section in pb_result.get("sections", []):
                         for lv_name, stats in section.get("levels_summary", {}).items():
                             summary_parts.append(
                                 f"{lv_name}: {stats['passed']}/{stats['total']}"
@@ -372,8 +372,8 @@ def analyze(
                     summary_str = " · ".join(summary_parts)
                     click.echo(
                         f"    {summary_str}  "
-                        f"({sc_result['passed_rules']}/{sc_result['total_rules']} rules passed, "
-                        f"{sc_result['score']}%)\n",
+                        f"({pb_result['passed_scorecards']}/{pb_result['total_scorecards']} scorecards passed, "
+                        f"{pb_result['score']}%)\n",
                         err=True,
                     )
 
@@ -381,15 +381,15 @@ def analyze(
         final_report = {
             **analysis_report,
         }
-        if scorecard_results:
-            final_report["scorecards"] = scorecard_results
-            # For backward compatibility (or simplicity), keep 'scorecard' pointing to the first result.
-            final_report["scorecard"] = scorecard_results[0]
+        if playbook_results:
+            final_report["playbooks"] = playbook_results
+            # For backward compatibility (or simplicity), keep 'playbook' pointing to the first result.
+            final_report["playbook"] = playbook_results[0]
 
-        # Extract evaluated links from scorecards
+        # Extract evaluated links from playbooks
         all_links = []
-        for sc_res in scorecard_results:
-            for link_def in sc_res.get("links", []):
+        for pb_res in playbook_results:
+            for link_def in pb_res.get("links", []):
                 if link_def not in all_links:
                     all_links.append(link_def)
 
@@ -437,41 +437,52 @@ def analyze(
 
     for fmt in formats:
         if fmt == "html":
-            # For HTML, generate one file per scorecard if scorecards exist.
-            # If no scorecards, generate a single report using fallback logic.
-            if scorecard_results:
-                for sc in scorecard_results:
-                    # Render HTML focusing on this single scorecard.
-                    # We pass the full report, but we might want to tell the template which SC to focus on,
-                    # or temporarily set 'scorecards' to just this one for rendering.
-                    single_sc_report = {
-                        **final_report,
-                        "scorecards": [sc],
-                        "scorecard": sc,
-                    }
-                    rendered = render_html(single_sc_report, theme=theme)
+            # For HTML, generate one file per playbook if playbooks exist.
+            # If no playbooks, generate a single report using fallback logic.
+            playbook_results = final_report.get("playbooks", [])
+            if playbook_results:
+                for pb in playbook_results:
+                    for page in pb.get("pages", []):
+                        # Render HTML focusing on this single page of the playbook.
+                        single_page_report = {
+                            **final_report,
+                            "playbooks": [
+                                {
+                                    **pb,
+                                    "pages": [page],
+                                }
+                            ],
+                            "playbook": pb,
+                            "page": page,
+                        }
+                        rendered = render_html(single_page_report, theme=theme)
 
-                    # Determine filename for this scorecard
-                    file_tmpl = output_template
-                    if not file_tmpl:
-                        if sc.get("slug"):
-                            file_tmpl = f"{sc['slug']}.{fmt}"
-                        elif "_meta" in sc and sc["_meta"].get("source_name"):
-                            file_tmpl = f"{sc['_meta']['source_name']}.{fmt}"
-                        else:
-                            file_tmpl = (
-                                f"report_{sc.get('scorecard_name', 'unnamed')}.{fmt}"
-                            )
+                        # Determine filename for this page
+                        file_tmpl = output_template
+                        if not file_tmpl:
+                            # Prefer page slug -> playbook slug -> default name
+                            pb_slug = pb.get("slug")
+                            pg_slug = page.get("slug")
+                            source_name = pb.get("_meta", {}).get("source_name")
 
-                    _write_report(
-                        dir_tmpl=output_dir_template or ".",
-                        file_tmpl=file_tmpl,
-                        report=single_sc_report,
-                        fmt=fmt,
-                        rendered=rendered,
-                    )
+                            if pg_slug:
+                                file_tmpl = f"{pg_slug}.{fmt}"
+                            elif pb_slug:
+                                file_tmpl = f"{pb_slug}-{page.get('title', 'page').lower()}.{fmt}"
+                            elif source_name:
+                                file_tmpl = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
+                            else:
+                                file_tmpl = f"report_{pb.get('playbook_name', 'unnamed')}_{page.get('title', 'page').lower()}.{fmt}"
+
+                        _write_report(
+                            dir_tmpl=output_dir_template or ".",
+                            file_tmpl=file_tmpl,
+                            report=single_page_report,
+                            fmt=fmt,
+                            rendered=rendered,
+                        )
             else:
-                # No scorecards, just render the base report
+                # No playbooks, just render the base report
                 rendered = render_html(final_report, theme=theme)
                 file_tmpl = output_template or f"report.{fmt}"
                 _write_report(

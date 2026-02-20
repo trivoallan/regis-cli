@@ -29,10 +29,10 @@ jobs:
           chmod 777 reports
           docker run --rm \
             -v ${PWD}/reports:/app/reports \
-            -v ${PWD}/scorecards:/app/scorecards \
+            -v ${PWD}/playbooks:/app/playbooks \
             ghcr.io/trivoallan/regis-cli:main \
             analyze "{% raw %}${{ github.event.inputs.image_url }}{% endraw %}" \
-            -s scorecards/default.yaml \
+            -p playbooks/default.yaml \
             --format json \
             --format html \
             --meta "github.requester={% raw %}${{ github.triggering_actor }}{% endraw %}" \

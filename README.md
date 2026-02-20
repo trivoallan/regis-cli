@@ -1,15 +1,15 @@
 # regis-cli
 
-`regis-cli` is a powerful tool to analyze Docker image registries, evaluate security scorecards, and produce rich HTML/JSON reports.
+`regis-cli` is a powerful tool to analyze Docker image registries, evaluate security playbooks, and produce rich HTML/JSON reports.
 
 ## Features
 
 - **Consolidated Analysis** — Uses `skopeo` for fast, multi-arch registry inspection.
-- **Scorecard Engine** — Evaluate custom rules and policies against image metadata.
+- **Playbook Engine** — Evaluate custom rules and policies against image metadata.
 - **Multi-Format Output** — Generate both JSON (for automation) and HTML (for humans) in a single run.
 - **Template-Based Paths** — Dynamic output directory and filename based on image metadata (registry, repository, tag).
 - **Report Caching** — Reuse existing analysis results to speed up report regeneration.
-- **Pluggable Architecture** — Easily add new analyzers and scorecard rules.
+- **Pluggable Architecture** — Easily add new analyzers and playbook rules.
 
 ## Built-in Analyzers
 
@@ -25,7 +25,7 @@
 | `provenance`   | Verifies image build provenance and SLSA metadata.                          |
 | `size`         | Analyzes image size and layer distribution.                                 |
 | `popularity`   | Fetches popularity metrics (stars, pulls) from Docker Hub.                  |
-| `scorecarddev` | Integration with OpenSSF Scorecard for registry-level security.             |
+| `playbookdev` | Integration with OpenSSF Playbook for registry-level security.             |
 
 ## Installation
 
@@ -59,15 +59,15 @@ By default, reports are written to `reports/{registry}/{repository}/{tag}/{forma
 regis-cli analyze nginx:latest -o "my-custom-report.{format}" -D "results/{repository}"
 ```
 
-## Scorecards
+## Playbooks
 
-Scorecards allow you to define rules using JSON logic. Use them to verify compliance:
+Playbooks allow you to define rules using JSON logic. Use them to verify compliance:
 - **No critical vulnerabilities**
 - **No root user**
 - **Maximum image age**
 - **Semantic versioning enforced**
 
-See `examples/` for sample scorecard definitions.
+See `examples/` for sample playbook definitions.
 
 ## Development
 

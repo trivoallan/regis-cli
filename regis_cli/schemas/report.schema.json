@@ -64,14 +64,14 @@
         "type": "object"
       }
     },
-    "scorecards": {
+    "playbooks": {
       "type": "array",
-      "description": "List of evaluated scorecard results.",
-      "items": { "$ref": "scorecard_result.schema.json" }
+      "description": "List of evaluated playbook results.",
+      "items": { "$ref": "playbook_result.schema.json" }
     },
-    "scorecard": {
-      "description": "Primary scorecard result (shorthand for scorecards[0]).",
-      "$ref": "scorecard_result.schema.json"
+    "playbook": {
+      "description": "Primary playbook result (shorthand for playbooks[0]).",
+      "$ref": "playbook_result.schema.json"
     }
   },
   "additionalProperties": false

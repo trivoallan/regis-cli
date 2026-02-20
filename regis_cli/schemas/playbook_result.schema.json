@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Scorecard Result",
+  "title": "Playbook Result",
   "type": "object",
-  "required": ["scorecard_name", "score", "total_rules", "passed_rules", "pages"],
+  "required": ["playbook_name", "score", "total_scorecards", "passed_scorecards", "pages"],
   "properties": {
-    "scorecard_name": {
+    "playbook_name": {
       "type": "string"
     },
     "score": {
@@ -12,11 +12,11 @@
       "minimum": 0,
       "maximum": 100
     },
-    "total_rules": {
+    "total_scorecards": {
       "type": "integer",
       "minimum": 0
     },
-    "passed_rules": {
+    "passed_scorecards": {
       "type": "integer",
       "minimum": 0
     },
@@ -36,19 +36,20 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["name", "score", "total_rules", "passed_rules", "sections"],
+        "required": ["title", "score", "total_scorecards", "passed_scorecards", "sections"],
         "properties": {
-          "name": { "type": "string" },
+          "title": { "type": "string" },
+          "slug": { "type": ["string", "null"] },
           "score": {
             "type": "integer",
             "minimum": 0,
             "maximum": 100
           },
-          "total_rules": {
+          "total_scorecards": {
             "type": "integer",
             "minimum": 0
           },
-          "passed_rules": {
+          "passed_scorecards": {
             "type": "integer",
             "minimum": 0
           },
@@ -57,7 +58,7 @@
             "minItems": 1,
             "items": {
         "type": "object",
-        "required": ["name", "score", "total_rules", "passed_rules", "rules"],
+        "required": ["name", "score", "total_scorecards", "passed_scorecards", "scorecards"],
         "properties": {
           "name": { "type": "string" },
           "hint": { "type": "string" },
@@ -66,11 +67,11 @@
             "minimum": 0,
             "maximum": 100
           },
-          "total_rules": {
+          "total_scorecards": {
             "type": "integer",
             "minimum": 0
           },
-          "passed_rules": {
+          "passed_scorecards": {
             "type": "integer",
             "minimum": 0
           },
@@ -98,7 +99,7 @@
               }
             }
           },
-          "rules": {
+          "scorecards": {
             "type": "array",
             "items": {
               "type": "object",

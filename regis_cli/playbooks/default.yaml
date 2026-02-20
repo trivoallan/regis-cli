@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=../schemas/playbook.schema.json
+name: RegiS Default Playbook
+
+pages:
+  - title: Scorecards
+    sections:
+      - name: Mandatory
+        scorecards:
+          - name: no-root
+            title: Image should not run as root.
+            level: critical
+            tags: [security]
+            condition:
+              "!=": [{ var: results.skopeo.platforms.0.user }, root]
+          - name: no-critical
+            title: No CRITICAL vulnerabilities found by Trivy.
+            level: critical
+            tags: [security]
+            condition:
+              "==": [{ var: results.trivy.critical_count }, 0]
+          - name: trusted-domaon
+            title: Image should be from a trusted domain.
+            tags: [security]
+            condition:
+              "in":
+                [
+                  { var: request.registry },
+                  [docker.io, registry-1.docker.io, quay.io, ghcr.io],
+                ]
+
+      - name: Recommended
+        scorecards:
+          - name: no-high
+            title: No HIGH vulnerabilities found by Trivy.
+            level: warning
+            tags: [security]
+            condition:
+              "==": [{ var: results.trivy.high_count }, 0]
+          - name: age
+            title: Image should be less than 30 days old.
+            level: warning
+            tags: [freshness]
+            condition:
+              "<": [{ var: results.freshness.age_days }, 30]
+
+  - title: Security
+    slug: security
+    sections:
+      - name: Trivy
+        widgets:
+          - template: analyzers/trivy/table.html
+            options:
+              columns:
+                - name
+                - severity
+              query:
+                severity: [CRITICAL, HIGH]
+              sort:
+                - severity
+              limit: 10

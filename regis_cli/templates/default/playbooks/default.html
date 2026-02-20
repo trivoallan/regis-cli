@@ -4,13 +4,13 @@
 
 <article>
 
-    {% for page in sc.pages %}
-        {% if sc.pages|length > 1 %}
-            <h3 style="margin-top: 1rem; color: var(--secondary);">{{ page.name|e }}</h3>
+    {% for page in pb.pages %}
+        {% if pb.pages|length > 1 %}
+            <h3 style="margin-top: 1rem; color: var(--secondary);">{{ page.title|e }}</h3>
         {% endif %}
 
         {% for section in page.sections %}
-            <div class="scorecard-section">
+            <div class="playbook-section">
                 <h4>{{ section.name|e }}</h4>
                 {% if section.hint %}
                 <p class="section-hint">{{ section.hint|e }}</p>
@@ -65,20 +65,20 @@
                 <hr>
                 {% endif %}
 
-                {# ── Rules table ─────────────────────────── #}
-                {% if block == "rules" and section.rules %}
+                {# ── Scorecards table ────────────────────── #}
+                {% if block == "scorecards" and section.scorecards %}
                 <div class="overflow-auto">
                     <table class="striped">
                         <thead>
                             <tr>
                                 <th>Status</th>
                                 {% if section.levels_summary %}<th>Level</th>{% endif %}
-                                <th>Rule</th>
+                                <th>Scorecard</th>
                                 <th>Analyzers</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for r in section.rules %}
+                            {% for r in section.scorecards %}
                             <tr>
                                 <td>{{ m.bool_icon(r.passed) }}</td>
                                 {% if section.levels_summary %}<td><small>{{ r.level|capitalize }}</small></td>{% endif %}

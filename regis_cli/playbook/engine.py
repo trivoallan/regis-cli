@@ -1,6 +1,6 @@
-"""Scorecard evaluation engine.
+"""Playbook evaluation engine.
 
-Loads scorecard definitions (YAML/JSON) containing rules with JsonLogic
+Loads playbook definitions (YAML/JSON) containing scorecards with JsonLogic
 conditions and evaluates them against a regis-cli analysis report.
 """
 
@@ -38,8 +38,8 @@ def _flatten(data: dict[str, Any], prefix: str = "") -> dict[str, Any]:
     return flat
 
 
-def load_scorecard(path: str | Path) -> dict[str, Any]:
-    """Load a scorecard definition from a YAML or JSON file."""
+def load_playbook(path: str | Path) -> dict[str, Any]:
+    """Load a playbook definition from a YAML or JSON file."""
     path = Path(path)
     text = path.read_text(encoding="utf-8")
     if path.suffix in (".yaml", ".yml"):
@@ -147,15 +147,15 @@ def _evaluate_section(
     section: dict[str, Any],
     raw_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Evaluate a single scorecard section against an already-flattened report context.
+    """Evaluate a single playbook section against an already-flattened report context.
 
-    Returns a result dict for the section with rules, levels_summary, display, etc.
+    Returns a result dict for the section with scorecards, levels_summary, display, etc.
     """
-    rules_defs = section.get("rules", [])
+    scorecards_defs = section.get("scorecards", [])
 
-    rule_results: list[dict[str, Any]] = []
-    for rule in rules_defs:
-        condition = rule.get("condition", {})
+    scorecard_results: list[dict[str, Any]] = []
+    for scorecard in scorecards_defs:
+        condition = scorecard.get("condition", {})
         tracker = MissingDataTracker(raw_context)
         try:
             result = jsonLogic(condition, tracker)
@@ -163,8 +163,8 @@ def _evaluate_section(
             incomplete = tracker.missing_accessed
         except Exception as exc:
             logger.warning(
-                "Rule '%s' evaluation error: %s",
-                rule.get("name"),
+                "Scorecard '%s' evaluation error: %s",
+                scorecard.get("name"),
                 exc,
             )
             passed = False
@@ -179,12 +179,12 @@ def _evaluate_section(
                 if len(parts) > 1:
                     involved_analyzers.add(parts[1])
 
-        rule_results.append(
+        scorecard_results.append(
             {
-                "name": rule.get("name", ""),
-                "title": rule.get("title", rule.get("name", "")),
-                "level": rule.get("level"),
-                "tags": rule.get("tags", []),
+                "name": scorecard.get("name", ""),
+                "title": scorecard.get("title", scorecard.get("name", "")),
+                "level": scorecard.get("level"),
+                "tags": scorecard.get("tags", []),
                 "analyzers": sorted(involved_analyzers),
                 "passed": passed,
                 "status": status,
@@ -201,42 +201,42 @@ def _evaluate_section(
 
     levels_summary = {}
     for level_name in sorted(levels_defined, key=lambda n: levels_defined[n]):
-        level_rules = [r for r in rule_results if r["level"] == level_name]
-        if level_rules:
-            passed_level = sum(1 for r in level_rules if r["passed"])
+        level_scorecards = [r for r in scorecard_results if r["level"] == level_name]
+        if level_scorecards:
+            passed_level = sum(1 for r in level_scorecards if r["passed"])
             levels_summary[level_name] = {
-                "total": len(level_rules),
+                "total": len(level_scorecards),
                 "passed": passed_level,
-                "percentage": round(passed_level / len(level_rules) * 100),
+                "percentage": round(passed_level / len(level_scorecards) * 100),
             }
 
     tags_defined = set()
-    for r in rule_results:
+    for r in scorecard_results:
         for t in r.get("tags", []):
             tags_defined.add(t)
 
     tags_summary = {}
     for tag_name in sorted(tags_defined):
-        tag_rules = [r for r in rule_results if tag_name in r.get("tags", [])]
-        if tag_rules:
-            passed_tag = sum(1 for r in tag_rules if r["passed"])
+        tag_scorecards = [r for r in scorecard_results if tag_name in r.get("tags", [])]
+        if tag_scorecards:
+            passed_tag = sum(1 for r in tag_scorecards if r["passed"])
             tags_summary[tag_name] = {
-                "total": len(tag_rules),
+                "total": len(tag_scorecards),
                 "passed": passed_tag,
-                "percentage": round(passed_tag / len(tag_rules) * 100),
+                "percentage": round(passed_tag / len(tag_scorecards) * 100),
             }
 
-    passed_count = sum(1 for r in rule_results if r["passed"])
-    total = len(rule_results)
+    passed_count = sum(1 for r in scorecard_results if r["passed"])
+    total = len(scorecard_results)
 
     section_result: dict[str, Any] = {
         "name": section.get("name", ""),
         "score": round(passed_count / total * 100) if total else 0,
-        "total_rules": total,
-        "passed_rules": passed_count,
+        "total_scorecards": total,
+        "passed_scorecards": passed_count,
         "levels_summary": levels_summary,
         "tags_summary": tags_summary,
-        "rules": rule_results,
+        "scorecards": scorecard_results,
     }
     if "hint" in section:
         section_result["hint"] = section["hint"]
@@ -267,11 +267,11 @@ def _evaluate_section(
             for display_key in display_def:
                 if display_key in ("analyzers", "widgets"):
                     render_order.append(display_key)
-        elif key in ("levels", "rules"):
+        elif key in ("levels", "scorecards"):
             render_order.append(key)
 
-    if tags_summary and "rules" in render_order:
-        idx = render_order.index("rules")
+    if tags_summary and "scorecards" in render_order:
+        idx = render_order.index("scorecards")
         render_order.insert(idx, "tags")
     elif tags_summary and "tags" not in render_order:
         render_order.append("tags")
@@ -282,28 +282,28 @@ def _evaluate_section(
 
 
 def evaluate(
-    scorecard: dict[str, Any],
+    playbook: dict[str, Any],
     report: dict[str, Any],
     source_name: str | None = None,
 ) -> dict[str, Any]:
-    """Evaluate a scorecard against an analysis report.
+    """Evaluate a playbook against an analysis report.
 
     Returns a result dict with:
-    - ``scorecard_name`` — name of the scorecard
-    - ``sections``       — per-section breakdown (rules, levels, display, widgets)
-    - ``score``          — overall percentage of rules passed (0–100)
+    - ``playbook_name``  — name of the playbook
+    - ``sections``       — per-section breakdown (scorecards, levels, display, widgets)
+    - ``score``          — overall percentage of scorecards passed (0–100)
     """
     # Build data context.
     raw_context = _flatten(report)
     raw_context.update(report)
 
-    pages_defs = scorecard.get("pages")
-    sections_defs = scorecard.get("sections")
+    pages_defs = playbook.get("pages")
+    sections_defs = playbook.get("sections")
 
     if not pages_defs and not sections_defs:
         raise ValueError(
-            f"Scorecard '{scorecard.get('name', 'unnamed')}' is missing "
-            "both 'pages' and 'sections'. Every scorecard must define at least one."
+            f"Playbook '{playbook.get('name', 'unnamed')}' is missing "
+            "both 'pages' and 'sections'. Every playbook must define at least one."
         )
 
     if not pages_defs:
@@ -311,40 +311,41 @@ def evaluate(
         pages_defs = [{"name": "Default", "sections": sections_defs}]
 
     pages_results = []
-    total_rules_all = 0
+    total_scorecards_all = 0
     total_passed_all = 0
 
     for page_def in pages_defs:
         page_sections_defs = page_def.get("sections", [])
         page_sections_results = []
-        page_total_rules = 0
-        page_passed_rules = 0
+        page_total_scorecards = 0
+        page_passed_scorecards = 0
 
         for section_def in page_sections_defs:
             section_result = _evaluate_section(section_def, raw_context)
             page_sections_results.append(section_result)
-            page_total_rules += section_result["total_rules"]
-            page_passed_rules += section_result["passed_rules"]
+            page_total_scorecards += section_result["total_scorecards"]
+            page_passed_scorecards += section_result["passed_scorecards"]
 
         pages_results.append(
             {
-                "name": page_def.get("name", "Default"),
+                "title": page_def.get("title", "Default"),
+                "slug": page_def.get("slug"),
                 "score": (
-                    round(page_passed_rules / page_total_rules * 100)
-                    if page_total_rules
+                    round(page_passed_scorecards / page_total_scorecards * 100)
+                    if page_total_scorecards
                     else 0
                 ),
-                "total_rules": page_total_rules,
-                "passed_rules": page_passed_rules,
+                "total_scorecards": page_total_scorecards,
+                "passed_scorecards": page_passed_scorecards,
                 "sections": page_sections_results,
             }
         )
-        total_rules_all += page_total_rules
-        total_passed_all += page_passed_rules
+        total_scorecards_all += page_total_scorecards
+        total_passed_all += page_passed_scorecards
 
-    # Resolve format strings for any scorecard-level links using the report context
+    # Resolve format strings for any playbook-level links using the report context
     resolved_links = []
-    for link_def in scorecard.get("links", []):
+    for link_def in playbook.get("links", []):
         if not isinstance(link_def, dict):
             continue
 
@@ -366,14 +367,16 @@ def evaluate(
             # but maybe the user wants it anyway. For now, strictly format it.
 
     result = {
-        "scorecard_name": scorecard.get("name", "unnamed"),
+        "playbook_name": playbook.get("name", "unnamed"),
         "score": (
-            round(total_passed_all / total_rules_all * 100) if total_rules_all else 0
+            round(total_passed_all / total_scorecards_all * 100)
+            if total_scorecards_all
+            else 0
         ),
-        "total_rules": total_rules_all,
-        "passed_rules": total_passed_all,
+        "total_scorecards": total_scorecards_all,
+        "passed_scorecards": total_passed_all,
         "pages": pages_results,
-        "slug": scorecard.get("slug"),
+        "slug": playbook.get("slug"),
     }
 
     meta = {}

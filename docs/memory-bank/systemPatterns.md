@@ -5,9 +5,9 @@
 
 ### Key Components
 - **CLI (Click)**: Entry point for user interaction.
-- **Engine**: Orchestrates analysis and scorecard evaluation.
+- **Engine**: Orchestrates analysis and playbook evaluation.
 - **Analyzers**: Pluggable modules that extract specific data (e.g., Skopeo, Trivy, Hadolint).
-- **Scorecard Engine**: Evaluates JSON logic rules against analyzer results.
+- **Playbook Engine**: Evaluates JSON logic rules against analyzer results.
 - **Report Generators**: Produces output in various formats using Jinja2 templates.
 
 ## Rules and Standards

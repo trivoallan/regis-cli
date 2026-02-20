@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli.dev/schemas/scorecard.schema.json",
-  "title": "Scorecard Definition",
-  "description": "Schema for regis-cli scorecard definition files (YAML or JSON).",
+  "$id": "https://regis-cli.dev/schemas/playbook.schema.json",
+  "title": "Playbook Definition",
+  "description": "Schema for regis-cli playbook definition files (YAML or JSON).",
   "type": "object",
   "required": ["name"],
   "anyOf": [
@@ -13,11 +13,11 @@
   "properties": {
     "name": {
       "type": "string",
-      "description": "Display name of the scorecard."
+      "description": "Display name of the playbook."
     },
     "description": {
       "type": "string",
-      "description": "Human-readable description of what this scorecard evaluates."
+      "description": "Human-readable description of what this playbook evaluates."
     },
     "slug": {
       "type": "string",
@@ -25,7 +25,7 @@
     },
     "links": {
       "type": "array",
-      "description": "Optional custom links to display as actions for this scorecard.",
+      "description": "Optional custom links to display as actions for this playbook.",
       "items": {
         "type": "object",
         "required": ["label", "url"],
@@ -37,7 +37,7 @@
     },
     "pages": {
       "type": "array",
-      "description": "List of scorecard pages. Each page groups sections.",
+      "description": "List of playbook pages. Each page groups sections.",
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/page"
@@ -45,7 +45,7 @@
     },
     "sections": {
       "type": "array",
-      "description": "List of scorecard sections. Each section groups rules, levels, and display preferences.",
+      "description": "List of playbook sections. Each section groups scorecards, levels, and display preferences.",
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/section"
@@ -55,16 +55,20 @@
   "$defs": {
     "page": {
       "type": "object",
-      "description": "A scorecard page containing sections.",
-      "required": ["name", "sections"],
+      "description": "A playbook page containing sections.",
+      "required": ["title", "sections"],
       "properties": {
-        "name": {
+        "title": {
           "type": "string",
           "description": "Display name of the page."
         },
+        "slug": {
+          "type": "string",
+          "description": "Short identifier used for HTML report filename generation. If not provided, it falls back to the playbook slug."
+        },
         "sections": {
           "type": "array",
-          "description": "List of scorecard sections.",
+          "description": "List of playbook sections.",
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/section"
@@ -75,7 +79,7 @@
     },
     "section": {
       "type": "object",
-      "description": "A scorecard section containing rules, optional levels, and display preferences.",
+      "description": "A playbook section containing scorecards, optional levels, and display preferences.",
       "properties": {
         "name": {
           "type": "string",
@@ -90,16 +94,16 @@
         },
         "levels": {
           "type": "array",
-          "description": "Priority/severity levels used to group rules. Built-in fallback order exists for bronze, silver, gold.",
+          "description": "Priority/severity levels used to group scorecards. Built-in fallback order exists for bronze, silver, gold.",
           "items": {
             "$ref": "#/$defs/level"
           }
         },
-        "rules": {
+        "scorecards": {
           "type": "array",
-          "description": "Evaluation rules with JsonLogic conditions.",
+          "description": "Evaluation scorecards with JsonLogic conditions.",
           "items": {
-            "$ref": "#/$defs/rule"
+            "$ref": "#/$defs/scorecard"
           }
         }
       },
@@ -148,12 +152,12 @@
     },
     "level": {
       "type": "object",
-      "description": "A priority/severity level used to group and summarise rules.",
+      "description": "A priority/severity level used to group and summarise scorecards.",
       "required": ["name"],
       "properties": {
         "name": {
           "type": "string",
-          "description": "Level identifier referenced by rules."
+          "description": "Level identifier referenced by scorecards."
         },
         "label": {
           "type": "string",
@@ -166,14 +170,14 @@
       },
       "additionalProperties": false
     },
-    "rule": {
+    "scorecard": {
       "type": "object",
-      "description": "An evaluation rule with a JsonLogic condition.",
+      "description": "An evaluation scorecard with a JsonLogic condition.",
       "required": ["name", "condition"],
       "properties": {
         "name": {
           "type": "string",
-          "description": "Unique identifier for the rule."
+          "description": "Unique identifier for the scorecard."
         },
         "title": {
           "type": "string",
@@ -181,7 +185,7 @@
         },
         "level": {
           "type": "string",
-          "description": "Level this rule belongs to. Must match a level name defined in the section."
+          "description": "Level this scorecard belongs to. Must match a level name defined in the section."
         },
         "tags": {
           "type": "array",

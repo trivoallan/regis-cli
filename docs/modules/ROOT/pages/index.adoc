@@ -1,5 +1,5 @@
 = regis-cli
 
-`regis-cli` is a powerful tool to analyze Docker image registries, evaluate security scorecards, and produce rich HTML/JSON reports.
+`regis-cli` is a powerful tool to analyze Docker image registries, evaluate security playbooks, and produce rich HTML/JSON reports.
 
 Check out the xref:github-workflow.adoc[GitHub Workflow Guide] to learn how to integrate it into your CI/CD.

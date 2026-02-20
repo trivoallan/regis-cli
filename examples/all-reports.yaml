@@ -1,21 +1,22 @@
-# yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
+# yaml-language-server: $schema=../regis_cli/schemas/playbook.schema.json
 name: all-reports
 
-slug: index
-
-sections:
-  - name: All Analyzers
-    hint: Display all analyzers in one place.
-    display:
-      analyzers:
-        - endoflife
-        - freshness
-        - popularity
-        - provenance
-        - sbom
-        - hadolint
-        - scorecarddev
-        - size
-        - skopeo
-        - trivy
-        - versioning
+pages:
+  - title: Global Security
+    slug: global-security
+    sections:
+      - name: All Analyzers
+        hint: Display all analyzers in one place.
+        display:
+          analyzers:
+            - endoflife
+            - freshness
+            - popularity
+            - provenance
+            - sbom
+            - hadolint
+            - scorecarddev
+            - size
+            - skopeo
+            - trivy
+            - versioning

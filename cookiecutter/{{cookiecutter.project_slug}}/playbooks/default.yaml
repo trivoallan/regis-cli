@@ -6,7 +6,7 @@ html:
 
 sections:
   - name: Security
-    rules:
+    scorecards:
       - name: no-root
         title: Image should not run as root.
         level: critical
@@ -20,7 +20,7 @@ sections:
           "<": [{ var: results.freshness.age_days }, 30]
 
   - name: Vulnerabilities
-    rules:
+    scorecards:
       - name: no-critical
         title: No critical vulnerabilities found by Trivy.
         level: critical

@@ -1,11 +1,11 @@
-"""Tests for the scorecard evaluation engine."""
+"""Tests for the playbook evaluation engine."""
 
 from __future__ import annotations
 
 import pytest
 import yaml
 
-from regis_cli.scorecard.engine import _flatten, evaluate, load_scorecard
+from regis_cli.playbook.engine import _flatten, evaluate, load_playbook
 
 
 class TestFlatten:
@@ -20,8 +20,8 @@ class TestFlatten:
         assert _flatten({}) == {}
 
 
-class TestLoadScorecard:
-    """Test scorecard loading."""
+class TestLoadPlaybook:
+    """Test playbook loading."""
 
     def test_load_from_file(self, tmp_path):
         custom = {
@@ -30,10 +30,10 @@ class TestLoadScorecard:
                 {
                     "name": "Main",
                     "levels": [{"name": "bronze", "order": 1}],
-                    "rules": [
+                    "scorecards": [
                         {
-                            "name": "test-rule",
-                            "title": "A test rule",
+                            "name": "test-scorecard",
+                            "title": "A test scorecard",
                             "level": "bronze",
                             "condition": {"==": [1, 1]},
                         },
@@ -43,9 +43,9 @@ class TestLoadScorecard:
         }
         p = tmp_path / "custom.yaml"
         p.write_text(yaml.dump(custom))
-        loaded = load_scorecard(p)
+        loaded = load_playbook(p)
         assert loaded["name"] == "Custom"
-        assert len(loaded["sections"][0]["rules"]) == 1
+        assert len(loaded["sections"][0]["scorecards"]) == 1
 
     def test_load_json(self, tmp_path):
         import json
@@ -56,7 +56,7 @@ class TestLoadScorecard:
                 {
                     "name": "Main",
                     "levels": [{"name": "bronze", "order": 1}],
-                    "rules": [
+                    "scorecards": [
                         {
                             "name": "always-pass",
                             "title": "Always passes",
@@ -69,15 +69,15 @@ class TestLoadScorecard:
         }
         p = tmp_path / "custom.json"
         p.write_text(json.dumps(custom))
-        loaded = load_scorecard(p)
+        loaded = load_playbook(p)
         assert loaded["name"] == "JSON Card"
 
 
 class TestEvaluate:
-    """Test scorecard evaluation."""
+    """Test playbook evaluation."""
 
-    SCORECARD = {
-        "name": "Test Scorecard",
+    PLAYBOOK = {
+        "name": "Test Playbook",
         "sections": [
             {
                 "name": "Test",
@@ -86,7 +86,7 @@ class TestEvaluate:
                     {"name": "silver", "order": 2},
                     {"name": "gold", "order": 3},
                 ],
-                "rules": [
+                "scorecards": [
                     {
                         "name": "has-tags",
                         "title": "Has tags",
@@ -103,9 +103,9 @@ class TestEvaluate:
                     },
                     {
                         "name": "good-score",
-                        "title": "Good scorecard",
+                        "title": "Good playbook",
                         "level": "gold",
-                        "condition": {">=": [{"var": "results.scorecarddev.score"}, 7]},
+                        "condition": {">=": [{"var": "results.playbookdev.score"}, 7]},
                     },
                 ],
             }
@@ -117,71 +117,71 @@ class TestEvaluate:
             "results": {
                 "tags": {"total_tags": 100},
                 "provenance": {"has_provenance": True},
-                "scorecarddev": {"score": 8},
+                "playbookdev": {"score": 8},
             },
         }
-        result = evaluate(self.SCORECARD, report)
+        result = evaluate(self.PLAYBOOK, report)
         assert result["score"] == 100
-        assert result["passed_rules"] == 3
+        assert result["passed_scorecards"] == 3
         section = result["pages"][0]["sections"][0]
-        assert all(r["passed"] for r in section["rules"])
+        assert all(r["passed"] for r in section["scorecards"])
 
     def test_partial_pass(self):
         report = {
             "results": {
                 "tags": {"total_tags": 50},
                 "provenance": {"has_provenance": False},
-                "scorecarddev": {"score": 2},
+                "playbookdev": {"score": 2},
             },
         }
-        result = evaluate(self.SCORECARD, report)
-        assert result["passed_rules"] == 1
+        result = evaluate(self.PLAYBOOK, report)
+        assert result["passed_scorecards"] == 1
 
     def test_two_pass(self):
         report = {
             "results": {
                 "tags": {"total_tags": 50},
                 "provenance": {"has_provenance": True},
-                "scorecarddev": {"score": 3},
+                "playbookdev": {"score": 3},
             },
         }
-        result = evaluate(self.SCORECARD, report)
-        assert result["passed_rules"] == 2
+        result = evaluate(self.PLAYBOOK, report)
+        assert result["passed_scorecards"] == 2
 
     def test_tags_propagation(self):
-        """Test that tags are correctly copied from rule defs to results."""
-        scorecard = {
+        """Test that tags are correctly copied from scorecard defs to results."""
+        playbook = {
             "name": "Tags Test",
             "sections": [
                 {
                     "name": "Main",
-                    "rules": [
+                    "scorecards": [
                         {
-                            "name": "rule-with-tags",
+                            "name": "scorecard-with-tags",
                             "tags": ["tag1", "tag2"],
                             "condition": {"==": [1, 1]},
                         },
                         {
-                            "name": "rule-without-tags",
+                            "name": "scorecard-without-tags",
                             "condition": {"==": [1, 1]},
                         },
                     ],
                 }
             ],
         }
-        result = evaluate(scorecard, {})
-        rules = result["pages"][0]["sections"][0]["rules"]
-        assert rules[0]["tags"] == ["tag1", "tag2"]
-        assert rules[1]["tags"] == []
+        result = evaluate(playbook, {})
+        scorecards = result["pages"][0]["sections"][0]["scorecards"]
+        assert scorecards[0]["tags"] == ["tag1", "tag2"]
+        assert scorecards[1]["tags"] == []
 
     def test_incomplete_status(self):
         """Test that missing data results in an 'incomplete' status."""
-        scorecard = {
+        playbook = {
             "name": "Missing Data Test",
             "sections": [
                 {
                     "name": "Main",
-                    "rules": [
+                    "scorecards": [
                         {
                             "name": "missing-var",
                             "condition": {">": [{"var": "non_existent"}, 0]},
@@ -190,26 +190,26 @@ class TestEvaluate:
                 }
             ],
         }
-        result = evaluate(scorecard, {"some_other_data": 42})
-        rules = result["pages"][0]["sections"][0]["rules"]
-        assert rules[0]["status"] == "incomplete"
-        assert "MISSING" in rules[0]["details"]
+        result = evaluate(playbook, {"some_other_data": 42})
+        scorecards = result["pages"][0]["sections"][0]["scorecards"]
+        assert scorecards[0]["status"] == "incomplete"
+        assert "MISSING" in scorecards[0]["details"]
 
     def test_no_pass(self):
         report = {
             "results": {
                 "tags": {"total_tags": 0},
                 "provenance": {"has_provenance": False},
-                "scorecarddev": {"score": 0},
+                "playbookdev": {"score": 0},
                 "trivy": {"vulnerability_count": 100},
             },
         }
-        result = evaluate(self.SCORECARD, report)
-        assert result["passed_rules"] == 0
+        result = evaluate(self.PLAYBOOK, report)
+        assert result["passed_scorecards"] == 0
 
-    def test_empty_rules(self):
+    def test_empty_scorecards(self):
         result = evaluate(
-            {"name": "empty", "sections": [{"name": "Main", "rules": []}]}, {}
+            {"name": "empty", "sections": [{"name": "Main", "scorecards": []}]}, {}
         )
         assert result["score"] == 0
 
@@ -218,60 +218,60 @@ class TestEvaluate:
             "results": {
                 "tags": {"total_tags": 10},
                 "provenance": {"has_provenance": True},
-                "scorecarddev": {"score": 3},
+                "playbookdev": {"score": 3},
             },
         }
-        result = evaluate(self.SCORECARD, report)
+        result = evaluate(self.PLAYBOOK, report)
         assert result["score"] == 67  # 2/3 = 66.67 → rounds to 67
 
     def test_missing_data_fails_gracefully(self):
-        """Rules referencing missing data should fail, not crash."""
+        """Scorecards referencing missing data should fail, not crash."""
         report = {"results": {}}
-        result = evaluate(self.SCORECARD, report)
+        result = evaluate(self.PLAYBOOK, report)
         assert isinstance(result["score"], int)
 
     def test_missing_sections_raises(self):
-        """Scorecards without sections must raise ValueError."""
-        scorecard = {
+        """Playbooks without sections must raise ValueError."""
+        playbook = {
             "name": "Legacy",
-            "rules": [{"name": "r", "condition": {"==": [1, 1]}}],
+            "scorecards": [{"name": "r", "condition": {"==": [1, 1]}}],
         }
         with pytest.raises(ValueError, match="missing both 'pages' and 'sections'"):
-            evaluate(scorecard, {})
+            evaluate(playbook, {})
 
     def test_multi_section(self):
         """Multiple sections aggregate correctly."""
-        scorecard = {
+        playbook = {
             "name": "Multi",
             "sections": [
                 {
                     "name": "A",
-                    "rules": [
+                    "scorecards": [
                         {"name": "a1", "title": "A1", "condition": {"==": [1, 1]}},
                     ],
                 },
                 {
                     "name": "B",
-                    "rules": [
+                    "scorecards": [
                         {"name": "b1", "title": "B1", "condition": {"==": [1, 0]}},
                     ],
                 },
             ],
         }
-        result = evaluate(scorecard, {})
-        assert result["total_rules"] == 2
-        assert result["passed_rules"] == 1
+        result = evaluate(playbook, {})
+        assert result["total_scorecards"] == 2
+        assert result["passed_scorecards"] == 1
         assert result["score"] == 50
         assert len(result["pages"][0]["sections"]) == 2
 
     def test_render_order(self):
         """render_order reflects the YAML key definition order."""
-        scorecard = {
+        playbook = {
             "name": "Order Test",
             "sections": [
                 {
-                    "name": "Rules First",
-                    "rules": [
+                    "name": "Scorecards First",
+                    "scorecards": [
                         {"name": "r1", "title": "R1", "condition": {"==": [1, 1]}},
                     ],
                     "display": {
@@ -282,6 +282,6 @@ class TestEvaluate:
                 },
             ],
         }
-        result = evaluate(scorecard, {})
+        result = evaluate(playbook, {})
         order = result["pages"][0]["sections"][0]["render_order"]
-        assert order == ["rules", "widgets", "analyzers", "levels"]
+        assert order == ["scorecards", "widgets", "analyzers", "levels"]
