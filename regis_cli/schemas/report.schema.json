@@ -4,8 +4,12 @@
   "title": "regis-cli Analysis Report",
   "description": "Final report envelope produced by regis-cli, containing request metadata and analyzer results.",
   "type": "object",
-  "required": ["request", "results"],
+  "required": ["request", "results", "version"],
   "properties": {
+    "version": {
+      "type": "string",
+      "description": "Version of regis-cli that generated this report."
+    },
     "metadata": {
       "type": "object",
       "description": "Arbitrary user-provided metadata.",

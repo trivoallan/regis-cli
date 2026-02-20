@@ -343,7 +343,10 @@ def analyze(
             else:
                 _set_nested_value(metadata_dict, item, "true")
 
+        from importlib.metadata import version
+
         analysis_report: dict[str, Any] = {
+            "version": version("regis-cli"),
             "request": {
                 "url": url,
                 "registry": ref.registry,
