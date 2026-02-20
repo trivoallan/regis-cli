@@ -1,13 +1,5 @@
 # Decision Log
 
-## 2026-02-20: Transition to Least-Privilege Workflow Permissions
-- **Decision**: Remove write permissions from top-level workflow blocks.
-- **Rationale**: Adhering to GitHub security best practices by only granting write access at the specific job level where it's actually needed.
-
-## 2026-02-20: Documentation as Code with Antora
-- **Decision**: Use Antora for documentation and maintain a Memory Bank in `docs/memory-bank/`.
-- **Rationale**: Aligning with project rules for structured, maintainable, and versioned documentation.
-
 ## 2026-02-20: Handle Skopeo Architecture Mismatch
 - **Decision**: Avoid high-level `skopeo inspect` on image indexes when the local architecture doesn't match the remote index.
 - **Rationale**: Prevent "no image found" errors (exit status 1) when analyzing multi-arch images on local dev machines (e.g., Apple Silicon).
@@ -19,3 +11,8 @@
 ## 2026-02-20: Cookiecutter Template for Consumer Repos
 - **Decision**: Create a Cookiecutter template to bootstrap new repositories for `regis-cli` users.
 - **Rationale**: Facilitate adoption and standardize the setup for image analysis projects, including CI/CD and security policies.
+
+## 2026-02-20: Fix Docker Permission Issues
+- **Decision**: Update `Dockerfile` to create a home directory for the `regis` user and set `HOME`.
+- **Decision**: Update template workflow to `chmod 777 reports` before analysis.
+- **Rationale**: Fix "permission denied" errors when running analyzers like Trivy (which need a home dir for cache) and when writing reports to host-mounted volumes in CI/CD.

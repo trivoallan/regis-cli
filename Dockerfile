@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     skopeo \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a non-root user
-RUN groupadd -r regis && useradd -r -g regis regis
+# Create a non-root user with a home directory
+RUN groupadd -r regis && useradd -r -g regis -m -d /home/regis regis
+ENV HOME=/home/regis
 
 # Install Trivy
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin

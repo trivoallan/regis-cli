@@ -6,8 +6,6 @@ permissions:
   id-token: write
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
       image_url:
@@ -28,10 +26,11 @@ jobs:
       - name: Run regis-cli
         run: |
           mkdir -p reports
+          chmod 777 reports
           docker run --rm \
             -v ${PWD}/reports:/app/reports \
             -v ${PWD}/scorecards:/app/scorecards \
-            ghcr.io/trivoallan/regis-cli:latest \
+            ghcr.io/trivoallan/regis-cli:main \
             analyze "{% raw %}${{ github.event.inputs.image_url }}{% endraw %}" \
             -s scorecards/default.yaml \
             -f html -f json
@@ -54,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: {% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}
+      url: "{% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}"
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
