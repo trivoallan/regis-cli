@@ -2,17 +2,27 @@ name: releaser-pleaser
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request_target:
+    types:
+      - edited
+      - labeled
+      - unlabeled
 
 permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: releaser-pleaser
+  cancel-in-progress: true
+
 jobs:
   releaser-pleaser:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - uses: apricote/releaser-pleaser@v0.7.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: releaser-pleaser
+        uses: apricote/releaser-pleaser@v0.7.1

@@ -34,6 +34,4 @@ jobs:
           VALIDATE_PYTHON_FLAKE8: true
           VALIDATE_PYTHON_ISORT: true
           VALIDATE_PYTHON_MYPY: true
-          # Disable things we might not want yet
-          VALIDATE_JSCPD: false
           VALIDATE_DOCKERFILE_HADOLINT: true
