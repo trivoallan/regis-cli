@@ -25,7 +25,6 @@ regis-cli = "regis_cli.cli:main"
 
 [project.entry-points."regis_cli.analyzers"]
 tags = "regis_cli.analyzers.tags:TagsAnalyzer"
-image = "regis_cli.analyzers.image:ImageAnalyzer"
 versioning = "regis_cli.analyzers.versioning:VersioningAnalyzer"
 scorecarddev = "regis_cli.analyzers.scorecarddev:ScorecardDevAnalyzer"
 skopeo = "regis_cli.analyzers.skopeo:SkopeoAnalyzer"

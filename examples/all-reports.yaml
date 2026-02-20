@@ -7,7 +7,6 @@ sections:
       analyzers:
         - endoflife
         - freshness
-        - image
         - popularity
         - provenance
         - sbom

@@ -2,15 +2,11 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Skopeo Analyzer Report",
   "type": "object",
-  "required": [
-    "analyzer",
-    "repository",
-    "tag"
-  ],
+  "required": ["analyzer", "repository", "tag", "platforms"],
   "properties": {
     "analyzer": {
       "type": "string",
-      "enum": ["skopeo"]
+      "const": "skopeo"
     },
     "repository": {
       "type": "string"
@@ -20,7 +16,27 @@
     },
     "inspect": {
       "type": "object",
-      "description": "Raw output from skopeo inspect"
+      "description": "Raw output from primary skopeo inspect"
+    },
+    "platforms": {
+      "type": "array",
+      "description": "List of platform variants available for this tag.",
+      "items": {
+        "type": "object",
+        "required": ["architecture", "os"],
+        "properties": {
+          "architecture": { "type": "string" },
+          "os": { "type": "string" },
+          "variant": { "type": "string" },
+          "digest": { "type": "string" },
+          "created": { "type": ["string", "null"] },
+          "labels": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "layers_count": { "type": "integer", "minimum": 0 }
+        }
+      }
     }
   },
   "additionalProperties": false

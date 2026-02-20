@@ -1,40 +1,42 @@
 <div class="card analyzer-card" id="analyzer-skopeo">
     <header>
-        <h3>Skopeo (Raw Metadata)</h3>
-        <span class="badge info">Raw Data</span>
+        <h3>Skopeo (Image Metadata)</h3>
+        <span class="badge info">Registry Data</span>
     </header>
     
     <div class="card-body">
-        <p>Raw inspection data from <code>skopeo inspect</code>.</p>
+        <p>Metadata resolved via <code>skopeo inspect</code>.</p>
         
-        <details>
-            <summary>View Raw JSON</summary>
-            <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; max-height: 400px;"><code>{{ data.inspect | tojson(indent=2) }}</code></pre>
-        </details>
-
-        <div style="margin-top: 1rem; font-size: 0.9rem;">
+        <div class="platforms-list" style="margin-bottom: 1.5rem;">
+            <h4>Available Platforms</h4>
             <table class="data-table">
-                <tr>
-                    <th>Digest</th>
-                    <td><code>{{ data.inspect.Digest }}</code></td>
-                </tr>
-                <tr>
-                    <th>Created</th>
-                    <td>{{ data.inspect.Created }}</td>
-                </tr>
-                <tr>
-                    <th>Docker Version</th>
-                    <td>{{ data.inspect.DockerVersion }}</td>
-                </tr>
-                <tr>
-                    <th>Architecture</th>
-                    <td>{{ data.inspect.Architecture }}</td>
-                </tr>
-                <tr>
-                    <th>OS</th>
-                    <td>{{ data.inspect.Os }}</td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Digest</th>
+                        <th>Created</th>
+                        <th>Layers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plat in data.platforms %}
+                    <tr>
+                        <td>
+                            <strong>{{ plat.os }}/{{ plat.architecture }}</strong>
+                            {% if plat.variant %}<small>({{ plat.variant }})</small>{% endif %}
+                        </td>
+                        <td><code title="{{ plat.digest }}">{{ plat.digest[:15] }}...</code></td>
+                        <td>{{ plat.created or 'N/A' }}</td>
+                        <td>{{ plat.layers_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
+
+        <details>
+            <summary class="btn-link">View Raw JSON Metadata</summary>
+            <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; max-height: 400px; margin-top: 0.5rem;"><code>{{ data.inspect | tojson(indent=2) }}</code></pre>
+        </details>
     </div>
 </div>

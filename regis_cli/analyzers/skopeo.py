@@ -1,10 +1,11 @@
-"""Skopeo analyzer — provides raw image metadata using skopeo inspect."""
+"""Skopeo analyzer — provides raw image metadata and platform details using skopeo."""
 
 from __future__ import annotations
 
 import json
 import logging
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
@@ -12,9 +13,18 @@ from regis_cli.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)
 
+# Manifest media types indicating a multi-arch manifest list.
+_INDEX_TYPES = {
+    "application/vnd.docker.distribution.manifest.list.v2+json",
+    "application/vnd.oci.image.index.v1+json",
+}
+
+# Default timeout for Skopeo calls (seconds)
+DEFAULT_TIMEOUT = 60
+
 
 class SkopeoAnalyzer(BaseAnalyzer):
-    """Fetch raw metadata for a Docker image using skopeo inspect."""
+    """Fetch metadata for a Docker image using skopeo. Provides raw inspect data and structured platform details."""
 
     name = "skopeo"
     schema_file = "skopeo.schema.json"
@@ -25,47 +35,156 @@ class SkopeoAnalyzer(BaseAnalyzer):
         repository: str,
         tag: str,
     ) -> dict[str, Any]:
-        """Return the raw JSON from skopeo inspect."""
+        """Return a report with raw skopeo inspect data and per-platform metadata."""
+        # 'registry-1.docker.io' -> 'docker.io' for skopeo compatibility
         registry = client.registry
+        if registry == "registry-1.docker.io":
+            registry = "docker.io"
+
         target = f"docker://{registry}/{repository}:{tag}"
 
-        cmd = [
-            "skopeo",
-            "inspect",
-            "--override-os", "linux",
-            "--override-arch", "amd64",
-            target,
-        ]
-
-        if client.username and client.password:
-            cmd.extend(["--creds", f"{client.username}:{client.password}"])
-
-        logger.debug("Running skopeo: %s", " ".join(cmd))
-
+        # 1. Fetch raw manifest (to see if it's an index)
         try:
-            res = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            inspect_data = json.loads(res.stdout)
+            raw_manifest_stdout = self._run_skopeo(client, ["inspect", "--raw", target])
+            manifest = json.loads(raw_manifest_stdout)
         except subprocess.CalledProcessError as e:
-            msg = f"Skopeo inspect failed for {target}: {e.stderr}"
+            msg = f"Skopeo inspect --raw failed for {target}: {e.stderr}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
-        except FileNotFoundError as e:
-            msg = "skopeo not found. Ensure it is installed and in PATH."
+        except Exception as e:
+            msg = f"Failed to fetch raw manifest for {target}: {e}"
             logger.error(msg)
             raise AnalyzerError(msg) from e
-        except json.JSONDecodeError as e:
-            msg = f"Failed to parse skopeo output for {target}: {res.stdout}"
-            logger.error(msg)
-            raise AnalyzerError(msg) from e
+
+        # 2. Fetch primary inspect data (raw metadata)
+        try:
+            primary_inspect_stdout = self._run_skopeo(client, ["inspect", target])
+            inspect_data = json.loads(primary_inspect_stdout)
+        except Exception as e:
+            logger.warning("Could not fetch primary inspect data for %s: %s", target, e)
+            inspect_data = {}
+
+        # 3. Resolve platforms
+        media_type = manifest.get("mediaType", "")
+        platforms: list[dict[str, Any]] = []
+
+        if media_type in _INDEX_TYPES:
+            # Multi-arch image — iterate over each platform manifest in parallel.
+            entries = manifest.get("manifests", [])
+            # Limit workers to avoid overwhelming the system
+            max_workers = min(10, len(entries) or 1)
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = []
+                for entry in entries:
+                    platform_info = entry.get("platform", {})
+                    digest = entry.get("digest", "")
+                    futures.append(
+                        executor.submit(
+                            self._inspect_platform,
+                            client,
+                            registry,
+                            repository,
+                            digest,
+                            platform_info,
+                        )
+                    )
+                for future in futures:
+                    try:
+                        platforms.append(future.result())
+                    except Exception as e:
+                        logger.error("Failed to inspect platform: %s", e)
+        else:
+            # Single-platform manifest or fallback.
+            detail = self._inspect_platform(client, registry, repository, tag, {})
+            # If we already have the raw manifest with layers, use it.
+            if "layers" in manifest:
+                detail["layers_count"] = len(manifest["layers"])
+            platforms.append(detail)
 
         return {
             "analyzer": self.name,
             "repository": repository,
             "tag": tag,
             "inspect": inspect_data,
+            "platforms": platforms,
         }
+
+    # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _run_skopeo(client: RegistryClient, args: list[str]) -> str:
+        """Run skopeo with the given arguments, injecting credentials if present."""
+        cmd = ["skopeo"] + args
+        if client.username and client.password:
+            cmd.extend(["--creds", f"{client.username}:{client.password}"])
+
+        logger.debug("Running skopeo: %s", " ".join(cmd))
+        try:
+            res = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=DEFAULT_TIMEOUT,
+            )
+            return res.stdout
+        except subprocess.CalledProcessError as e:
+            # Ensure we have stderr in the error message
+            raise e from None
+        except FileNotFoundError:
+            raise AnalyzerError(
+                "skopeo not found. Ensure it is installed and in PATH."
+            ) from None
+
+    def _inspect_platform(
+        self,
+        client: RegistryClient,
+        registry: str,
+        repository: str,
+        ref: str,
+        platform_info: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Inspect a single platform by running skopeo inspect."""
+        result: dict[str, Any] = {
+            "architecture": platform_info.get("architecture", "unknown"),
+            "os": platform_info.get("os", "unknown"),
+        }
+
+        if ref.startswith("sha256:"):
+            result["digest"] = ref
+            target = f"docker://{registry}/{repository}@{ref}"
+        else:
+            target = f"docker://{registry}/{repository}:{ref}"
+
+        if "variant" in platform_info:
+            result["variant"] = platform_info["variant"]
+
+        # Run high-level inspect to get Architecture, Os, Labels, Created, and Layers count.
+        args = ["inspect"]
+        if result["os"] != "unknown":
+            args.extend(["--override-os", result["os"]])
+        if result["architecture"] != "unknown":
+            args.extend(["--override-arch", result["architecture"]])
+        args.append(target)
+
+        try:
+            inspect_stdout = self._run_skopeo(client, args)
+            data = json.loads(inspect_stdout)
+
+            result["created"] = data.get("Created")
+            result["labels"] = data.get("Labels") or {}
+            result["layers_count"] = len(data.get("Layers", []))
+
+            if result["architecture"] == "unknown":
+                result["architecture"] = data.get("Architecture", "unknown")
+            if result["os"] == "unknown":
+                result["os"] = data.get("Os", "unknown")
+
+        except subprocess.CalledProcessError as e:
+            logger.debug("Skopeo command failed for %s: %s", target, e.stderr)
+        except Exception:
+            logger.debug("Could not inspect platform %s", target, exc_info=True)
+
+        return result

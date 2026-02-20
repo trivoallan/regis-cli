@@ -45,7 +45,7 @@ pages:
     sections:
       - name: Technical
         display:
-          analyzers: [size, tags, versioning]
+          analyzers: [size, tags, versioning, hadolint, skopeo]
       - name: Maturity
         display:
           analyzers: [endoflife, freshness, popularity]
