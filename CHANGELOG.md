@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.2.2](https://github.com/trivoallan/regis-cli/releases/tag/v0.2.2)
+
+### Bug Fixes
+
+- **ci**: configure releaser-pleaser action with release token
+
 ## [v0.2.1](https://github.com/trivoallan/regis-cli/releases/tag/v0.2.1)
 
 ### Bug Fixes
