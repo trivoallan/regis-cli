@@ -66,8 +66,8 @@
                                     <div class="{{ w_class }}" style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: {{ w_align }}; {% if w.resolved_url %}cursor: pointer;{% endif %}">
                                         {%- if w.resolved_url -%}<a href="{{ w.resolved_url }}" style="text-decoration: none; color: inherit; display: block;">{%- endif -%}
                                         {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
-                                        <strong>{{ w.label|e }}</strong><br>
-                                        <span style="font-size: 1.4rem; font-weight: bold;">
+                                        <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">{{ w.label|e }}</strong><br>
+                                        <span style="font-size: 2rem; font-weight: bold; line-height: 1;">
                                             {%- if w.resolved_value is sameas true -%}✅
                                             {%- elif w.resolved_value is sameas false -%}❌
                                             {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>
@@ -88,11 +88,11 @@
                                     <div class="grid" style="margin-bottom: calc(4 * var(--pico-spacing));">
                                     {% set ns.in_grid = true %}
                                 {% endif %}
-                                <div class="{{ w_class }}" style="text-align: {{ w_align }};">
+                                <div class="{{ w_class }}" style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: {{ w_align }}; {% if w.resolved_url %}cursor: pointer;{% endif %}">
                                     {%- if w.resolved_url -%}<a href="{{ w.resolved_url }}" style="text-decoration: none; color: inherit; display: block;">{%- endif -%}
                                     {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
-                                    <strong>{{ w.label|e }}</strong><br>
-                                    <span style="font-size: 1.4rem; font-weight: bold;">
+                                    <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">{{ w.label|e }}</strong><br>
+                                    <span style="font-size: 2rem; font-weight: bold; line-height: 1;">
                                         {%- if w.resolved_value is sameas true -%}✅
                                         {%- elif w.resolved_value is sameas false -%}❌
                                         {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>

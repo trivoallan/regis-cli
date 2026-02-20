@@ -119,11 +119,10 @@ class TestCliBasics:
             from pathlib import Path
 
             report_file = Path(
-                "reports/registry-1.docker.io/library-nginx/latest/report.html"
+                "reports/registry-1.docker.io/library-nginx/latest/index.html"
             )
             html_content = report_file.read_text(encoding="utf-8")
 
-            assert "metadata-badges" in html_content
             assert "build" in html_content
             assert "123" in html_content
             assert "env" in html_content

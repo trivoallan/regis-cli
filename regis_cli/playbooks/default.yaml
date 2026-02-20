@@ -5,25 +5,46 @@ pages:
   - title: Overview
     slug: index
     sections:
+      - name: ""
+        widgets:
+          - label: Recommandation
+            value: "{{ 'GO' }}"
+            options:
+              class: recommandation-go
+              align: center
+            condition:
+              ">=": [{ var: playbooks.0.pages.1.sections.1.score }, 90]
+          - label: Recommandation
+            value: "{{ 'NOGO' }}"
+            options:
+              class: recommandation-nogo
+              align: center
+            condition:
+              "<": [{ var: playbooks.0.pages.1.sections.1.score }, 90]
+      - name: ""
+        widgets:
+          - label: Overall Compliance
+            value: "{{ playbooks.0.score }}%"
+            url: compliance.html
+            options:
+              align: center
+          - label: Mandatory Requirements
+            value: "{{ playbooks.0.pages.1.sections.1.passed_scorecards }} / {{ playbooks.0.pages.1.sections.1.total_scorecards }}"
+            url: compliance.html
+            options:
+              align: center
+          - label: Recommended Requirements
+            value: "{{ playbooks.0.pages.1.sections.2.passed_scorecards }} / {{ playbooks.0.pages.1.sections.2.total_scorecards }}"
+            url: compliance.html
+            options:
+              align: center
+
       - name: Request Status
         widgets:
           - label: Created on
             value: "{{ request.timestamp | format_datetime }}"
           - label: By
             value: "{{ request.metadata.user | default('Unknown') }}"
-          - label: Recommandation
-            value: "{{ 'GO' }}"
-            options:
-              class: recommandation-go
-            condition:
-              "==": [{ var: playbooks.0.pages.1.sections.1.score }, 100]
-          - label: Recommandation
-            value: "{{ 'NOGO' }}"
-            url: compliance.html
-            options:
-              class: recommandation-nogo
-            condition:
-              "<=": [{ var: playbooks.0.pages.1.sections.1.score }, 80]
 
       - name: Requested Image
         widgets:
@@ -33,17 +54,6 @@ pages:
             value: "{{ request.repository }}"
           - label: Tag
             value: "{{ request.tag }}"
-      - name: Compliance
-        widgets:
-          - label: Overall Compliance
-            value: "{{ playbooks.0.score }}%"
-            url: compliance.html
-          - label: Mandatory Requirements
-            value: "{{ playbooks.0.pages.1.sections.1.passed_scorecards }} / {{ playbooks.0.pages.1.sections.1.total_scorecards }}"
-            url: compliance.html
-          - label: Recommended Requirements
-            value: "{{ playbooks.0.pages.1.sections.2.passed_scorecards }} / {{ playbooks.0.pages.1.sections.2.total_scorecards }}"
-            url: compliance.html
       - name: Context
         widgets:
           - template: request/table.html
