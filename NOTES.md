@@ -8,7 +8,7 @@
 - [ ] Recommandation de configuration d'import (regex)
 - [ ] Démo intégration avec PowerBI (idées)
 - [ ] Consolidation de la documentation (docs/)
-- [ ] Comment gérer les mises à jour du playbook ? Permettre de spécifier une version du playbook ? et un lien de téléchargement ?
+- [x] Comment gérer les mises à jour du playbook ? Permettre de spécifier une version du playbook ? et un lien de téléchargement ?
 - [x] Merger les deux cookiecutters en un seul
 - [x] Versionner les artifacts dans le repo gitlab
 

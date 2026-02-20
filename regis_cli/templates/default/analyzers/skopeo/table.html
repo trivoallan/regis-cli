@@ -9,6 +9,7 @@
                 <th>User</th>
                 <th>Created</th>
                 <th>Layers</th>
+                <th>Labels</th>
             </tr>
         </thead>
         <tbody>
@@ -34,11 +35,25 @@
                 </td>
                 <td><small>{{ plat.created or '-' }}</small></td>
                 <td>{{ plat.layers_count }}</td>
+                <td>
+                    {% if plat.labels %}
+                        <span title="{{ plat.labels | length }} labels">{{ plat.labels | length }}</span>
+                    {% else %}
+                        0
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% if data.tags %}
+<div style="margin-top: 1rem;">
+    <strong>Recent Tags:</strong>
+    <code style="font-size: 0.85rem;">{{ data.tags[:10] | join(', ') }}{% if data.tags | length > 10 %}...{% endif %}</code>
+</div>
+{% endif %}
 
 {% if data.inspect %}
 <details style="margin-top: 1rem;">
