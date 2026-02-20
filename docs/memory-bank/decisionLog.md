@@ -12,8 +12,7 @@
 - **Decision**: Create a Cookiecutter template to bootstrap new repositories for `regis-cli` users.
 - **Rationale**: Facilitate adoption and standardize the setup for image analysis projects, including CI/CD and security policies.
 
-## 2026-02-20: Fix Docker Permission Issues
-- **Decision**: Fixed Docker permission issues by creating a home directory for the `regis` user (UID 1001), adjusting volume permissions in the workflow, and adding a fallback output mechanism in `cli.py`.
-- **Decision**: Created comprehensive Cookiecutter usage guide in `docs/modules/ROOT/pages/cookiecutter.adoc`.
-- **Decision**: Update template workflow to `chmod 777 reports` before analysis.
-- **Rationale**: Address "permission denied" errors on both `/home/regis` (due to missing home/UID mismatch) and on host-mounted `reports` volumes. UID 1001 matches standard GitHub Actions runners.
+## 2026-02-20: Fix Missing Scorecard Values
+- **Decision**: Update `evaluate` in `engine.py` to merge `results` into the root context of the `MissingDataTracker`.
+- **Decision**: Fix Trivy rule keys in the default scorecard template.
+- **Rationale**: Scorecard rules like `trivy.critical_count` were failing because the analyzer data was nested under `results.`. Matching the structure and mapping it to the root simplifies rule writing and fixes `(MISSING)` errors in reports.

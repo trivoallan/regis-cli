@@ -30,4 +30,10 @@ sections:
         description: No critical vulnerabilities found by Trivy.
         level: critical
         condition:
-          "==": [{ var: trivy.vulnerability_counts.CRITICAL }, 0]
+          "==": [{ var: trivy.critical_count }, 0]
+
+      - name: no-high
+        description: No high vulnerabilities found by Trivy.
+        level: critical
+        condition:
+          "==": [{ var: trivy.high_count }, 0]

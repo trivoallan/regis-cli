@@ -4,8 +4,9 @@
 Initialize the project's documentation and fix security-related workflow permission issues.
 
 ## Recent Changes
-- Created Cookiecutter template for consumer repositories in `cookiecutter/`.
-- Enhanced template workflow with manual inputs, the ability to commit reports back, and GitHub Pages publishing.
+- Fixed Docker permission issues by creating a home directory for the `regis` user (UID 1001), adjusting volume permissions in the workflow, and adding a fallback output mechanism in `cli.py`.
+- Resolved `(MISSING)` scorecard values by exposing analyzer results at the root of the evaluation context in `engine.py`.
+- Corrected Trivy rule keys in the default scorecard template.
 - Created comprehensive Cookiecutter usage guide in `docs/modules/ROOT/pages/cookiecutter.adoc`.
 - Fixed Skopeo architecture mismatch error by skipping high-level `inspect` on image indexes.
 - Modified `.github/workflows/docker-publish.yml` to use least-privilege top-level permissions (`contents: read`).
