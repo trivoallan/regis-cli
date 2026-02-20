@@ -14,5 +14,5 @@
 
 ## 2026-02-20: Fix Missing Scorecard Values
 - **Decision**: Update `evaluate` in `engine.py` to merge `results` into the root context of the `MissingDataTracker`.
-- **Decision**: Fix Trivy rule keys in the default scorecard template.
-- **Rationale**: Scorecard rules like `trivy.critical_count` were failing because the analyzer data was nested under `results.`. Matching the structure and mapping it to the root simplifies rule writing and fixes `(MISSING)` errors in reports.
+- **Decision**: Integrate GitHub Actions metadata into the template workflow using `regis-cli -m`.
+- **Rationale**: Providing workflow context (requester, run ID) directly in the report improves auditability and helps users identify the origin of an automated report.

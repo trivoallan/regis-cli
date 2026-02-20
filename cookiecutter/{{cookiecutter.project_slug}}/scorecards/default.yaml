@@ -1,14 +1,6 @@
 name: Default Security Scorecard
 description: Basic security and freshness checks.
 
-levels:
-  - name: critical
-    color: "#ff0000"
-  - name: warning
-    color: "#ffa500"
-  - name: healthy
-    color: "#008000"
-
 sections:
   - name: Security
     rules:
