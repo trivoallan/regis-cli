@@ -1,0 +1,32 @@
+{% import theme ~ "/macros.html" as m with context %}
+
+<article>
+    <header>
+        <h3 style="margin: 0;">📊 Popularity</h3>
+    </header>
+    {% if data.available %}
+    <div class="grid">
+        <div>
+            <strong>Pull Count</strong><br>
+            <span style="font-size: 1.4rem; font-weight: bold;">{{ data.pull_count|format_number }}</span>
+        </div>
+        <div>
+            <strong>Stars</strong><br>
+            <span style="font-size: 1.4rem; font-weight: bold;">{{ data.star_count|format_number }}</span>
+        </div>
+        <div>
+            <strong>Official</strong><br>
+            <span style="font-size: 1.4rem;">{% if data.is_official %}✅{% else %}❌{% endif %}</span>
+        </div>
+    </div>
+    {% if data.description %}
+        <p><small>{{ data.description|e }}</small></p>
+    {% endif %}
+    <p style="font-size: 0.8rem; opacity: 0.6;">
+        Registered: {{ data.date_registered|e }}
+        · Last updated: {{ data.last_updated|e }}
+    </p>
+    {% else %}
+        <p>⚠️ Docker Hub popularity data unavailable.</p>
+    {% endif %}
+</article>

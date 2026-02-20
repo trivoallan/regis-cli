@@ -1,0 +1,15 @@
+name: all-reports
+
+display:
+  analyzers:
+    - endoflife
+    - freshness
+    - image
+    - license
+    - popularity
+    - provenance
+    - scorecarddev
+    - size
+    - tags
+    - trivy
+    - versioning

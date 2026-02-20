@@ -157,14 +157,19 @@ def evaluate(
     """
     rules_defs = scorecard.get("rules", [])
     if not rules_defs:
-        return {
+        result: dict[str, Any] = {
             "scorecard_name": scorecard.get("name", "unnamed"),
             "level": "none",
             "score": 0,
             "total_rules": 0,
             "passed_rules": 0,
+            "levels_summary": {},
             "rules": [],
         }
+        display = scorecard.get("display")
+        if display:
+            result["display"] = dict(display)
+        return result
 
     # Build data context — both the nested original *and* a flat version
     # so that JsonLogic ``var`` can use dot paths like

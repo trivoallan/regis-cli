@@ -288,7 +288,7 @@ def analyze(
                     for lv in sc_def.get("levels", [])
                 }
                 summary_parts = []
-                for lv_name, stats in sc_result["levels_summary"].items():
+                for lv_name, stats in sc_result.get("levels_summary", {}).items():
                     label = level_labels.get(lv_name, lv_name)
                     summary_parts.append(f"{label}: {stats['passed']}/{stats['total']}")
 
