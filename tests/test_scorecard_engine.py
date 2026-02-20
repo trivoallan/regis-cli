@@ -123,7 +123,7 @@ class TestEvaluate:
         result = evaluate(self.SCORECARD, report)
         assert result["score"] == 100
         assert result["passed_rules"] == 3
-        section = result["sections"][0]
+        section = result["pages"][0]["sections"][0]
         assert all(r["passed"] for r in section["rules"])
 
     def test_partial_pass(self):
@@ -170,7 +170,7 @@ class TestEvaluate:
             ],
         }
         result = evaluate(scorecard, {})
-        rules = result["sections"][0]["rules"]
+        rules = result["pages"][0]["sections"][0]["rules"]
         assert rules[0]["tags"] == ["tag1", "tag2"]
         assert rules[1]["tags"] == []
 
@@ -191,7 +191,7 @@ class TestEvaluate:
             ],
         }
         result = evaluate(scorecard, {"some_other_data": 42})
-        rules = result["sections"][0]["rules"]
+        rules = result["pages"][0]["sections"][0]["rules"]
         assert rules[0]["status"] == "incomplete"
         assert "MISSING" in rules[0]["details"]
 
@@ -236,7 +236,7 @@ class TestEvaluate:
             "name": "Legacy",
             "rules": [{"name": "r", "condition": {"==": [1, 1]}}],
         }
-        with pytest.raises(ValueError, match="missing a 'sections' key"):
+        with pytest.raises(ValueError, match="missing both 'pages' and 'sections'"):
             evaluate(scorecard, {})
 
     def test_multi_section(self):
@@ -262,7 +262,7 @@ class TestEvaluate:
         assert result["total_rules"] == 2
         assert result["passed_rules"] == 1
         assert result["score"] == 50
-        assert len(result["sections"]) == 2
+        assert len(result["pages"][0]["sections"]) == 2
 
     def test_render_order(self):
         """render_order reflects the YAML key definition order."""
@@ -283,5 +283,5 @@ class TestEvaluate:
             ],
         }
         result = evaluate(scorecard, {})
-        order = result["sections"][0]["render_order"]
+        order = result["pages"][0]["sections"][0]["render_order"]
         assert order == ["rules", "widgets", "analyzers", "levels"]

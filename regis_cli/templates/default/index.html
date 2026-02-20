@@ -12,13 +12,6 @@
 {% endblock %}
 
 {% block body %}
-    {% if report.scorecards %}
-    <section>
-        <hr>
-        <h2>Scorecards</h2>
-    </section>
-    {% endif %}
-
     {# Track which analyzers are claimed by scorecards #}
     {% set ns = namespace(claimed_analyzers=[]) %}
 
@@ -27,15 +20,17 @@
             {% include theme ~ "/scorecards/default.html" %}
         </section>
 
-        {# Track claimed analyzers from all sections #}
-        {% for section in sc.sections %}
-            {% if section.display is defined and section.display.analyzers is defined %}
-                {% for analyzer_name in section.display.analyzers %}
-                    {% if analyzer_name not in ns.claimed_analyzers %}
-                        {% set ns.claimed_analyzers = ns.claimed_analyzers + [analyzer_name] %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
+        {# Track claimed analyzers from all sections across all pages #}
+        {% for page in sc.pages %}
+            {% for section in page.sections %}
+                {% if section.display is defined and section.display.analyzers is defined %}
+                    {% for analyzer_name in section.display.analyzers %}
+                        {% if analyzer_name not in ns.claimed_analyzers %}
+                            {% set ns.claimed_analyzers = ns.claimed_analyzers + [analyzer_name] %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
         {% endfor %}
     {% endfor %}
 

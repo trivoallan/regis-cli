@@ -210,6 +210,22 @@ def _evaluate_section(
                 "percentage": round(passed_level / len(level_rules) * 100),
             }
 
+    tags_defined = set()
+    for r in rule_results:
+        for t in r.get("tags", []):
+            tags_defined.add(t)
+
+    tags_summary = {}
+    for tag_name in sorted(tags_defined):
+        tag_rules = [r for r in rule_results if tag_name in r.get("tags", [])]
+        if tag_rules:
+            passed_tag = sum(1 for r in tag_rules if r["passed"])
+            tags_summary[tag_name] = {
+                "total": len(tag_rules),
+                "passed": passed_tag,
+                "percentage": round(passed_tag / len(tag_rules) * 100),
+            }
+
     passed_count = sum(1 for r in rule_results if r["passed"])
     total = len(rule_results)
 
@@ -219,6 +235,7 @@ def _evaluate_section(
         "total_rules": total,
         "passed_rules": passed_count,
         "levels_summary": levels_summary,
+        "tags_summary": tags_summary,
         "rules": rule_results,
     }
 
@@ -250,6 +267,13 @@ def _evaluate_section(
                     render_order.append(display_key)
         elif key in ("levels", "rules"):
             render_order.append(key)
+
+    if tags_summary and "rules" in render_order:
+        idx = render_order.index("rules")
+        render_order.insert(idx, "tags")
+    elif tags_summary and "tags" not in render_order:
+        render_order.append("tags")
+
     section_result["render_order"] = render_order
 
     return section_result
@@ -270,22 +294,50 @@ def evaluate(
     raw_context = _flatten(report)
     raw_context.update(report)
 
-    # Sections are mandatory.
+    pages_defs = scorecard.get("pages")
     sections_defs = scorecard.get("sections")
-    if not sections_defs:
+
+    if not pages_defs and not sections_defs:
         raise ValueError(
-            f"Scorecard '{scorecard.get('name', 'unnamed')}' is missing a "
-            "'sections' key.  Every scorecard must define at least one section."
+            f"Scorecard '{scorecard.get('name', 'unnamed')}' is missing "
+            "both 'pages' and 'sections'. Every scorecard must define at least one."
         )
 
-    sections_results = []
-    total_rules = 0
-    total_passed = 0
-    for section_def in sections_defs:
-        section_result = _evaluate_section(section_def, raw_context)
-        sections_results.append(section_result)
-        total_rules += section_result["total_rules"]
-        total_passed += section_result["passed_rules"]
+    if not pages_defs:
+        # Implicitly wrap root sections in a single defaults page
+        pages_defs = [{"name": "Default", "sections": sections_defs}]
+
+    pages_results = []
+    total_rules_all = 0
+    total_passed_all = 0
+
+    for page_def in pages_defs:
+        page_sections_defs = page_def.get("sections", [])
+        page_sections_results = []
+        page_total_rules = 0
+        page_passed_rules = 0
+
+        for section_def in page_sections_defs:
+            section_result = _evaluate_section(section_def, raw_context)
+            page_sections_results.append(section_result)
+            page_total_rules += section_result["total_rules"]
+            page_passed_rules += section_result["passed_rules"]
+
+        pages_results.append(
+            {
+                "name": page_def.get("name", "Default"),
+                "score": (
+                    round(page_passed_rules / page_total_rules * 100)
+                    if page_total_rules
+                    else 0
+                ),
+                "total_rules": page_total_rules,
+                "passed_rules": page_passed_rules,
+                "sections": page_sections_results,
+            }
+        )
+        total_rules_all += page_total_rules
+        total_passed_all += page_passed_rules
 
     # Resolve format strings for any scorecard-level links using the report context
     resolved_links = []
@@ -305,10 +357,12 @@ def evaluate(
 
     result = {
         "scorecard_name": scorecard.get("name", "unnamed"),
-        "score": round(total_passed / total_rules * 100) if total_rules else 0,
-        "total_rules": total_rules,
-        "passed_rules": total_passed,
-        "sections": sections_results,
+        "score": (
+            round(total_passed_all / total_rules_all * 100) if total_rules_all else 0
+        ),
+        "total_rules": total_rules_all,
+        "passed_rules": total_passed_all,
+        "pages": pages_results,
     }
 
     if resolved_links:

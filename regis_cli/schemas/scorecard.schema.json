@@ -4,7 +4,11 @@
   "title": "Scorecard Definition",
   "description": "Schema for regis-cli scorecard definition files (YAML or JSON).",
   "type": "object",
-  "required": ["name", "sections"],
+  "required": ["name"],
+  "anyOf": [
+    { "required": ["sections"] },
+    { "required": ["pages"] }
+  ],
   "additionalProperties": false,
   "properties": {
     "name": {
@@ -27,6 +31,14 @@
         }
       }
     },
+    "pages": {
+      "type": "array",
+      "description": "List of scorecard pages. Each page groups sections.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
     "sections": {
       "type": "array",
       "description": "List of scorecard sections. Each section groups rules, levels, and display preferences.",
@@ -37,6 +49,26 @@
     }
   },
   "$defs": {
+    "page": {
+      "type": "object",
+      "description": "A scorecard page containing sections.",
+      "required": ["name", "sections"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the page."
+        },
+        "sections": {
+          "type": "array",
+          "description": "List of scorecard sections.",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/section"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "section": {
       "type": "object",
       "description": "A scorecard section containing rules, optional levels, and display preferences.",

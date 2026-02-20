@@ -1,0 +1,86 @@
+{% import theme ~ "/macros.html" as m with context %}
+
+<article>
+    <header>
+        <h3 style="margin: 0;">🏷️ Versioning</h3>
+    </header>
+
+    <div class="grid" style="margin-bottom: 1rem;">
+        <div>
+            <strong>Dominant Pattern</strong><br>
+            <span style="font-size: 1.4rem; font-weight: bold;">{{ data.dominant_pattern|e }}</span>
+        </div>
+        <div>
+            <strong>SemVer Compliant</strong><br>
+            <span style="font-size: 1.4rem; font-weight: bold;">{{ data.semver_compliant_percentage }}%</span>
+        </div>
+        <div>
+            <strong>Total Tags</strong><br>
+            <span style="font-size: 1.4rem;">{{ data.total_tags }}</span>
+        </div>
+    </div>
+
+    {% if data.patterns %}
+    <details style="margin-bottom: 1rem;">
+        <summary>Patterns Distribution</summary>
+        <div class="overflow-auto" style="margin-top: 1rem;">
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Pattern</th>
+                        <th># Tags</th>
+                        <th>%</th>
+                        <th>Examples</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pat in data.patterns %}
+                    <tr>
+                        <td><strong>{{ pat.pattern|e }}</strong></td>
+                        <td>{{ pat.count }}</td>
+                        <td>{{ pat.percentage }}%</td>
+                        <td>
+                            {% for ex in pat.examples %}
+                            <code>{{ ex|e }}</code>{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </details>
+    {% endif %}
+
+    {% if data.variants %}
+    <details open>
+        <summary>OS/Distro Variants</summary>
+        <div class="overflow-auto" style="margin-top: 1rem;">
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Variant</th>
+                        <th># Tags</th>
+                        <th>%</th>
+                        <th>Examples</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for var in data.variants %}
+                    <tr>
+                        <td><strong>{{ var.name|e }}</strong></td>
+                        <td>{{ var.count }}</td>
+                        <td>{{ var.percentage }}%</td>
+                        <td>
+                            {% for ex in var.examples %}
+                            <code>{{ ex|e }}</code>{% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </details>
+    {% endif %}
+</article>

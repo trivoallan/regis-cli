@@ -1,37 +1,54 @@
 # yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
-name: Security
-description: Security checks
+name: Example Scorecard
 
 links:
-  - label: External Dashboard
-    url: "https://my-dashboard.corp/images/{request[repository]}?tag={request[tag]}&env={metadata[env]}"
+  - label: Merge Request
+    url: "https://my-dashboard.corp/images/{request[repository]}?tag={request[tag]}"
+  - label: JSON
+    url: report.json
+pages:
+  - name: Evaluation
+    sections:
+      - name: Policies
+        levels:
+          - name: mandatory
+            order: 1
+          - name: optional
+            order: 2
+        rules:
+          - name: no-critical-vulns
+            title: No critical vulnerabilities
+            condition:
+              "==": [{ var: results.trivy.critical_count }, 0]
+            level: mandatory
+            tags: [security]
+          - name: no-high-vulns
+            title: No high vulnerabilities
+            condition:
+              "==": [{ var: results.trivy.high_count }, 0]
+            level: optional
+            tags: [security]
+          - name: age
+            title: Image is less than 1 year old
+            condition:
+              "<=": [{ var: results.freshness.age_days }, 365]
+            level: optional
+            tags: [maturity]
+          - name: size-max
+            title: Image is less than 1 Go
+            condition:
+              "<=": [{ var: results.size.total_compressed_bytes }, 1073741824]
+            level: optional
+            tags: [technical]
 
-sections:
-  - name: Score
-    display:
-      widgets:
-        - label: Critical
-          value: results.trivy.critical_count
-        - label: High
-          value: results.trivy.high_count
-    rules:
-      - name: no-critical-vulns
-        title: No critical vulnerabilities
-        condition:
-          "==": [{ var: results.trivy.critical_count }, 0]
-      - name: no-high-vulns
-        title: No high vulnerabilities
-        condition:
-          "==": [{ var: results.trivy.high_count }, 0]
   - name: Reports
-    display:
-      analyzers: [trivy, provenance, sbom]
-
-  - name: Maturity
-    display:
-      analyzers: [freshness]
-    rules:
-      - name: age
-        title: Image is less than 1 year old
-        condition:
-          "<=": [{ var: results.freshness.age_days }, 365]
+    sections:
+      - name: Technical
+        display:
+          analyzers: [size, tags, versioning]
+      - name: Maturity
+        display:
+          analyzers: [endoflife, freshness, popularity]
+      - name: Security
+        display:
+          analyzers: [trivy, sbom, scorecarddev, provenance]

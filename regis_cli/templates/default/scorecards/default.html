@@ -7,9 +7,14 @@
         <h2 style="margin: 0;">{{ sc.scorecard_name|default("Scorecard")|e }}</h2>
     </header>
 
-    {% for section in sc.sections %}
-        <div class="scorecard-section">
-            <h3>{{ section.name|e }}</h3>
+    {% for page in sc.pages %}
+        {% if sc.pages|length > 1 %}
+            <h3 style="margin-top: 1rem; color: var(--secondary);">{{ page.name|e }}</h3>
+        {% endif %}
+
+        {% for section in page.sections %}
+            <div class="scorecard-section">
+                <h4>{{ section.name|e }}</h4>
 
             {% for block in section.render_order %}
 
@@ -40,6 +45,19 @@
                         {% set level_icon = icons.get(level_name, '') %}
                         <div>
                             <strong>{{ level_icon }} {{ level_name|capitalize }}</strong><br>
+                            {{ stats.passed }}/{{ stats.total }} passed ({{ stats.percentage }}%)
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                {% endif %}
+
+                {# ── Tags summary ────────────────────────── #}
+                {% if block == "tags" and section.tags_summary %}
+                <div class="grid">
+                    {% for tag_name, stats in section.tags_summary.items() %}
+                        <div>
+                            <strong>🏷️ {{ tag_name|capitalize }}</strong><br>
                             {{ stats.passed }}/{{ stats.total }} passed ({{ stats.percentage }}%)
                         </div>
                     {% endfor %}
@@ -106,7 +124,10 @@
 
             {% endfor %}
         </div>
-
         {% if not loop.last %}<hr>{% endif %}
+
+        {% endfor %}
+
+        {% if not loop.last %}<hr style="border-width: 2px;">{% endif %}
     {% endfor %}
 </article>

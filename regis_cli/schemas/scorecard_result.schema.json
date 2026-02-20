@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Scorecard Result",
   "type": "object",
-  "required": ["scorecard_name", "score", "total_rules", "passed_rules", "sections"],
+  "required": ["scorecard_name", "score", "total_rules", "passed_rules", "pages"],
   "properties": {
     "scorecard_name": {
       "type": "string"
@@ -31,10 +31,31 @@
         }
       }
     },
-    "sections": {
+    "pages": {
       "type": "array",
       "minItems": 1,
       "items": {
+        "type": "object",
+        "required": ["name", "score", "total_rules", "passed_rules", "sections"],
+        "properties": {
+          "name": { "type": "string" },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "total_rules": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "passed_rules": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sections": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
         "type": "object",
         "required": ["name", "score", "total_rules", "passed_rules", "rules"],
         "properties": {
@@ -53,6 +74,18 @@
             "minimum": 0
           },
           "levels_summary": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["total", "passed", "percentage"],
+              "properties": {
+                "total": { "type": "integer", "minimum": 0 },
+                "passed": { "type": "integer", "minimum": 0 },
+                "percentage": { "type": "integer", "minimum": 0, "maximum": 100 }
+              }
+            }
+          },
+          "tags_summary": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
@@ -116,4 +149,7 @@
       }
     }
   }
+}
+}
+}
 }
