@@ -39,12 +39,23 @@ pages:
             options:
               align: center
 
-      - name: Request Status
+      - name: Request
         widgets:
-          - label: Created on
-            value: "{{ request.timestamp | format_datetime }}"
-          - label: By
-            value: "{{ request.metadata.user | default('Unknown') }}"
+          - label: Creation Time
+            value: "{{ request.timestamp | format_date }}"
+            options:
+              subvalue: "{{ request.timestamp | format_time }}"
+          - label: Triggered by
+            value: "{{ request.metadata.trigger.user | default('Unknown Emiter') }}"
+            url: "{{ request.metadata.trigger.url | default('') }}"
+          - template: request/table.html
+            options:
+              title: Request Parameters
+          - template: metadata/table.html
+            options:
+              title: Additional Metadata
+            condition:
+              "!!": [{ var: request.metadata }]
 
       - name: Requested Image
         widgets:
@@ -54,16 +65,6 @@ pages:
             value: "{{ request.repository }}"
           - label: Tag
             value: "{{ request.tag }}"
-      - name: Context
-        widgets:
-          - template: request/table.html
-            options:
-              title: Request Parameters
-          - template: metadata/table.html
-            options:
-              title: Additional Metadata
-            condition:
-              "!!": [{ var: request.metadata }]
 
   - title: Compliance
     slug: compliance

@@ -87,6 +87,54 @@ class TestCliBasics:
 
     @patch("regis_cli.cli.RegistryClient")
     @patch("regis_cli.cli._discover_analyzers")
+    def test_analyze_with_nested_metadata(self, mock_discover, mock_client):
+        from regis_cli.analyzers.base import BaseAnalyzer
+
+        class DummyAnalyzer(BaseAnalyzer):
+            def analyze(self, client, repo, tag):
+                return {"analyzer": "dummy", "repository": repo, "tag": tag}
+
+            def validate(self, report):
+                pass
+
+        mock_discover.return_value = {"dummy": DummyAnalyzer}
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                [
+                    "analyze",
+                    "nginx:latest",
+                    "--meta",
+                    "ci.job_id=456",
+                    "--meta",
+                    "ci.url=http://ci.com",
+                    "--meta",
+                    "project=regis",
+                ],
+            )
+            if result.exit_code != 0:
+                print(result.output)
+            assert result.exit_code == 0
+
+            import json
+            from pathlib import Path
+
+            report_file = Path(
+                "reports/registry-1.docker.io/library-nginx/latest/report.json"
+            )
+            report = json.loads(report_file.read_text(encoding="utf-8"))
+
+            assert "metadata" in report
+            assert report["metadata"]["ci"]["job_id"] == "456"
+            assert report["metadata"]["ci"]["url"] == "http://ci.com"
+            assert report["metadata"]["project"] == "regis"
+            # Also check request metadata
+            assert report["request"]["metadata"]["ci"]["job_id"] == "456"
+
+    @patch("regis_cli.cli.RegistryClient")
+    @patch("regis_cli.cli._discover_analyzers")
     def test_analyze_html_with_metadata(self, mock_discover, mock_client):
         from regis_cli.analyzers.base import BaseAnalyzer
 

@@ -106,6 +106,16 @@ def _write_report(
             ) from inner_exc
 
 
+def _set_nested_value(d: dict[str, Any], dot_key: str, value: Any) -> None:
+    """Set a value in a nested dictionary using dot notation for keys."""
+    keys = dot_key.split(".")
+    for key in keys[:-1]:
+        if key not in d or not isinstance(d[key], dict):
+            d[key] = {}
+        d = d[key]
+    d[keys[-1]] = value
+
+
 @click.group()
 @click.option(
     "-v",
@@ -164,7 +174,7 @@ def main(verbose: bool) -> None:
     "--meta",
     "meta",
     multiple=True,
-    help="Arbitrary metadata in key=value format. Can be repeated.",
+    help="Arbitrary metadata in key=value format. Can be repeated. Supports dot notation (e.g. ci.job_id=123).",
 )
 @click.option(
     "-f",
@@ -325,13 +335,13 @@ def analyze(
             raise click.ClickException("All analyzers failed.")
 
         # Build the analysis report.
-        metadata_dict = {}
+        metadata_dict: dict[str, Any] = {}
         for item in meta:
             if "=" in item:
                 k, v = item.split("=", 1)
-                metadata_dict[k] = v
+                _set_nested_value(metadata_dict, k, v)
             else:
-                metadata_dict[item] = "true"
+                _set_nested_value(metadata_dict, item, "true")
 
         analysis_report: dict[str, Any] = {
             "request": {

@@ -39,9 +39,19 @@ def _format_datetime(v: str) -> str:
         return v
 
 
+def _format_time(v: str) -> str:
+    from datetime import datetime
+
+    try:
+        return datetime.fromisoformat(v).strftime("%H:%M:%S")
+    except (ValueError, TypeError):
+        return v
+
+
 _WIDGET_ENV = Environment(loader=BaseLoader(), undefined=ChainableUndefined)
 _WIDGET_ENV.filters["format_date"] = _format_date
 _WIDGET_ENV.filters["format_datetime"] = _format_datetime
+_WIDGET_ENV.filters["format_time"] = _format_time
 
 
 def _resolve_template(

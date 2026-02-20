@@ -19,22 +19,20 @@ concurrency:
 jobs:
   analyze:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/trivoallan/regis-cli:0.3
+      volumes:
+        - {% raw %}${{ github.workspace }}/playbooks:/app/playbooks
+        - {% raw %}${{ github.workspace }}/reports:/app/reports
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Run regis-cli
+      - name: Analyze Image
         run: |
-          mkdir -p reports
-          chmod 777 reports
-          docker run --rm \
-            -v ${PWD}/reports:/app/reports \
-            -v ${PWD}/playbooks:/app/playbooks \
-            ghcr.io/trivoallan/regis-cli:main \
-            analyze "{% raw %}${{ github.event.inputs.image_url }}{% endraw %}" \
-            -p playbooks/default.yaml \
+          regis-cli analyze "{% raw %}${{ github.event.inputs.image_url }}{% endraw %}" \
             --format json \
             --format html \
+            --playbook playbooks/default.yaml \
             --meta "github.requester={% raw %}${{ github.triggering_actor }}{% endraw %}" \
             --meta "github.workflow={% raw %}${{ github.workflow }}{% endraw %}" \
             --meta "github.run_id={% raw %}${{ github.run_id }}{% endraw %}" \
@@ -58,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: "{% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}"
+      url: {% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

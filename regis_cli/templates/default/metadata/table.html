@@ -1,4 +1,5 @@
 {% set data = report.request.get('metadata', {}) %}
+{% import theme ~ "/macros.html" as m with context %}
 {% if data %}
 <div class="overflow-auto">
     <table class="striped">
@@ -9,12 +10,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for key, value in data.items() %}
-            <tr>
-                <td><strong>{{ key | e }}</strong></td>
-                <td>{{ value | e }}</td>
-            </tr>
-            {% endfor %}
+            {{ m.render_metadata_rows(data) }}
         </tbody>
     </table>
 </div>

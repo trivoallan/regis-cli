@@ -33,8 +33,15 @@ def render_html(report: dict[str, Any], theme: str = "default") -> str:
         except (ValueError, TypeError):
             return v
 
+    def _format_time(v: str) -> str:
+        try:
+            return datetime.fromisoformat(v).strftime("%H:%M:%S")
+        except (ValueError, TypeError):
+            return v
+
     env.filters["format_date"] = _format_date
     env.filters["format_datetime"] = _format_datetime
+    env.filters["format_time"] = _format_time
 
     template = env.get_template(f"{theme}/index.html")
     return template.render(report=report, theme=theme)

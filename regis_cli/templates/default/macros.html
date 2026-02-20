@@ -33,3 +33,27 @@
     <p><strong>{{ error.type|e }}:</strong> {{ error.message|e }}</p>
 </article>
 {% endmacro %}
+
+{% macro render_metadata_rows(data, level=0) %}
+    {% for key, value in data.items()|sort %}
+        <tr>
+            <td style="padding-left: {{ level * 20 }}px;">
+                {% if value is mapping %}
+                    <strong>{{ key | e }}</strong>
+                {% else %}
+                    {{ key | e }}
+                {% endif %}
+            </td>
+            <td>
+                {% if value is mapping %}
+                    {# Recursive call for nested dictionaries #}
+                {% else %}
+                    {{ value | e }}
+                {% endif %}
+            </td>
+        </tr>
+        {% if value is mapping %}
+            {{ render_metadata_rows(value, level + 1) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}

@@ -9,7 +9,7 @@
     "metadata": {
       "type": "object",
       "description": "Arbitrary user-provided metadata.",
-      "additionalProperties": { "type": "string" }
+      "additionalProperties": true
     },
     "links": {
       "type": "array",
@@ -57,7 +57,7 @@
         "metadata": {
           "type": "object",
           "description": "Arbitrary user-provided metadata.",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": true
         }
       },
       "additionalProperties": false
