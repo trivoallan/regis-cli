@@ -152,6 +152,11 @@ def main(verbose: bool) -> None:
     multiple=True,
     help="Credentials in registry.domain=user:pass format. Can be repeated.",
 )
+@click.option(
+    "--cache",
+    is_flag=True,
+    help="Use existing report.json as cache if available.",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -163,6 +168,7 @@ def analyze(
     theme: str,
     meta: tuple[str, ...],
     auth: tuple[str, ...],
+    cache: bool,
 ) -> None:
     """Analyze a Docker image and evaluate scorecards.
 
@@ -182,140 +188,174 @@ def analyze(
         err=True,
     )
 
-    # Discover analyzers.
-    all_analyzers = _discover_analyzers()
-    if not all_analyzers:
-        raise click.ClickException(
-            "No analyzers found. Is regis-cli installed correctly?"
-        )
-
     # Select output formats.
     formats = [f.lower() for f in output_formats] if output_formats else ["json"]
 
-    # Select which analyzers to run.
-    if analyzer_names:
-        selected: dict[str, type[BaseAnalyzer]] = {}
-        for name in analyzer_names:
-            if name not in all_analyzers:
-                available = ", ".join(sorted(all_analyzers))
-                raise click.ClickException(
-                    f"Unknown analyzer '{name}'. Available: {available}"
-                )
-            selected[name] = all_analyzers[name]
-    else:
-        selected = all_analyzers
+    # 1. Check for cache if requested.
+    final_report = None
+    if cache:
+        # Construct the expected path for a JSON report to see if it exists.
+        # We use a dummy report to get the path.
+        dummy_report = {
+            "request": {
+                "registry": ref.registry,
+                "repository": ref.repository,
+                "tag": ref.tag,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        }
+        dir_tmpl = output_dir_template or "reports/{registry}/{repository}/{tag}"
+        file_tmpl = output_template or "report.{format}"
 
-    from regis_cli.registry.auth import resolve_credentials
-
-    # Create the registry client.
-    username, password = resolve_credentials(ref.registry, list(auth) if auth else None)
-    client = RegistryClient(
-        registry=ref.registry,
-        repository=ref.repository,
-        username=username,
-        password=password,
-    )
-
-    # Run each analyzer.
-    reports: dict[str, Any] = {}
-    for name, analyzer_cls in sorted(selected.items()):
-        click.echo(f"  Running analyzer: {name}...", err=True)
-        analyzer = analyzer_cls()
         try:
-            report = analyzer.analyze(client, ref.repository, ref.tag)
-            analyzer.validate(report)
-            reports[name] = report
-        except RegistryError as exc:
-            click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
-            reports[name] = {
-                "analyzer": name,
-                "error": {"type": "registry", "message": str(exc)},
-            }
-        except AnalyzerError as exc:
-            click.echo(f"  ✗ {name}: validation error — {exc}", err=True)
-            reports[name] = {
-                "analyzer": name,
-                "error": {"type": "validation", "message": str(exc)},
-            }
+            cache_dir = _format_output_path(dir_tmpl, dummy_report, "json")
+            cache_file = _format_output_path(file_tmpl, dummy_report, "json")
+            cache_path = cache_dir / cache_file
+
+            if cache_path.exists():
+                click.echo(f"  Using cached report from {cache_path}", err=True)
+                final_report = json.loads(cache_path.read_text(encoding="utf-8"))
         except Exception as exc:
-            click.echo(f"  ✗ {name}: unexpected error — {exc}", err=True)
-            reports[name] = {
-                "analyzer": name,
-                "error": {"type": "unexpected", "message": str(exc)},
-            }
+            logger.debug("Cache lookup failed: %s", exc)
 
-    if not reports:
-        raise click.ClickException("All analyzers failed.")
+    if final_report:
+        # If we have a cached report, we skip analysis and scorecard evaluation.
+        # We might want to re-run scorecards eventually, but for now we follow the "cache report" intent.
+        pass
+    else:
+        # Discover analyzers.
+        all_analyzers = _discover_analyzers()
+        if not all_analyzers:
+            raise click.ClickException(
+                "No analyzers found. Is regis-cli installed correctly?"
+            )
 
-    # Build the analysis report.
-    metadata_dict = {}
-    for item in meta:
-        if "=" in item:
-            k, v = item.split("=", 1)
-            metadata_dict[k] = v
+        # Select which analyzers to run.
+        if analyzer_names:
+            selected: dict[str, type[BaseAnalyzer]] = {}
+            for name in analyzer_names:
+                if name not in all_analyzers:
+                    available = ", ".join(sorted(all_analyzers))
+                    raise click.ClickException(
+                        f"Unknown analyzer '{name}'. Available: {available}"
+                    )
+                selected[name] = all_analyzers[name]
         else:
-            metadata_dict[item] = "true"
+            selected = all_analyzers
 
-    analysis_report: dict[str, Any] = {
-        "request": {
-            "url": url,
-            "registry": ref.registry,
-            "repository": ref.repository,
-            "tag": ref.tag,
-            "analyzers": sorted(reports.keys()),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        },
-        "results": reports,
-    }
-    if metadata_dict:
-        analysis_report["metadata"] = metadata_dict
+        from regis_cli.registry.auth import resolve_credentials
 
-    # Load and evaluate scorecards.
-    from regis_cli.scorecard.engine import evaluate, load_scorecard
+        # Create the registry client.
+        username, password = resolve_credentials(
+            ref.registry, list(auth) if auth else None
+        )
+        client = RegistryClient(
+            registry=ref.registry,
+            repository=ref.repository,
+            username=username,
+            password=password,
+        )
 
-    scorecard_results = []
-    if scorecard_paths:
-        for sc_path in scorecard_paths:
-            click.echo(f"  Evaluating scorecard: {sc_path}...", err=True)
-            sc_def = load_scorecard(sc_path)
-            sc_result = evaluate(sc_def, analysis_report)
-            scorecard_results.append(sc_result)
+        # Run each analyzer.
+        reports: dict[str, Any] = {}
+        for name, analyzer_cls in sorted(selected.items()):
+            click.echo(f"  Running analyzer: {name}...", err=True)
+            analyzer = analyzer_cls()
+            try:
+                report = analyzer.analyze(client, ref.repository, ref.tag)
+                analyzer.validate(report)
+                reports[name] = report
+            except RegistryError as exc:
+                click.echo(f"  ✗ {name}: registry error — {exc}", err=True)
+                reports[name] = {
+                    "analyzer": name,
+                    "error": {"type": "registry", "message": str(exc)},
+                }
+            except AnalyzerError as exc:
+                click.echo(f"  ✗ {name}: validation error — {exc}", err=True)
+                reports[name] = {
+                    "analyzer": name,
+                    "error": {"type": "validation", "message": str(exc)},
+                }
+            except Exception as exc:
+                click.echo(f"  ✗ {name}: unexpected error — {exc}", err=True)
+                reports[name] = {
+                    "analyzer": name,
+                    "error": {"type": "unexpected", "message": str(exc)},
+                }
 
-            # Print summary for EACH scorecard if in CLI mode
-            if "html" not in formats or len(formats) > 1:
-                summary_parts = []
-                for section in sc_result.get("sections", []):
-                    for lv_name, stats in section.get("levels_summary", {}).items():
-                        summary_parts.append(
-                            f"{lv_name}: {stats['passed']}/{stats['total']}"
-                        )
+        if not reports:
+            raise click.ClickException("All analyzers failed.")
 
-                summary_str = " · ".join(summary_parts)
-                click.echo(
-                    f"    {summary_str}  "
-                    f"({sc_result['passed_rules']}/{sc_result['total_rules']} rules passed, "
-                    f"{sc_result['score']}%)\n",
-                    err=True,
-                )
+        # Build the analysis report.
+        metadata_dict = {}
+        for item in meta:
+            if "=" in item:
+                k, v = item.split("=", 1)
+                metadata_dict[k] = v
+            else:
+                metadata_dict[item] = "true"
 
-    # Build the final report.
-    final_report: dict[str, Any] = {
-        **analysis_report,
-    }
-    if scorecard_results:
-        final_report["scorecards"] = scorecard_results
-        # For backward compatibility (or simplicity), keep 'scorecard' pointing to the first result.
-        final_report["scorecard"] = scorecard_results[0]
+        analysis_report: dict[str, Any] = {
+            "request": {
+                "url": url,
+                "registry": ref.registry,
+                "repository": ref.repository,
+                "tag": ref.tag,
+                "analyzers": sorted(reports.keys()),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            },
+            "results": reports,
+        }
+        if metadata_dict:
+            analysis_report["metadata"] = metadata_dict
 
-    # Extract evaluated links from scorecards
-    all_links = []
-    for sc_res in scorecard_results:
-        for link_def in sc_res.get("links", []):
-            if link_def not in all_links:
-                all_links.append(link_def)
+        # Load and evaluate scorecards.
+        from regis_cli.scorecard.engine import evaluate, load_scorecard
 
-    if all_links:
-        final_report["links"] = all_links
+        scorecard_results = []
+        if scorecard_paths:
+            for sc_path in scorecard_paths:
+                click.echo(f"  Evaluating scorecard: {sc_path}...", err=True)
+                sc_def = load_scorecard(sc_path)
+                sc_result = evaluate(sc_def, analysis_report)
+                scorecard_results.append(sc_result)
+
+                # Print summary for EACH scorecard if in CLI mode
+                if "html" not in formats or len(formats) > 1:
+                    summary_parts = []
+                    for section in sc_result.get("sections", []):
+                        for lv_name, stats in section.get("levels_summary", {}).items():
+                            summary_parts.append(
+                                f"{lv_name}: {stats['passed']}/{stats['total']}"
+                            )
+
+                    summary_str = " · ".join(summary_parts)
+                    click.echo(
+                        f"    {summary_str}  "
+                        f"({sc_result['passed_rules']}/{sc_result['total_rules']} rules passed, "
+                        f"{sc_result['score']}%)\n",
+                        err=True,
+                    )
+
+        # Build the final report.
+        final_report = {
+            **analysis_report,
+        }
+        if scorecard_results:
+            final_report["scorecards"] = scorecard_results
+            # For backward compatibility (or simplicity), keep 'scorecard' pointing to the first result.
+            final_report["scorecard"] = scorecard_results[0]
+
+        # Extract evaluated links from scorecards
+        all_links = []
+        for sc_res in scorecard_results:
+            for link_def in sc_res.get("links", []):
+                if link_def not in all_links:
+                    all_links.append(link_def)
+
+        if all_links:
+            final_report["links"] = all_links
 
     # Validate final report against its schema.
     from jsonschema.validators import validator_for
