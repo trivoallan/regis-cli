@@ -29,5 +29,4 @@ jobs:
           token: ${{ secrets.RELEASE_TOKEN }}
           extra-files: |
             pyproject.toml
-            cookiecutter/github/cookiecutter.json
-            cookiecutter/gitlab/cookiecutter.json
+            cookiecutter/cookiecutter.json
