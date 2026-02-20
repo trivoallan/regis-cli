@@ -52,4 +52,11 @@
             {% endif %}
         </section>
     {% endfor %}
+
+    {# Always show error cards for analyzers not already displayed #}
+    {% for name, data in report.results.items()|sort %}
+        {% if data.error and name not in ns.claimed_analyzers %}
+            {{ m.error_card(name, data.error) }}
+        {% endif %}
+    {% endfor %}
 {% endblock %}
