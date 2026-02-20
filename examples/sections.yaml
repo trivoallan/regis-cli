@@ -1,6 +1,11 @@
 # yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
 name: Image Quality
 description: Combined security and maturity checks
+
+links:
+  - label: External Dashboard
+    url: "https://my-dashboard.corp/images/{request[repository]}?tag={request[tag]}&env={metadata[env]}"
+
 sections:
   - name: Security
     display:

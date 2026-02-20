@@ -287,10 +287,31 @@ def evaluate(
         total_rules += section_result["total_rules"]
         total_passed += section_result["passed_rules"]
 
-    return {
+    # Resolve format strings for any scorecard-level links using the report context
+    resolved_links = []
+    for link_def in scorecard.get("links", []):
+        url_tmpl = link_def.get("url", "")
+        # Format against original report dictionary
+        try:
+            url = url_tmpl.format(**report)
+            resolved_links.append({"label": link_def.get("label", ""), "url": url})
+        except KeyError as e:
+            logger.warning(
+                "Could not format link '%s': missing template key %s",
+                link_def.get("label"),
+                e,
+            )
+            resolved_links.append(link_def)
+
+    result = {
         "scorecard_name": scorecard.get("name", "unnamed"),
         "score": round(total_passed / total_rules * 100) if total_rules else 0,
         "total_rules": total_rules,
         "passed_rules": total_passed,
         "sections": sections_results,
     }
+
+    if resolved_links:
+        result["links"] = resolved_links
+
+    return result

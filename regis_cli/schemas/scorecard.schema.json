@@ -15,6 +15,18 @@
       "type": "string",
       "description": "Human-readable description of what this scorecard evaluates."
     },
+    "links": {
+      "type": "array",
+      "description": "Optional custom links to display as actions for this scorecard.",
+      "items": {
+        "type": "object",
+        "required": ["label", "url"],
+        "properties": {
+          "label": { "type": "string" },
+          "url": { "type": "string", "description": "URL template which can use {metadata[key]} placeholders" }
+        }
+      }
+    },
     "sections": {
       "type": "array",
       "description": "List of scorecard sections. Each section groups rules, levels, and display preferences.",

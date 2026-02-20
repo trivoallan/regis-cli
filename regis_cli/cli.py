@@ -307,6 +307,16 @@ def analyze(
         # For backward compatibility (or simplicity), keep 'scorecard' pointing to the first result.
         final_report["scorecard"] = scorecard_results[0]
 
+    # Extract evaluated links from scorecards
+    all_links = []
+    for sc_res in scorecard_results:
+        for link_def in sc_res.get("links", []):
+            if link_def not in all_links:
+                all_links.append(link_def)
+
+    if all_links:
+        final_report["links"] = all_links
+
     # Validate final report against its schema.
     from jsonschema.validators import validator_for
     from referencing import Registry, Resource

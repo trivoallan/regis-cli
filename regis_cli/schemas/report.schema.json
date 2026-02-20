@@ -11,6 +11,18 @@
       "description": "Arbitrary user-provided metadata.",
       "additionalProperties": { "type": "string" }
     },
+    "links": {
+      "type": "array",
+      "description": "Custom templated links.",
+      "items": {
+        "type": "object",
+        "required": ["label", "url"],
+        "properties": {
+          "label": { "type": "string" },
+          "url": { "type": "string" }
+        }
+      }
+    },
     "request": {
       "type": "object",
       "description": "Metadata describing the analysis request.",

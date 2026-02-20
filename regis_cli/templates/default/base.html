@@ -12,6 +12,15 @@
 <main class="container">
   <header>
     <h1>{{ report.request.registry|e }}/{{ report.request.repository|e }}:{{ report.request.tag|e }}</h1>
+    {% if report.links %}
+      <div class="custom-links" style="margin-top: 1rem;">
+        {% for link in report.links %}
+          <a href="{{ link.url|e }}" target="_blank" role="button" class="outline" style="margin-right: 0.5rem; margin-bottom: 0.5rem;">
+            {{ link.label|e }}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
   </header>
 
   {% block request_params %}{% endblock %}
