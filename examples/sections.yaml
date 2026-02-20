@@ -1,15 +1,14 @@
 # yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
-name: Image Quality
-description: Combined security and maturity checks
+name: Security
+description: Security checks
 
 links:
   - label: External Dashboard
     url: "https://my-dashboard.corp/images/{request[repository]}?tag={request[tag]}&env={metadata[env]}"
 
 sections:
-  - name: Security
+  - name: Score
     display:
-      analyzers: [trivy]
       widgets:
         - label: Critical
           value: results.trivy.critical_count
@@ -24,6 +23,9 @@ sections:
         title: No high vulnerabilities
         condition:
           "==": [{ var: results.trivy.high_count }, 0]
+  - name: Reports
+    display:
+      analyzers: [trivy, provenance, sbom]
 
   - name: Maturity
     display:

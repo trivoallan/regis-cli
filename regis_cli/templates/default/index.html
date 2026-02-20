@@ -1,18 +1,6 @@
 {% extends theme ~ "/base.html" %}
 {% import theme ~ "/macros.html" as m with context %}
 
-{% block request_params %}
-    <div class="request-params" style="margin-bottom: 1rem; font-size: 0.85rem; color: #666;">
-        {% if report.scorecards %}
-        <div>
-            {% for sc in report.scorecards %}
-                {{ m.badge(sc.scorecard_name, status="outline", href="#scorecard-" ~ loop.index0) }}
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-{% endblock %}
-
 {% block metadata %}
     {% if report.metadata %}
         <div class="metadata-badges" style="margin-bottom: 2rem;">
@@ -24,6 +12,13 @@
 {% endblock %}
 
 {% block body %}
+    {% if report.scorecards %}
+    <section>
+        <hr>
+        <h2>Scorecards</h2>
+    </section>
+    {% endif %}
+
     {# Track which analyzers are claimed by scorecards #}
     {% set ns = namespace(claimed_analyzers=[]) %}
 
