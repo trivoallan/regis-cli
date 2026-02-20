@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.4.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.4.0)
+
+### Features
+
+- add time formatting and recursive metadata rendering to improve report request details display.
+- refactor cookiecutter templates to support both GitHub and GitLab platforms with dedicated CI configurations and documentation.
+
 ## [v0.3.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.3.0)
 
 ### Features
