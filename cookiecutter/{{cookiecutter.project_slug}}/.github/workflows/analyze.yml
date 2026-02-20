@@ -11,9 +11,8 @@ on:
   workflow_dispatch:
     inputs:
       image_url:
-        description: Image URL to analyze
+        description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
         required: true
-        default: "{{ cookiecutter.registry_domain }}/{{ cookiecutter.repository_owner }}/my-image:latest"
 
 concurrency:
   group: pages

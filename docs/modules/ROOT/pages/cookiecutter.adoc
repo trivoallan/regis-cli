@@ -1,33 +1,90 @@
 = Quickstart with Cookiecutter
 
-You can quickly bootstrap a new repository dedicated to image analysis and security scoring using our official Cookiecutter template.
+The `regis-cli` Cookiecutter template allows you to bootstrap a new Git repository dedicated to container image analysis and security scoring.
 
 == Prerequisites
 
-- `cookiecutter` installed in your environment.
-- `regis-cli` installed or accessible via Docker.
+* Install Cookiecutter: `pip install cookiecutter` or `brew install cookiecutter`
+* Access to the `regis-cli` repository (local or remote)
 
-== Usage
+== Creating a New Repository
 
-To create a new project, run the following command from the root of the `regis-cli` repository:
+Follow these steps to create your analysis project:
+
+=== 1. Generate the Project
+
+Run Cookiecutter pointing to the `cookiecutter/` directory in this repository:
 
 [source,bash]
 ----
 pipenv run cookiecutter cookiecutter/
 ----
 
-You will be prompted for several variables:
+[NOTE]
+====
+You can also point to the remote Git URL if the repository is public:
+`cookiecutter https://github.com/trivoallan/regis-cli --directory cookiecutter`
+====
 
-* `project_name`: The human-readable name of your analysis project.
-* `project_slug`: The directory name for your project (defaults to a slugified version of the name).
-* `registry_domain`: The domain of the registry you'll be analyzing (e.g., `ghcr.io`).
-* `repository_owner`: The owner or organization of the repositories.
+=== 2. Configure Variables
 
-== What's Included
+You will be prompted to provide values for the following variables:
 
-The template generates a fully functional repository with:
+[cols="1,3"]
+|===
+| Variable | Description
 
-- **GitHub Actions**: A starter workflow in `.github/workflows/analyze.yml` that runs `regis-cli` weekly.
-- **Scorecards**: A default security scorecard in `scorecards/default.yaml`.
-- **Memory Bank**: A structured `docs/memory-bank/` directory to document project context and progress.
-- **README**: Clear instructions for running analysis locally and in CI.
+| `project_name`
+| The human-readable name of your project (e.g., "Acme Production Security").
+
+| `project_slug`
+| The directory name (defaults to a slugified version of the project name).
+
+| `registry_domain`
+| The domain of your container registry (e.g., `ghcr.io`, `docker.io`).
+
+| `repository_owner`
+| The GitHub username or organization (used for default image paths).
+
+| `description`
+| A short summary of the project's purpose.
+|===
+
+=== 3. Initialize Git
+
+After generation, enter the new directory and initialize your repository:
+
+[source,bash]
+----
+cd my-analysis-project
+git init
+git add .
+git commit -m "feat: initial bootstrap"
+----
+
+== Post-Generation Setup
+
+To enable the fully automated reporting workflow, you must perform the following steps in your GitHub repository:
+
+=== 1. Enable GitHub Pages
+
+The generated workflow is designed to publish reports to GitHub Pages.
+
+. Go to your repository **Settings**.
+. Navigate to **Pages** in the sidebar.
+. Under **Build and deployment**, set the **Source** to **GitHub Actions**.
+
+=== 2. Configure Secrets (Optional)
+
+If you are analyzing private images, ensure your GitHub Actions environment has the necessary credentials (e.g., `GH_TOKEN` or registry logins) as described in the xref:github-workflow.adoc[GitHub Workflow guide].
+
+== Running Your First Analysis
+
+Once pushed to GitHub, you can trigger a manual analysis:
+
+. Go to the **Actions** tab in your repository.
+. Select the **Image Analysis** workflow.
+. Click **Run workflow**.
+. Enter the URL of the image you want to analyze (e.g., `ghcr.io/my-org/my-app:latest`).
+
+The workflow will run the analysis, commit the reports to your repository, and deploy the updated site to GitHub Pages.
