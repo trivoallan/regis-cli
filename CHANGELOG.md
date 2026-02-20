@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.3.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.3.0)
+
+### Features
+
+- **analyzers**: Enable private registry authentication for Trivy-based analyzers and update documentation.
+
+### Bug Fixes
+
+- **build**: install git in Dockerfile
+
 ## [v0.2.2](https://github.com/trivoallan/regis-cli/releases/tag/v0.2.2)
 
 ### Bug Fixes
