@@ -1,0 +1,62 @@
+name: Image Analysis
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_url:
+        description: Image URL to analyze
+        required: true
+        default: "{{ cookiecutter.registry_domain }}/{{ cookiecutter.repository_owner }}/my-image:latest"
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run regis-cli
+        run: |
+          mkdir -p reports
+          docker run --rm \
+            -v ${PWD}/reports:/app/reports \
+            -v ${PWD}/scorecards:/app/scorecards \
+            ghcr.io/trivoallan/regis-cli:latest \
+            analyze "{% raw %}${{ github.event.inputs.image_url }}{% endraw %}" \
+            -s scorecards/default.yaml \
+            -f html -f json
+
+      - name: Commit and Push Reports
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/
+          git commit -m "chore: update analysis reports [skip ci]" || echo "No changes to commit"
+          git push
+
+      - name: Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: reports/
+
+  deploy:
+    needs: analyze
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: {% raw %}${{ steps.deployment.outputs.page_url }}{% endraw %}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

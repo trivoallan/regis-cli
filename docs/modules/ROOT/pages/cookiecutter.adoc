@@ -1,0 +1,33 @@
+= Quickstart with Cookiecutter
+
+You can quickly bootstrap a new repository dedicated to image analysis and security scoring using our official Cookiecutter template.
+
+== Prerequisites
+
+- `cookiecutter` installed in your environment.
+- `regis-cli` installed or accessible via Docker.
+
+== Usage
+
+To create a new project, run the following command from the root of the `regis-cli` repository:
+
+[source,bash]
+----
+pipenv run cookiecutter cookiecutter/
+----
+
+You will be prompted for several variables:
+
+* `project_name`: The human-readable name of your analysis project.
+* `project_slug`: The directory name for your project (defaults to a slugified version of the name).
+* `registry_domain`: The domain of the registry you'll be analyzing (e.g., `ghcr.io`).
+* `repository_owner`: The owner or organization of the repositories.
+
+== What's Included
+
+The template generates a fully functional repository with:
+
+- **GitHub Actions**: A starter workflow in `.github/workflows/analyze.yml` that runs `regis-cli` weekly.
+- **Scorecards**: A default security scorecard in `scorecards/default.yaml`.
+- **Memory Bank**: A structured `docs/memory-bank/` directory to document project context and progress.
+- **README**: Clear instructions for running analysis locally and in CI.

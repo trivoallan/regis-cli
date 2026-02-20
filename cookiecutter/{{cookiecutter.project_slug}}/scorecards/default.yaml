@@ -1,0 +1,33 @@
+name: Default Security Scorecard
+description: Basic security and freshness checks.
+
+levels:
+  - name: critical
+    color: "#ff0000"
+  - name: warning
+    color: "#ffa500"
+  - name: healthy
+    color: "#008000"
+
+sections:
+  - name: Security
+    rules:
+      - name: no-root
+        description: Image should not run as root.
+        level: critical
+        condition:
+          "!=": [{ var: skopeo.platforms.0.user }, root]
+
+      - name: freshness
+        description: Image should be less than 30 days old.
+        level: warning
+        condition:
+          "<": [{ var: freshness.age_days }, 30]
+
+  - name: Vulnerabilities
+    rules:
+      - name: no-critical
+        description: No critical vulnerabilities found by Trivy.
+        level: critical
+        condition:
+          "==": [{ var: trivy.vulnerability_counts.CRITICAL }, 0]

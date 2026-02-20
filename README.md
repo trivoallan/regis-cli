@@ -90,6 +90,14 @@ regis-cli -v analyze nginx:latest
 
 Comprehensive documentation is available in the `docs/` directory (Antora).
 
+## Cookiecutter Template
+
+You can quickly bootstrap a new repository for image analysis using our Cookiecutter template:
+
+```bash
+pipenv run cookiecutter cookiecutter/
+```
+
 ## License
 
 MIT

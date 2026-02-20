@@ -15,3 +15,7 @@
 ## 2026-02-20: Automated Docs Publishing
 - **Decision**: Implement GitHub Actions workflow to build and publish Antora site to GitLab Pages.
 - **Rationale**: Automate documentation deployment to ensure it stays up-to-date with the code.
+
+## 2026-02-20: Cookiecutter Template for Consumer Repos
+- **Decision**: Create a Cookiecutter template to bootstrap new repositories for `regis-cli` users.
+- **Rationale**: Facilitate adoption and standardize the setup for image analysis projects, including CI/CD and security policies.

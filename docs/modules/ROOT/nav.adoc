@@ -1,2 +1,3 @@
 * xref:index.adoc[Home]
 * xref:github-workflow.adoc[Using in GitHub Workflows]
+* xref:cookiecutter.adoc[Quickstart with Cookiecutter]
