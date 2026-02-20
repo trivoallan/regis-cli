@@ -5,7 +5,9 @@ on:
     branches:
       - main
     tags:
-      - v.*
+      - v*
+  workflow_dispatch:
+
 
 permissions:
   contents: read
