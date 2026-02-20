@@ -210,12 +210,12 @@ pages:
               title: Layer Distribution
               collapsed: true
 
-      - name: Registry Metadata
+      - name: Skopeo Inspection
         widgets:
           - template: analyzers/skopeo/cards.html
           - template: analyzers/skopeo/table.html
             options:
-              title: Inspect Details
+              title: Platforms & Tags
               collapsed: true
 
       - name: Versioning Analysis
