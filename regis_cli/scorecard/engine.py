@@ -342,18 +342,25 @@ def evaluate(
     # Resolve format strings for any scorecard-level links using the report context
     resolved_links = []
     for link_def in scorecard.get("links", []):
-        url_tmpl = link_def.get("url", "")
+        if not isinstance(link_def, dict):
+            continue
+
+        url_tmpl = link_def.get("url")
+        if not isinstance(url_tmpl, str):
+            continue
+
         # Format against original report dictionary
         try:
             url = url_tmpl.format(**report)
             resolved_links.append({"label": link_def.get("label", ""), "url": url})
-        except KeyError as e:
+        except (KeyError, IndexError, ValueError) as e:
             logger.warning(
-                "Could not format link '%s': missing template key %s",
+                "Could not format link '%s': %s",
                 link_def.get("label"),
                 e,
             )
-            resolved_links.append(link_def)
+            # Add as-is if formatting fails, or skip? Let's skip for safety
+            # but maybe the user wants it anyway. For now, strictly format it.
 
     result = {
         "scorecard_name": scorecard.get("name", "unnamed"),

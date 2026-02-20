@@ -13,6 +13,6 @@
 - **Rationale**: Facilitate adoption and standardize the setup for image analysis projects, including CI/CD and security policies.
 
 ## 2026-02-20: Fix Missing Scorecard Values
-- **Decision**: Update `evaluate` in `engine.py` to merge `results` into the root context of the `MissingDataTracker`.
-- **Decision**: Integrate GitHub Actions metadata into the template workflow using `regis-cli -m`.
-- **Rationale**: Providing workflow context (requester, run ID) directly in the report improves auditability and helps users identify the origin of an automated report.
+- **Decision**: Update `evaluate` in `engine.py` to add type checking and safety guards for scorecard links.
+- **Decision**: Integrate GitHub Actions metadata into the template workflow using `regis-cli --metadata`.
+- **Rationale**: Prevent `AttributeError` crashes when link URLs are null or missing in scorecard definitions. Improved metadata integration ensures better traceability in CI/CD.
