@@ -16,10 +16,11 @@ docker run --rm \
   -v ${PWD}/playbooks:/app/playbooks \
   {{ cookiecutter.regis_cli_image_url }} \
   analyze {{ cookiecutter.regis_cli_image_url }} \
-  -s playbooks/default.yaml \
-  -f html
+  -p playbooks/default.yaml \
+  --site
 ```
 
+{% if cookiecutter.platform == "github" -%}
 ### GitHub Actions
 
 A workflow is provided in `.github/workflows/analyze.yml` to automate this analysis.
@@ -29,6 +30,17 @@ A workflow is provided in `.github/workflows/analyze.yml` to automate this analy
 - **Automatic Publishing**: Generated reports are committed back to the repository and automatically published to **GitHub Pages**.
 
 To view your reports, enable GitHub Pages in your repository settings and point it to the "GitHub Actions" source.
+{%- elif cookiecutter.platform == "gitlab" -%}
+### GitLab CI
+
+A workflow is provided in `.gitlab-ci.yml` to automate this analysis.
+
+- **Manual Trigger**: You can manually run the analysis from the "Build > Pipelines" tab by providing an `image_url`.
+- **Metadata Traceability**: Reports automatically include GitLab CI metadata (requester, job ID, pipeline URL) for better auditability.
+- **Automatic Publishing**: Generated reports are committed back to the repository and automatically published to **GitLab Pages**.
+
+To view your reports, ensure GitLab Pages is enabled for your project.
+{%- endif %}
 
 ## Documentation
 

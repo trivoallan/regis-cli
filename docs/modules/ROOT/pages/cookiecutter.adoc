@@ -13,20 +13,16 @@ Follow these steps to create your analysis project:
 
 === 1. Generate the Project
 
-Run Cookiecutter pointing to the platform-specific directory in this repository:
+Run Cookiecutter pointing to the `cookiecutter/` directory in this repository:
 
 [source,bash]
 ----
-# For GitHub
-pipenv run cookiecutter cookiecutter/github/
-
-# For GitLab
-pipenv run cookiecutter cookiecutter/gitlab/
+pipenv run cookiecutter cookiecutter/
 ----
 
 [NOTE]
 ====
-Platform-specific templates include pre-configured CI/CD workflows (GitHub Actions or GitLab CI) and optimized directory structures.
+You will be prompted to choose between `github` and `gitlab` via the `platform` parameter. The template automatically configures the appropriate CI/CD workflows for your choice.
 ====
 
 === 2. Configure Variables
@@ -39,6 +35,9 @@ You will be prompted to provide values for the following variables:
 
 | `project_name`
 | The human-readable name of your project (e.g., "Acme Production Security").
+
+| `platform`
+| The target CI/CD platform (`github` or `gitlab`).
 
 | `project_slug`
 | The directory name (defaults to a slugified version of the project name).
@@ -91,3 +90,12 @@ Once pushed to GitHub, you can trigger a manual analysis:
 . Enter the URL of the image you want to analyze (e.g., `ghcr.io/my-org/my-app:latest`).
 
 The workflow will run the analysis, commit the reports to your repository, and deploy the updated site to GitHub Pages.
+
+== Manual Usage
+
+You can also run the analysis locally using the `--site` flag to generate the HTML dashboard:
+
+[source,bash]
+----
+pipenv run regis-cli analyze my-image:latest --site
+----

@@ -106,12 +106,26 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 detail["layers_count"] = len(manifest["layers"])
             platforms.append(detail)
 
+        # 4. List tags
+        tags: list[str] = []
+        try:
+            # skopeo list-tags docker://registry/repository
+            list_tags_target = f"docker://{registry}/{repository}"
+            list_tags_stdout = self._run_skopeo(client, ["list-tags", list_tags_target])
+            tags_data = json.loads(list_tags_stdout)
+            tags = tags_data.get("Tags", [])
+            # Natural sort or just take the ones from skopeo (usually unsorted or alphabetical)
+            # We'll return the raw list and let the renderer handle it, but we can also store a subset.
+        except Exception as e:
+            logger.warning("Could not list tags for %s: %s", repository, e)
+
         return {
             "analyzer": self.name,
             "repository": repository,
             "tag": tag,
             "inspect": inspect_data,
             "platforms": platforms,
+            "tags": tags,
         }
 
     # ------------------------------------------------------------------

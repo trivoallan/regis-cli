@@ -19,8 +19,7 @@ analyze:
   script:
     - |
       regis-cli analyze "$[[ inputs.image_url ]]" \
-        --format json \
-        --format html \
+        --site \
         --playbook "{{ cookiecutter.regis_playbook_url }}" \
         --output-dir public \
         --meta "trigger.user=$GITLAB_USER_LOGIN" \

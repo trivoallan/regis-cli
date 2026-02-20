@@ -15,8 +15,8 @@ You can use `cookiecutter` to quickly create a new GitLab repository pre-configu
 
 [source,bash]
 ----
-# Generate the project from the gitlab template
-pipenv run cookiecutter cookiecutter/gitlab/
+# Generate the project from the unified template (choose 'gitlab')
+pipenv run cookiecutter cookiecutter/
 
 # Create the repository on GitLab and push
 cd <your-project-slug>

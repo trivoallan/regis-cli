@@ -47,7 +47,29 @@
                 </tbody>
             </table>
         </div>
-
+        
+        {% if data.tags %}
+        <div class="tags-list" style="margin-bottom: 1.5rem;">
+            <h4>Recent Tags</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                {% for tag in data.tags[:15] %}
+                <span class="badge {{ 'info' if tag == data.tag else '' }}" style="font-family: monospace;">{{ tag }}</span>
+                {% endfor %}
+                {% if data.tags|length > 15 %}
+                <span class="badge secondary">+{{ data.tags|length - 15 }} more</span>
+                {% endif %}
+            </div>
+            {% if data.registry == 'docker.io' %}
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                <a href="https://hub.docker.com/r/{{ data.repository }}/tags" target="_blank" class="btn-link">View all tags on Docker Hub</a>
+            </p>
+            {% elif data.registry == 'ghcr.io' %}
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                <a href="https://github.com/{{ data.repository.split('/')[0] }}/{{ data.repository.split('/')[1:]|join('/') }}/pkgs/container/{{ data.repository.split('/')[-1] }}" target="_blank" class="btn-link">View all tags on GHCR</a>
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
         <details>
             <summary class="btn-link">View Raw JSON Metadata</summary>
             <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: 4px; overflow-x: auto; font-size: 0.85rem; max-height: 400px; margin-top: 0.5rem;"><code>{{ data.inspect | tojson(indent=2) }}</code></pre>

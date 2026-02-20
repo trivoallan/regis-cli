@@ -30,8 +30,7 @@ jobs:
       - name: Analyze Image
         run: |
           regis-cli analyze "{% raw %}${{ github.event.inputs.image_url }}{% endraw %}" \
-            --format json \
-            --format html \
+            --site \
             --playbook "{{ cookiecutter.regis_playbook_url }}" \
             --meta "trigger.user={% raw %}${{ github.triggering_actor }}{% endraw %}" \
             --meta "trigger.url={% raw %}https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}{% endraw %}" \

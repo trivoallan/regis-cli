@@ -1,5 +1,7 @@
 # Backlog
 
+- [ ] Tests unitaires pour cookiecutter
+- [ ] Implémenter le workflow complet à base de MR pour Gitlab
 - [ ] Cleanup du cli (--format, list (?))
 - [ ] Récupération et affichage des tags adjacents à l'image analysée (skopeo)
 - [ ] Interface d'administration (requirements manuels) ?
@@ -7,7 +9,7 @@
 - [ ] Démo intégration avec PowerBI (idées)
 - [ ] Consolidation de la documentation (docs/)
 - [ ] Comment gérer les mises à jour du playbook ? Permettre de spécifier une version du playbook ? et un lien de téléchargement ?
-- [ ] Merger les deux cookiecutters en un seul
+- [x] Merger les deux cookiecutters en un seul
 - [x] Versionner les artifacts dans le repo gitlab
 
 

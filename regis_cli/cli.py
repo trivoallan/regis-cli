@@ -176,12 +176,11 @@ def main(verbose: bool) -> None:
     help="Arbitrary metadata in key=value format. Can be repeated. Supports dot notation (e.g. ci.job_id=123).",
 )
 @click.option(
-    "-f",
-    "--format",
-    "output_formats",
-    multiple=True,
-    type=click.Choice(["json", "html"], case_sensitive=False),
-    help="Output format (can be repeated, default: json).",
+    "-s",
+    "--site",
+    is_flag=True,
+    default=False,
+    help="Generate HTML report site.",
 )
 @click.option(
     "--theme",
@@ -207,7 +206,7 @@ def analyze(
     output_template: str | None,
     output_dir_template: str | None,
     pretty: bool,
-    output_formats: tuple[str, ...],
+    site: bool,
     theme: str,
     meta: tuple[str, ...],
     auth: tuple[str, ...],
@@ -231,11 +230,11 @@ def analyze(
         err=True,
     )
 
-    # Select output formats, ensuring 'json' is always generated.
-    formats_set = {f.lower() for f in output_formats} if output_formats else set()
-    formats_set.add("json")
-    # Put json first, then others
-    formats = ["json"] + sorted(list(formats_set - {"json"}))
+    # Select output formats.
+    # JSON is always generated. HTML if --site is active.
+    formats = ["json"]
+    if site:
+        formats.append("html")
 
     # 1. Check for cache if requested.
     final_report = None

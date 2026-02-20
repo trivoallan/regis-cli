@@ -38,6 +38,11 @@
           "user": { "type": "string" }
         }
       }
+    },
+    "tags": {
+      "type": "array",
+      "description": "List of tags associated with the repository.",
+      "items": { "type": "string" }
     }
   },
   "additionalProperties": false

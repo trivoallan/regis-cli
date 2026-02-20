@@ -1,10 +1,11 @@
 {
-    "project_name": "RegiS Analysis for {{ cookiecutter.project_name }}",
+    "project_name": "RegiS Analysis for {{ cookiecutter.platform }}",
     "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
+    "platform": ["github", "gitlab"],
     "registry_domain": "ghcr.io",
     "repository_owner": "username",
     "author_name": "RegiS",
-    "description": "Image analysis and security scorecards for {{ cookiecutter.project_name }}",
+    "description": "Image analysis and security scorecards for {{ cookiecutter.platform }}",
     "regis_cli_image_url": "ghcr.io/trivoallan/regis-cli:0.4.0",
     "regis_playbook_url": "https://raw.githubusercontent.com/trivoallan/regis-cli/refs/tags/v0.4.0/regis_cli/playbooks/default.yaml"
 }
