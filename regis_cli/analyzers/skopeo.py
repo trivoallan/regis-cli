@@ -56,17 +56,22 @@ class SkopeoAnalyzer(BaseAnalyzer):
             logger.error(msg)
             raise AnalyzerError(msg) from e
 
-        # 2. Fetch primary inspect data (raw metadata)
-        try:
-            primary_inspect_stdout = self._run_skopeo(client, ["inspect", target])
-            inspect_data = json.loads(primary_inspect_stdout)
-        except Exception as e:
-            logger.warning("Could not fetch primary inspect data for %s: %s", target, e)
-            inspect_data = {}
-
-        # 3. Resolve platforms
+        # 2. Resolve platforms
         media_type = manifest.get("mediaType", "")
         platforms: list[dict[str, Any]] = []
+
+        # 3. Fetch primary inspect data (raw metadata) if NOT an index.
+        # Calling high-level inspect on an index from a machine with different architecture
+        # (e.g. arm64 local vs amd64 remote) often fails with 'no image found'.
+        inspect_data: dict[str, Any] = {}
+        if media_type not in _INDEX_TYPES:
+            try:
+                primary_inspect_stdout = self._run_skopeo(client, ["inspect", target])
+                inspect_data = json.loads(primary_inspect_stdout)
+            except Exception as e:
+                logger.warning(
+                    "Could not fetch primary inspect data for %s: %s", target, e
+                )
 
         if media_type in _INDEX_TYPES:
             # Multi-arch image — iterate over each platform manifest in parallel.
