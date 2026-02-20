@@ -5,7 +5,7 @@ trigger: always_on
 # Commit messages
 
 - Must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. Allowed types : https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type
-- Scopes must be extrapolated from project analysis and are mandatory.
+- Scopes are **mandatory** and must be extrapolated from the architectural component modified.
 
 ## Defined Scopes
 
@@ -20,8 +20,10 @@ To ensure clean and readable changelogs, please use the following allowed scopes
 ### Analyzers
 - `analyzer` : Changes to the base analyzer class or shared analyzer interfaces.
 - `analyzer/trivy` : Specific to vulnerability scanning and SBOM generation via Trivy.
+- `analyzer/sbom` : Specific to SBOM analysis and CycloneDX/SPDX generation.
 - `analyzer/hadolint` : Specific to Dockerfile linting.
 - `analyzer/skopeo` : Specific to base metadata extraction.
+
 - `analyzer/freshness` : Specific to image age and freshness score calculations.
 - `analyzer/size` : Specific to size and layer calculations.
 - `analyzer/popularity` : Specific to registry popularity metrics.
