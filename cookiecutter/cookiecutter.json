@@ -1,8 +1,0 @@
-{
-    "project_name": "My Registry Analysis",
-    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
-    "registry_domain": "ghcr.io",
-    "repository_owner": "username",
-    "author_name": "TTC",
-    "description": "Image analysis and security scorecards for {{ cookiecutter.project_name }}"
-}

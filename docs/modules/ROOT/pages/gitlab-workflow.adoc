@@ -1,0 +1,53 @@
+= Using in GitLab CI
+:description: Guide to using regis-cli in GitLab CI/CD pipelines.
+
+This guide explains how to integrate `regis-cli` into your GitLab CI/CD pipelines to automate container image analysis and security scoring.
+
+== Prerequisites
+
+* A GitLab project.
+* GitLab Runner with Docker executor.
+* (Optional) `glab` CLI installed locally.
+
+== Bootstrapping a New Project
+
+You can use `cookiecutter` to quickly create a new GitLab repository pre-configured for `regis-cli`.
+
+[source,bash]
+----
+# Generate the project from the gitlab template
+pipenv run cookiecutter cookiecutter/gitlab/
+
+# Create the repository on GitLab and push
+cd <your-project-slug>
+glab repo create --public
+----
+
+== GitLab CI Configuration
+
+The generated `.gitlab-ci.yml` uses GitLab CI `spec: inputs` to parameterize the image analysis.
+
+[source,yaml]
+----
+include::example$gitlab-ci-fragment.yml[]
+----
+
+[NOTE]
+====
+In GitLab CI, the workspace is automatically available. The template uses a `before_script` to symlink workspace directories to the `/app/playbooks` and `/app/reports` paths expected by the `regis-cli` container.
+====
+
+== Running Analysis
+
+Once pushed, you can trigger an analysis manually from the GitLab UI:
+
+1. Go to **Build > Pipelines**.
+2. Click **Run pipeline**.
+3. Enter the `image_url` input.
+4. Click **Run pipeline**.
+
+The analysis results will be published to **GitLab Pages**.
+
+== GitLab Pages Setup
+
+Ensure GitLab Pages is enabled for your project. The reports are automatically written to the `public/` directory, which is the default for GitLab Pages.

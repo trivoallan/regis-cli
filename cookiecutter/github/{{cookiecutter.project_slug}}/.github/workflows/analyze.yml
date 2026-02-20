@@ -20,7 +20,7 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/trivoallan/regis-cli:0.3
+      image: "{{ cookiecutter.regis_cli_image_url }}"
       volumes:
         - {% raw %}${{ github.workspace }}/playbooks:/app/playbooks
         - {% raw %}${{ github.workspace }}/reports:/app/reports
@@ -33,6 +33,8 @@ jobs:
             --format json \
             --format html \
             --playbook playbooks/default.yaml \
+            --meta "trigger.user={% raw %}${{ github.triggering_actor }}{% endraw %}" \
+            --meta "trigger.url={% raw %}https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}{% endraw %}" \
             --meta "github.requester={% raw %}${{ github.triggering_actor }}{% endraw %}" \
             --meta "github.workflow={% raw %}${{ github.workflow }}{% endraw %}" \
             --meta "github.run_id={% raw %}${{ github.run_id }}{% endraw %}" \

@@ -1,0 +1,51 @@
+spec:
+  inputs:
+    image_url:
+      description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
+
+stages:
+  - analyze
+  - deploy
+
+analyze:
+  stage: analyze
+  image:
+    name: "{{ cookiecutter.regis_cli_image_url }}"
+    entrypoint: [""]
+  before_script:
+    - mkdir -p public
+    - ln -s $(pwd)/playbooks /app/playbooks || true
+    - ln -s $(pwd)/public /app/reports || true
+  script:
+    - |
+      regis-cli analyze "$[[ inputs.image_url ]]" \
+        --format json \
+        --format html \
+        --playbook playbooks/default.yaml \
+        --output-dir public \
+        --meta "trigger.user=$GITLAB_USER_LOGIN" \
+        --meta "trigger.url=$CI_PIPELINE_URL" \
+        --meta "gitlab.user=$GITLAB_USER_LOGIN" \
+        --meta "gitlab.project=$CI_PROJECT_PATH" \
+        --meta "gitlab.job_id=$CI_JOB_ID" \
+        --meta "gitlab.pipeline_url=$CI_PIPELINE_URL"
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && "$[[ inputs.image_url ]]" != ""'
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Deploying to GitLab Pages"
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && "$[[ inputs.image_url ]]" != ""'
+  needs:
+    - analyze

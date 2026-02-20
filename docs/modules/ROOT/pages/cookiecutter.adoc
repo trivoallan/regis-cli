@@ -13,17 +13,20 @@ Follow these steps to create your analysis project:
 
 === 1. Generate the Project
 
-Run Cookiecutter pointing to the `cookiecutter/` directory in this repository:
+Run Cookiecutter pointing to the platform-specific directory in this repository:
 
 [source,bash]
 ----
-pipenv run cookiecutter cookiecutter/
+# For GitHub
+pipenv run cookiecutter cookiecutter/github/
+
+# For GitLab
+pipenv run cookiecutter cookiecutter/gitlab/
 ----
 
 [NOTE]
 ====
-You can also point to the remote Git URL if the repository is public:
-`cookiecutter https://github.com/trivoallan/regis-cli --directory cookiecutter`
+Platform-specific templates include pre-configured CI/CD workflows (GitHub Actions or GitLab CI) and optimized directory structures.
 ====
 
 === 2. Configure Variables

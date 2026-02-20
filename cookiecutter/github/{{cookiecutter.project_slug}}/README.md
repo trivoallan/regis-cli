@@ -13,10 +13,10 @@ You can run the analysis using Docker:
 ```bash
 docker run --rm \
   -v ${PWD}/reports:/app/reports \
-  -v ${PWD}/scorecards:/app/scorecards \
-  ghcr.io/trivoallan/regis-cli:latest \
-  analyze {{ cookiecutter.registry_domain }}/{{ cookiecutter.repository_owner }}/YOUR_IMAGE:TAG \
-  -s scorecards/default.yaml \
+  -v ${PWD}/playbooks:/app/playbooks \
+  {{ cookiecutter.regis_cli_image_url }} \
+  analyze {{ cookiecutter.regis_cli_image_url }} \
+  -s playbooks/default.yaml \
   -f html
 ```
 
@@ -33,4 +33,4 @@ To view your reports, enable GitHub Pages in your repository settings and point 
 ## Documentation
 
 - [docs/memory-bank/](docs/memory-bank/): Project context and progress tracking.
-- [scorecards/](scorecards/): Custom security policies.
+- [playbooks/](playbooks/): Custom security policies.

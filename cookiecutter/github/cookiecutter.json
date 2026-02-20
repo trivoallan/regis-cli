@@ -1,0 +1,9 @@
+{
+    "project_name": "Regis Analysis for Github",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
+    "registry_domain": "ghcr.io",
+    "repository_owner": "username",
+    "author_name": "",
+    "description": "Image analysis and security scorecards for {{ cookiecutter.project_name }}",
+    "regis_cli_image_url": "ghcr.io/trivoallan/regis-cli:0.3"
+}
