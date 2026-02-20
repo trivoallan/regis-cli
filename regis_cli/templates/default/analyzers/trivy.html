@@ -1,58 +1,46 @@
-{% import theme ~ "/macros.html" as m %}
+{% import theme ~ "/macros.html" as m with context %}
 
-{% call m.section("Trivy Scan", "🛡️") %}
-    {% set count = data.vulnerability_count|default(0) %}
-    {% set color = "#22c55e" if count == 0 else "#f59e0b" if count < 10 else "#ef4444" %}
-    
-    <div class="flex-between">
-        <div class="card-title-main" style="--accent-color: {{ color }}; color: var(--accent-color); margin-bottom: 0;">
-            {{ count }} vulnerability{{ 'y' if count == 1 else 'ies' }}
-        </div>
-        <div class="text-muted">Trivy v{{ data.trivy_version|default('?')|e }}</div>
-    </div>
+{% set vuln_count = data.targets[0].Vulnerabilities|length if data.targets[0].Vulnerabilities else 0 %}
 
-    <div class="flex-gap" style="margin-top: 12px; margin-bottom: 16px;">
-        {{ m.badge('Critical', data.critical_count|default(0), '#ef4444') }}
-        {{ m.badge('High', data.high_count|default(0), '#f97316') }}
-        {{ m.badge('Medium', data.medium_count|default(0), '#f59e0b') }}
-        {{ m.badge('Low', data.low_count|default(0), '#6366f1') }}
-        {{ m.badge('Unknown', data.unknown_count|default(0), '#6b7280') }}
-    </div>
+{% set sorted_vulns = data.targets[0].Vulnerabilities|selectattr("Severity", "in", ["CRITICAL", "HIGH"])|list|sort(attribute="Severity") %}
 
-    {% for target in data.targets %}
-        {% set vulns = target.Vulnerabilities %}
-        {% if vulns %}
-            <h4 class="target-heading">{{ target.Target|default('Unknown Target')|e }}</h4>
-            
-            <table>
+<article>
+    <header>
+        <h3 style="margin: 0;">🛡️ Trivy ({{ vuln_count }})</h3>
+    </header>
+    {% if sorted_vulns %}
+        <div class="overflow-auto">
+            <table class="striped">
                 <thead>
                     <tr>
+                        <th>Severity</th>
                         <th>ID</th>
                         <th>Package</th>
-                        <th>Installed</th>
-                        <th>Fixed</th>
-                        <th>Severity</th>
+                        <th>Fixed In</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for v in vulns[:10] %}
-                        {% set sev = v.Severity|default("UNKNOWN") %}
-                        {% set sev_color = "#ef4444" if sev == "CRITICAL" else "#f97316" if sev == "HIGH" else "#f59e0b" if sev == "MEDIUM" else "#6366f1" if sev == "LOW" else "#6b7280" %}
-                        <tr>
-                            <td>{{ v.VulnerabilityID|default("")|e }}</td>
-                            <td>{{ v.PkgName|default("")|e }}</td>
-                            <td>{{ v.InstalledVersion|default("")|e }}</td>
-                            <td>{{ v.FixedVersion|default("")|e }}</td>
-                            <td>
-                                <span class="sev-label" style="--accent-color: {{ sev_color }}; color: var(--accent-color);">{{ sev|e }}</span>
-                            </td>
-                        </tr>
+                    {% for v in sorted_vulns[:10] %}
+                    <tr>
+                        <td>
+                            {% set status = "error" if v.Severity in ["CRITICAL"] else None %}
+                            {{ m.badge(v.Severity, status=status) }}
+                        </td>
+                        <td><code>{{ v.VulnerabilityID|e }}</code></td>
+                        <td>
+                            <strong>{{ v.PkgName|e }}</strong><br>
+                            <small>{{ v.version|e }}</small>
+                        </td>
+                        <td>{{ v.fixed_version|default("-")|e }}</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            {% if vulns|length > 10 %}
-                <p class="text-muted" style="margin-top: 8px;">… and {{ vulns|length - 10 }} more in this target</p>
-            {% endif %}
+        </div>
+        {% if sorted_vulns|length > 10 %}
+            <p><small>… showing top 10 of {{ sorted_vulns|length }} CRITICAL/HIGH vulnerabilities</small></p>
         {% endif %}
-    {% endfor %}
-{% endcall %}
+    {% else %}
+        <p>✅ No CRITICAL or HIGH vulnerabilities found.</p>
+    {% endif %}
+</article>

@@ -1,100 +1,79 @@
-{% import theme ~ "/macros.html" as m %}
+{% import theme ~ "/macros.html" as m with context %}
 
-{# Scorecard result visualization #}
-{% set sc_val = sc|default(report.scorecard) %}
-{% if sc_val %}
-    {% set sc = sc_val %}
-    {% set level = sc.level|default('none') %}
-    {% set colors = {'gold': '#f59e0b', 'silver': '#94a3b8', 'bronze': '#cd7f32', 'none': '#6b7280'} %}
-    {% set icons = {'gold': '🥇', 'silver': '🥈', 'bronze': '🥉', 'none': '—'} %}
-    {% set color = colors[level] %}
-    {% set icon = icons[level] %}
-    {% set score_pct = sc.score|default(0) %}
+{% set icons = {"bronze": "🥉", "silver": "🥈", "gold": "🥇", "none": "⭕"} %}
 
-    <div class="sc-container">
-        <div class="sc-header">
-            <h2>📊 {{ sc.scorecard_name|default("Scorecard")|e }}</h2>
-        </div>
-        
-        <div class="sc-metrics-summary" style="display: flex; flex-wrap: wrap; gap: 16px; margin: 16px 0;">
-            {% for level_name, stats in sc.levels_summary.items() %}
-                {% set level_color = colors.get(level_name, '#6b7280') %}
-                {% set level_icon = icons.get(level_name, '') %}
-                <div class="sc-level-metric" style="flex: 1; min-width: 120px; padding: 12px; background: {{ level_color }}11; border: 1px solid {{ level_color }}33; border-radius: 8px;">
-                    <div style="font-size: 1.2rem; margin-bottom: 4px;">{{ level_icon }} {{ level_name|capitalize }}</div>
-                    <div style="font-weight: 600; font-size: 1.1rem; color: {{ level_color }};">
-                        {{ stats.passed }}/{{ stats.total }} passed
-                    </div>
-                    <div class="text-muted" style="font-size: 0.85rem; margin-top: 4px;">
-                        {{ stats.percentage }}% success rate
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        
-        {{ m.score_bar(score_pct, 100) }}
+<article>
+    <header>
+        <h2 style="margin: 0;">{{ sc.scorecard_name|default("Scorecard")|e }}</h2>
+    </header>
 
-        <div style="margin-top:20px;">
-            <table class="sc-table">
-                <thead>
-                    <tr>
-                        <th class="status">Status</th>
-                        <th class="level">Level</th>
-                        <th class="rule">Rule</th>
-                        <th class="analyzers">Analyzers</th>
-                        <th class="tags">Tags</th>
-                        <th class="details">Details</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in sc.rules %}
-                        {% set lvl = r.level|default('') %}
-                        {% set lvl_icon = icons.get(lvl, '') %}
-                        <tr>
-                            <td class="status">
-                                {% if r.status == "incomplete" %}
-                                    <span title="Incomplete data">⚠️</span>
-                                {% elif r.passed %}
-                                    ✅
-                                {% else %}
-                                    ❌
-                                {% endif %}
-                            </td>
-                            <td class="level">
-                                {{ lvl_icon }} {{ lvl|e }}
-                            </td>
-                            <td class="rule">
-                                <div class="rule-title">{{ r.title|default(r.name)|default('')|e }}</div>
-                            </td>
-                            <td class="analyzers">
-                                {% if r.analyzers %}
-                                    <div class="sc-tag-list">
-                                        {% for analyzer in r.analyzers %}
-                                            <span class="sc-tag analyzer-tag" style="background-color: #f3f4f6; color: #374151; font-weight: 500;">
-                                                🔍 {{ analyzer|e }}
-                                            </span>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </td>
-                            <td class="tags">
-                                {% if r.tags %}
-                                    <div class="sc-tag-list">
-                                        {% for tag in r.tags %}
-                                            <span class="sc-tag">
-                                                {{ tag|e }}
-                                            </span>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </td>
-                            <td class="details">
-                                {{ r.details|e }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    {% if sc.display is defined and sc.display.widgets is defined %}
+    <div class="grid">
+        {% for w in sc.display.widgets %}
+            <div>
+                {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
+                <strong>{{ w.label|e }}</strong><br>
+                <span style="font-size: 1.4rem; font-weight: bold;">
+                    {%- if w.resolved_value is sameas true -%}✅
+                    {%- elif w.resolved_value is sameas false -%}❌
+                    {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>
+                    {%- else -%}{{ w.resolved_value }}
+                    {%- endif -%}
+                </span>
+            </div>
+        {% endfor %}
     </div>
-{% endif %}
+    <hr>
+    {% endif %}
+
+    {% if sc.levels_summary %}
+    <div class="grid">
+        {% for level_name, stats in sc.levels_summary.items() %}
+            {% set level_icon = icons.get(level_name, '') %}
+            <div>
+                <strong>{{ level_icon }} {{ level_name|capitalize }}</strong><br>
+                {{ stats.passed }}/{{ stats.total }} passed ({{ stats.percentage }}%)
+            </div>
+        {% endfor %}
+    </div>
+
+    <hr>
+    {% endif %}
+
+    <div class="overflow-auto">
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    {% if sc.levels_summary %}<th>Level</th>{% endif %}
+                    <th>Rule</th>
+                    <th>Analyzers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in sc.rules %}
+                <tr>
+                    <td>{{ m.bool_icon(r.passed) }}</td>
+                    {% if sc.levels_summary %}<td><small>{{ r.level|capitalize }}</small></td>{% endif %}
+                    <td>
+                        <strong>{{ r.title|e }}</strong>
+                        {% if r.tags %}
+                        <div style="margin-top: 0.2rem;">
+                            {% for tag in r.tags %}
+                            {{ m.badge(tag) }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem;">{{ r.details|e }}</div>
+                    </td>
+                    <td>
+                        {% for analyzer in r.analyzers %}
+                        <small>{{ m.badge(analyzer, status="outline") }}</small>
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>

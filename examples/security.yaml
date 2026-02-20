@@ -1,5 +1,16 @@
-name: Image Security
+name: Security
 description: Evaluate container image security posture
+
+display:
+  analyzers:
+    - trivy
+  widgets:
+    - label: Critical Vulnerabilities
+      value: results.trivy.critical_count
+      icon: 🔴
+    - label: High Vulnerabilities
+      value: results.trivy.high_count
+      icon: 🟠
 
 levels:
   - name: mandatory

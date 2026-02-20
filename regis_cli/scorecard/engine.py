@@ -206,7 +206,7 @@ def evaluate(
             {
                 "name": rule.get("name", ""),
                 "title": rule.get("title", rule.get("name", "")),
-                "level": rule.get("level", "bronze"),
+                "level": rule.get("level"),
                 "tags": rule.get("tags", []),
                 "analyzers": sorted(involved_analyzers),
                 "passed": passed,
@@ -221,8 +221,6 @@ def evaluate(
         lv["name"]: lv.get("order", _LEVEL_ORDER.get(lv["name"], 0))
         for lv in scorecard.get("levels", [])
     }
-    if not levels_defined:
-        levels_defined = dict(_LEVEL_ORDER)
 
     levels_summary = {}
     for level_name in sorted(levels_defined, key=lambda n: levels_defined[n]):
@@ -238,7 +236,7 @@ def evaluate(
     passed_count = sum(1 for r in rule_results if r["passed"])
     total = len(rule_results)
 
-    return {
+    result: dict[str, Any] = {
         "scorecard_name": scorecard.get("name", "unnamed"),
         "score": round(passed_count / total * 100) if total else 0,
         "total_rules": total,
@@ -246,3 +244,22 @@ def evaluate(
         "levels_summary": levels_summary,
         "rules": rule_results,
     }
+
+    # Forward display preferences and resolve widget values.
+    display = scorecard.get("display")
+    if display:
+        display_result = dict(display)
+        # Resolve widget values from the report data.
+        widgets = display_result.get("widgets", [])
+        if widgets:
+            resolved_widgets = []
+            for widget in widgets:
+                resolved = dict(widget)
+                value_path = widget.get("value")
+                if value_path:
+                    resolved["resolved_value"] = raw_context.get(value_path)
+                resolved_widgets.append(resolved)
+            display_result["widgets"] = resolved_widgets
+        result["display"] = display_result
+
+    return result

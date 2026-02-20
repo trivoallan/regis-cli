@@ -36,11 +36,11 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "title", "level", "passed"],
+        "required": ["name", "title", "passed"],
         "properties": {
           "name": {"type": "string"},
           "title": {"type": "string"},
-          "level": {"type": "string"},
+          "level": {"type": ["string", "null"]},
           "tags": {
             "type": "array",
             "items": {"type": "string"}

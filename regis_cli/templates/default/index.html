@@ -1,34 +1,55 @@
 {% extends theme ~ "/base.html" %}
-{% import theme ~ "/macros.html" as m %}
+{% import theme ~ "/macros.html" as m with context %}
 
-{% block scorecard %}
-    {% for sc in report.scorecards %}
-        {% include theme ~ "/scorecards/default.html" %}
-    {% endfor %}
+{% block request_params %}
+    <div class="request-params" style="margin-bottom: 1rem; font-size: 0.85rem; color: #666;">
+        {% if report.scorecards %}
+        <div>
+            {% for sc in report.scorecards %}
+                {{ m.badge(sc.scorecard_name, status="outline", href="#scorecard-" ~ loop.index0) }}
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
 {% endblock %}
 
-{% block content %}
+{% block metadata %}
     {% if report.metadata %}
-    <div class="card meta-section">
-        <h2 class="card-title">Metadata</h2>
-        <table class="meta-table">
-            <tbody>
-                {% for key, value in report.metadata.items() %}
-                <tr>
-                    <td class="label">{{ key|e }}</td>
-                    <td class="value">{{ value|e }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        <div class="metadata-badges" style="margin-bottom: 2rem;">
+            {% for key, value in report.metadata.items() %}
+                {{ m.badge(key, value) }}
+            {% endfor %}
+        </div>
     {% endif %}
+{% endblock %}
 
-    {% for name, data in report.results.items()|sort %}
-        {% if data.error %}
-            {{ m.error_card(name, data.error) }}
-        {% else %}
-            {% include [theme ~ "/analyzers/" ~ name ~ ".html", theme ~ "/analyzers/default.html"] %}
-        {% endif %}
+{% block body %}
+    {# Track which analyzers are claimed by scorecards #}
+    {% set ns = namespace(claimed_analyzers=[]) %}
+
+    {% for sc in report.scorecards %}
+        <section id="scorecard-{{ loop.index0 }}">
+            {% include theme ~ "/scorecards/default.html" %}
+
+            {# Render this scorecard's analyzers inside the section #}
+            {% if sc.display is defined and sc.display.analyzers is defined %}
+                {% for analyzer_name in sc.display.analyzers %}
+                    {% if analyzer_name in report.results %}
+                        {% set name = analyzer_name %}
+                        {% set data = report.results[analyzer_name] %}
+                        <div id="analyzer-{{ name }}">
+                            {% if data.error %}
+                                {{ m.error_card(name, data.error) }}
+                            {% else %}
+                                {% include [theme ~ "/analyzers/" ~ name ~ ".html", theme ~ "/analyzers/default.html"] %}
+                            {% endif %}
+                        </div>
+                        {% if analyzer_name not in ns.claimed_analyzers %}
+                            {% set ns.claimed_analyzers = ns.claimed_analyzers + [analyzer_name] %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </section>
     {% endfor %}
 {% endblock %}

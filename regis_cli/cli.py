@@ -118,7 +118,7 @@ def main(verbose: bool) -> None:
     "--output-dir",
     "output_dir_template",
     help="Base directory template for output files (e.g. 'reports/{repository}').",
-    default="reports/{repository}/{tag}",
+    default="reports/{registry}/{repository}/{tag}",
 )
 @click.option(
     "--pretty/--no-pretty",
@@ -143,7 +143,7 @@ def main(verbose: bool) -> None:
 @click.option(
     "--theme",
     default="default",
-    type=click.Choice(["default", "shadcn"], case_sensitive=False),
+    type=click.Choice(["default"], case_sensitive=False),
     help="Theme to use for HTML report (default: default).",
 )
 @click.option(

@@ -1,81 +1,35 @@
-{% macro score_color(score, max_score=10) %}
-{%- if score is none -%}
-#6b7280
-{%- else -%}
-{%- set ratio = score / max_score -%}
-{%- if ratio >= 0.7 -%}
-#22c55e
-{%- elif ratio >= 0.4 -%}
-#f59e0b
-{%- else -%}
-#ef4444
-{%- endif -%}
-{%- endif -%}
-{% endmacro %}
-
-{% macro badge(label, value, color="#6366f1") %}
-<span class="badge" style="--accent-color: {{ color }}; background: var(--accent-color)22; color: var(--accent-color); border: 1px solid var(--accent-color)44;">
-    {{ label|e }}: {{ value|e }}
+{% macro badge(label, value=None, status=None, href=None) %}
+{%- if href -%}<a href="{{ href }}" style="text-decoration: none; color: inherit;">{%- endif -%}
+<span class="badge {% if status %}{{ status }}{% endif %}">
+    {{ label|e }}{% if value is not none %}: {{ value|e }}{% endif %}
 </span>
+{%- if href -%}</a>{%- endif -%}
 {% endmacro %}
 
 {% macro bool_icon(val) %}
 {%- if val is sameas true -%}
-✅
+<span class="status-passed">✅</span>
 {%- elif val is sameas false -%}
-❌
+<span class="status-failed">❌</span>
 {%- else -%}
-➖
+<span class="status-muted">➖</span>
 {%- endif -%}
 {% endmacro %}
 
-{% macro section(title, icon="📦") %}
-<details class="report-section" open>
-    <summary>{{ icon }} {{ title|e }}</summary>
-    <div class="section-content">
-        {{ caller() }}
-    </div>
-</details>
+{% macro section(title, icon=None) %}
+<article>
+    <header>
+        <h3 style="margin: 0;">{% if icon %}{{ icon }} {% endif %}{{ title|e }}</h3>
+    </header>
+    {{ caller() }}
+</article>
 {% endmacro %}
 
-{% macro table(headers, rows) %}
-<table>
-    <thead>
-        <tr>
-            {% for h in headers %}
-            <th>{{ h|e }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in rows %}
-        <tr>
-            {% for cell in row %}
-            <td>{{ cell }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endmacro %}
-
-{% macro score_bar(score, max_score=10) %}
-{% set pct = (score / max_score * 100)|round(0)|int %}
-{% set pct = 100 if pct > 100 else (0 if pct < 0 else pct) %}
-{% set color = score_color(score, max_score)|trim %}
-<div class="score-bar-container" style="--accent-color: {{ color }};">
-    <div class="score-bar-bg">
-        <div class="score-bar-fill" style="width:{{ pct }}%; background: var(--accent-color);"></div>
-    </div>
-    <span class="score-value" style="color: var(--accent-color);">{{ score }}</span>
-</div>
-{% endmacro %}
 {% macro error_card(name, error) %}
-<div class="card error-card" style="border-left: 4px solid #ef4444;">
-    <h3 class="card-title" style="color: #ef4444;">⚠️ {{ name|e }} Analyzer Error</h3>
-    <div class="error-details">
-        <p><strong>Type:</strong> {{ error.type|e }}</p>
-        <p><strong>Message:</strong> {{ error.message|e }}</p>
-    </div>
-</div>
+<article style="border-left: 5px solid #ef4444;">
+    <header>
+        <h3 style="color: #ef4444; margin: 0;">⚠️ {{ name|e }} Analyzer Error</h3>
+    </header>
+    <p><strong>{{ error.type|e }}:</strong> {{ error.message|e }}</p>
+</article>
 {% endmacro %}
