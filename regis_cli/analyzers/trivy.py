@@ -15,7 +15,11 @@ from regis_cli.registry.client import RegistryClient
 logger = logging.getLogger(__name__)
 
 
-def _run_trivy(image: str) -> dict[str, Any]:
+def _run_trivy(
+    image: str,
+    username: str | None = None,
+    password: str | None = None,
+) -> dict[str, Any]:
     """Run trivy image scan and return parsed JSON."""
     trivy_path = shutil.which("trivy")
     if not trivy_path:
@@ -23,14 +27,20 @@ def _run_trivy(image: str) -> dict[str, Any]:
 
     # Pass registry credentials to Trivy if available
     env = os.environ.copy()
-    if env.get("REGIS_USERNAME") and env.get("REGIS_PASSWORD"):
-        env["TRIVY_USERNAME"] = env["REGIS_USERNAME"]
-        env["TRIVY_PASSWORD"] = env["REGIS_PASSWORD"]
+
+    # Priority: passed credentials > environment variables
+    user = username or env.get("REGIS_USERNAME")
+    pwd = password or env.get("REGIS_PASSWORD")
+
+    if user and pwd:
+        env["TRIVY_USERNAME"] = user
+        env["TRIVY_PASSWORD"] = pwd
 
     cmd = [
         trivy_path,
         "image",
-        "--format", "json",
+        "--format",
+        "json",
         "--quiet",
         "--no-progress",
         image,
@@ -74,7 +84,9 @@ class TrivyAnalyzer(BaseAnalyzer):
             full_image = f"{client.registry}/{repository}:{tag}"
 
         try:
-            data = _run_trivy(full_image)
+            data = _run_trivy(
+                full_image, username=client.username, password=client.password
+            )
         except AnalyzerError as exc:
             # If analysis fails, we return a partial report or raise?
             # BaseAnalyzer usually expects a valid report conforming to schema.
@@ -83,12 +95,6 @@ class TrivyAnalyzer(BaseAnalyzer):
             raise exc
 
         # Process results
-        trivy_version = data.get("SchemaVersion", "unknown")  # Trivy JSON output schema version? 
-        # Actually SchemaVersion in root is the JSON schema version. 
-        # But we want Trivy version? Trivy JSON output doesn't always include its own version in the report.
-        # We can run `trivy --version` but that's extra overhead.
-        # Let's just use "unknown" or check metadata if available.
-        
         targets = []
         counts = {
             "CRITICAL": 0,
@@ -103,27 +109,29 @@ class TrivyAnalyzer(BaseAnalyzer):
                 "Target": result.get("Target"),
                 "Vulnerabilities": [],
             }
-            
+
             vulns = result.get("Vulnerabilities", [])
             if vulns:
                 clean_vulns = []
                 for v in vulns:
                     severity = v.get("Severity", "UNKNOWN")
                     counts[severity] = counts.get(severity, 0) + 1
-                    
-                    clean_vulns.append({
-                        "VulnerabilityID": v.get("VulnerabilityID"),
-                        "PkgName": v.get("PkgName"),
-                        "InstalledVersion": v.get("InstalledVersion"),
-                        "FixedVersion": v.get("FixedVersion", ""),
-                        "Severity": severity,
-                        "Title": v.get("Title", ""),
-                        "Description": v.get("Description", ""),
-                    })
+
+                    clean_vulns.append(
+                        {
+                            "VulnerabilityID": v.get("VulnerabilityID"),
+                            "PkgName": v.get("PkgName"),
+                            "InstalledVersion": v.get("InstalledVersion"),
+                            "FixedVersion": v.get("FixedVersion", ""),
+                            "Severity": severity,
+                            "Title": v.get("Title", ""),
+                            "Description": v.get("Description", ""),
+                        }
+                    )
                 target_data["Vulnerabilities"] = clean_vulns
             else:
                 target_data["Vulnerabilities"] = None
-            
+
             targets.append(target_data)
 
         total = sum(counts.values())

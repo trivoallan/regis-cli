@@ -15,7 +15,11 @@ from regis_cli.registry.client import RegistryClient
 logger = logging.getLogger(__name__)
 
 
-def _run_trivy_sbom(image: str) -> dict[str, Any]:
+def _run_trivy_sbom(
+    image: str,
+    username: str | None = None,
+    password: str | None = None,
+) -> dict[str, Any]:
     """Run ``trivy image --format cyclonedx`` and return parsed CycloneDX JSON."""
     trivy_path = shutil.which("trivy")
     if not trivy_path:
@@ -23,14 +27,20 @@ def _run_trivy_sbom(image: str) -> dict[str, Any]:
 
     # Forward registry credentials to Trivy when available.
     env = os.environ.copy()
-    if env.get("REGIS_USERNAME") and env.get("REGIS_PASSWORD"):
-        env["TRIVY_USERNAME"] = env["REGIS_USERNAME"]
-        env["TRIVY_PASSWORD"] = env["REGIS_PASSWORD"]
+
+    # Priority: passed credentials > environment variables
+    user = username or env.get("REGIS_USERNAME")
+    pwd = password or env.get("REGIS_PASSWORD")
+
+    if user and pwd:
+        env["TRIVY_USERNAME"] = user
+        env["TRIVY_PASSWORD"] = pwd
 
     cmd = [
         trivy_path,
         "image",
-        "--format", "cyclonedx",
+        "--format",
+        "cyclonedx",
         "--quiet",
         "--no-progress",
         image,
@@ -82,7 +92,9 @@ class SbomAnalyzer(BaseAnalyzer):
         else:
             full_image = f"{client.registry}/{repository}:{tag}"
 
-        data = _run_trivy_sbom(full_image)
+        data = _run_trivy_sbom(
+            full_image, username=client.username, password=client.password
+        )
 
         # Parse CycloneDX structure.
         raw_components = data.get("components", [])
@@ -99,13 +111,15 @@ class SbomAnalyzer(BaseAnalyzer):
             comp_licenses = _extract_licenses(comp)
             all_licenses.update(comp_licenses)
 
-            components.append({
-                "name": comp.get("name", ""),
-                "version": comp.get("version"),
-                "type": ctype,
-                "purl": comp.get("purl"),
-                "licenses": comp_licenses,
-            })
+            components.append(
+                {
+                    "name": comp.get("name", ""),
+                    "version": comp.get("version"),
+                    "type": ctype,
+                    "purl": comp.get("purl"),
+                    "licenses": comp_licenses,
+                }
+            )
 
         return {
             "analyzer": self.name,
