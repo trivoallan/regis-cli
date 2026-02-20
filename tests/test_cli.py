@@ -27,8 +27,8 @@ class TestCliBasics:
         result = runner.invoke(main, ["list"])
         assert result.exit_code == 0
         # The built-in analyzers should appear.
-        assert "tags" in result.output
-        assert "image" in result.output
+        assert "skopeo" in result.output
+        assert "versioning" in result.output
 
     def test_analyze_invalid_url(self):
         runner = CliRunner()

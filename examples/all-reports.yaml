@@ -14,6 +14,5 @@ sections:
         - scorecarddev
         - size
         - skopeo
-        - tags
         - trivy
         - versioning

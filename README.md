@@ -1,19 +1,31 @@
 # regis-cli
 
-CLI tool to analyze Docker image registries and produce JSON reports.
+`regis-cli` is a powerful tool to analyze Docker image registries, evaluate security scorecards, and produce rich HTML/JSON reports.
 
 ## Features
 
-- **Pluggable analyzers** — each analyzer is a Python module producing a JSON report validated by a dedicated JSON Schema
-- **Entry-points architecture** — add new analyzers without modifying core code
-- **Docker Registry V2 API** — supports Docker Hub and any V2-compatible registry
+- **Consolidated Analysis** — Uses `skopeo` for fast, multi-arch registry inspection.
+- **Scorecard Engine** — Evaluate custom rules and policies against image metadata.
+- **Multi-Format Output** — Generate both JSON (for automation) and HTML (for humans) in a single run.
+- **Template-Based Paths** — Dynamic output directory and filename based on image metadata (registry, repository, tag).
+- **Report Caching** — Reuse existing analysis results to speed up report regeneration.
+- **Pluggable Architecture** — Easily add new analyzers and scorecard rules.
 
-### Built-in Analyzers
+## Built-in Analyzers
 
-| Analyzer | Description |
-|----------|-------------|
-| `tags`   | Lists all available tags for a repository |
-| `image`  | Inspects image metadata (architecture, OS, labels, layers) |
+| Analyzer       | Description                                                                 |
+|----------------|-----------------------------------------------------------------------------|
+| `skopeo`       | **Unified** inspection (multi-arch, OS, labels, layers, and root detection). |
+| `versioning`   | Checks for semantic versioning consistency and tag patterns.                |
+| `freshness`    | Calculates image age and identifies the creation date.                       |
+| `trivy`        | Integrates vulnerability scanning results.                                   |
+| `endoflife`    | Checks for EOL status of base images via `endoflife.date`.                  |
+| `hadolint`     | Lints Dockerfiles for best practices (if reconstructed).                    |
+| `sbom`         | Generates/Retrieves Software Bill of Materials (SBOM).                      |
+| `provenance`   | Verifies image build provenance and SLSA metadata.                          |
+| `size`         | Analyzes image size and layer distribution.                                 |
+| `popularity`   | Fetches popularity metrics (stars, pulls) from Docker Hub.                  |
+| `scorecarddev` | Integration with OpenSSF Scorecard for registry-level security.             |
 
 ## Installation
 
@@ -23,26 +35,43 @@ pipenv install
 
 ## Usage
 
+### Basic Analysis
 ```bash
-# Analyze an image (all analyzers)
-regis-cli analyze https://hub.docker.com/r/library/nginx --pretty
-
-# Run a specific analyzer
-regis-cli analyze nginx:latest --analyzer tags
-
-# List available analyzers
-regis-cli list
-
-# Write output to file
-regis-cli analyze nginx --output report.json
+# Analyze an image and output to stdout (JSON)
+regis-cli analyze nginx:latest
 ```
+
+### Advanced Reporting
+```bash
+# Generate both JSON and HTML reports in a dedicated directory
+regis-cli analyze nginx:latest -f json -f html -s examples/all-reports.yaml
+```
+
+### Report Caching
+```bash
+# Faster HTML generation by reusing previous analysis
+regis-cli analyze nginx:latest -f html --cache
+```
+
+### Dynamic Output Paths
+By default, reports are written to `reports/{registry}/{repository}/{tag}/{format}`. You can override this using:
+```bash
+regis-cli analyze nginx:latest -o "my-custom-report.{format}" -D "results/{repository}"
+```
+
+## Scorecards
+
+Scorecards allow you to define rules using JSON logic. Use them to verify compliance:
+- **No critical vulnerabilities**
+- **No root user**
+- **Maximum image age**
+- **Semantic versioning enforced**
+
+See `examples/` for sample scorecard definitions.
 
 ## Development
 
 ```bash
-# Install with dev dependencies
-pipenv install --dev
-
 # Run tests
 pipenv run pytest -v
 
@@ -54,18 +83,12 @@ regis-cli -v analyze nginx:latest
 
 1. Create a module in `regis_cli/analyzers/` inheriting from `BaseAnalyzer`
 2. Create a JSON Schema in `regis_cli/schemas/`
-3. Register the entry point in `pyproject.toml`:
-
-```toml
-[project.entry-points."regis_cli.analyzers"]
-myanalyzer = "regis_cli.analyzers.myanalyzer:MyAnalyzer"
-```
-
+3. Register the entry point in `pyproject.toml`
 4. Reinstall: `pipenv install`
 
 ## Documentation
 
-See the [docs/](docs/) directory for detailed documentation (Antora).
+Comprehensive documentation is available in the `docs/` directory (Antora).
 
 ## License
 

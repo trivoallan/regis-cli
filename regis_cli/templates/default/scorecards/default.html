@@ -3,9 +3,6 @@
 {% set icons = {"bronze": "🥉", "silver": "🥈", "gold": "🥇", "none": "⭕"} %}
 
 <article>
-    <header>
-        <h2 style="margin: 0;">{{ sc.scorecard_name|default("Scorecard")|e }}</h2>
-    </header>
 
     {% for page in sc.pages %}
         {% if sc.pages|length > 1 %}
