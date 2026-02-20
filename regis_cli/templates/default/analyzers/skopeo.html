@@ -14,6 +14,7 @@
                     <tr>
                         <th>Platform</th>
                         <th>Digest</th>
+                        <th>User</th>
                         <th>Created</th>
                         <th>Layers</th>
                     </tr>
@@ -25,7 +26,20 @@
                             <strong>{{ plat.os }}/{{ plat.architecture }}</strong>
                             {% if plat.variant %}<small>({{ plat.variant }})</small>{% endif %}
                         </td>
-                        <td><code title="{{ plat.digest }}">{{ plat.digest[:15] }}...</code></td>
+                        <td>
+                            {% if plat.digest %}
+                                <code title="{{ plat.digest }}">{{ plat.digest[:15] }}...</code>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if plat.user == '' or plat.user == '0' or plat.user == 'root' %}
+                                <span class="badge danger" title="Runs as root">root</span>
+                            {% else %}
+                                <code>{{ plat.user }}</code>
+                            {% endif %}
+                        </td>
                         <td>{{ plat.created or 'N/A' }}</td>
                         <td>{{ plat.layers_count }}</td>
                     </tr>

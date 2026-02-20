@@ -161,7 +161,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
         if "variant" in platform_info:
             result["variant"] = platform_info["variant"]
 
-        # Run high-level inspect to get Architecture, Os, Labels, Created, and Layers count.
+        # 1. Run high-level inspect to get Architecture, Os, Labels, Created, and Layers count.
         args = ["inspect"]
         if result["os"] != "unknown":
             args.extend(["--override-os", result["os"]])
@@ -181,10 +181,31 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 result["architecture"] = data.get("Architecture", "unknown")
             if result["os"] == "unknown":
                 result["os"] = data.get("Os", "unknown")
+            if "digest" not in result or not result["digest"]:
+                result["digest"] = data.get("Digest")
 
         except subprocess.CalledProcessError as e:
             logger.debug("Skopeo command failed for %s: %s", target, e.stderr)
         except Exception:
             logger.debug("Could not inspect platform %s", target, exc_info=True)
+
+        # 2. Run --config inspect to get the User field
+        config_args = ["inspect", "--config"]
+        if result["os"] != "unknown":
+            config_args.extend(["--override-os", result["os"]])
+        if result["architecture"] != "unknown":
+            config_args.extend(["--override-arch", result["architecture"]])
+        config_args.append(target)
+
+        try:
+            config_stdout = self._run_skopeo(client, config_args)
+            config_data = json.loads(config_stdout)
+            # The User field is usually in the 'config' section of the config blob
+            result["user"] = config_data.get("config", {}).get("User", "")
+        except Exception:
+            logger.debug(
+                "Could not fetch config for platform %s", target, exc_info=True
+            )
+            result["user"] = "unknown"
 
         return result

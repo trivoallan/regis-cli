@@ -34,7 +34,8 @@
             "type": "object",
             "additionalProperties": { "type": "string" }
           },
-          "layers_count": { "type": "integer", "minimum": 0 }
+          "layers_count": { "type": "integer", "minimum": 0 },
+          "user": { "type": "string" }
         }
       }
     }

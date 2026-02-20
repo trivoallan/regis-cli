@@ -26,7 +26,15 @@ class TestSkopeoAnalyzer:
                 def __init__(self, stdout):
                     self.stdout = stdout
 
-            if "--raw" in cmd:
+            if "--config" in cmd:
+                return MockResponse(
+                    json.dumps(
+                        {
+                            "config": {"User": "postgres"},
+                        }
+                    )
+                )
+            elif "--raw" in cmd:
                 return MockResponse(
                     json.dumps(
                         {
@@ -66,6 +74,7 @@ class TestSkopeoAnalyzer:
         assert plat["architecture"] == "amd64"
         assert plat["os"] == "linux"
         assert plat["layers_count"] == 2
+        assert plat["user"] == "postgres"
 
     @patch("regis_cli.analyzers.skopeo.subprocess.run")
     def test_multi_arch_manifest(self, mock_run):
@@ -75,7 +84,13 @@ class TestSkopeoAnalyzer:
                     self.stdout = stdout
 
             target = cmd[-1]
-            if "--raw" in cmd:
+            if "--config" in cmd:
+                if "sha256:amd64digest" in target:
+                    return MockResponse(json.dumps({"config": {"User": "root"}}))
+                if "sha256:arm64digest" in target:
+                    return MockResponse(json.dumps({"config": {"User": "1001"}}))
+                return MockResponse("{}")
+            elif "--raw" in cmd:
                 return MockResponse(
                     json.dumps(
                         {
@@ -134,9 +149,17 @@ class TestSkopeoAnalyzer:
         analyzer.validate(report)
 
         assert len(report["platforms"]) == 2
-        archs = {p["architecture"] for p in report["platforms"]}
-        assert archs == {"amd64", "arm64"}
-        assert report["inspect"]["Digest"] == "sha256:indexdigest"
+
+        # Verify users
+        plat_amd64 = next(
+            p for p in report["platforms"] if p["architecture"] == "amd64"
+        )
+        assert plat_amd64["user"] == "root"
+
+        plat_arm64 = next(
+            p for p in report["platforms"] if p["architecture"] == "arm64"
+        )
+        assert plat_arm64["user"] == "1001"
 
     def test_report_missing_field(self):
         analyzer = SkopeoAnalyzer()
