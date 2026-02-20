@@ -11,6 +11,7 @@ sections:
         - popularity
         - provenance
         - sbom
+        - hadolint
         - scorecarddev
         - size
         - tags

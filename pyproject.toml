@@ -35,6 +35,7 @@ size = "regis_cli.analyzers.size:SizeAnalyzer"
 freshness = "regis_cli.analyzers.freshness:FreshnessAnalyzer"
 provenance = "regis_cli.analyzers.provenance:ProvenanceAnalyzer"
 sbom = "regis_cli.analyzers.sbom:SbomAnalyzer"
+hadolint = "regis_cli.analyzers.hadolint:HadolintAnalyzer"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "pytest-cov>=4.1", "responses>=0.24"]

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3617d4d8958fbd6b653920f98dfae17498f077a65196856fb8acea940f199b6a"
+            "sha256": "a184b3240802a5607ca524f615860f6510c390b9f73b73b337e23131629b02e3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -383,6 +383,10 @@
             ],
             "markers": "python_version >= '3.10'",
             "version": "==0.37.0"
+        },
+        "regis-cli": {
+            "editable": true,
+            "file": "."
         },
         "requests": {
             "hashes": [

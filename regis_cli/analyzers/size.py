@@ -135,7 +135,7 @@ class SizeAnalyzer(BaseAnalyzer):
 
                 plat_layers = plat_manifest.get("layers", [])
                 plat_config_size = plat_manifest.get("config", {}).get("size", 0)
-                plat_layer_sizes = [l.get("size", 0) for l in plat_layers]
+                plat_layer_sizes = [layer.get("size", 0) for layer in plat_layers]
                 plat_total = sum(plat_layer_sizes) + plat_config_size
             except Exception:
                 plat_total = entry.get("size", 0)

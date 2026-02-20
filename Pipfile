@@ -11,6 +11,7 @@ semver = "*"
 json-logic-qubit = "*"
 pyyaml = "*"
 jinja2 = "*"
+regis-cli = {file = ".", editable = true}
 
 [dev-packages]
 pytest = ">=7.4"

@@ -1,0 +1,70 @@
+{% if data.error %}
+<article class="card error">
+    <header>
+        <h3>Hadolint (Dockerfile Linter)</h3>
+    </header>
+    <div class="card-content">
+        <p><strong>Error:</strong> {{ data.error }}</p>
+    </div>
+</article>
+{% else %}
+<article class="card">
+    <header>
+        <h3>Hadolint (Dockerfile Linter)</h3>
+        {% if data.passed %}
+            <span class="badge success">Passed</span>
+        {% else %}
+            <span class="badge danger">{{ data.issues_count }} Issues</span>
+            {% if data.issues_by_level.error > 0 %}
+                <span class="badge danger" style="margin-left: 0.2rem;">{{ data.issues_by_level.error }} Errors</span>
+            {% endif %}
+            {% if data.issues_by_level.warning > 0 %}
+                <span class="badge warning" style="margin-left: 0.2rem;">{{ data.issues_by_level.warning }} Warnings</span>
+            {% endif %}
+            {% if data.issues_by_level.info > 0 %}
+                <span class="badge info" style="margin-left: 0.2rem;">{{ data.issues_by_level.info }} Info</span>
+            {% endif %}
+            {% if data.issues_by_level.style > 0 %}
+                <span class="badge neutral" style="margin-left: 0.2rem;">{{ data.issues_by_level.style }} Style</span>
+            {% endif %}
+        {% endif %}
+    </header>
+    
+    <div class="card-content">
+        {% if data.passed %}
+            <p>No issues found. Target adheres to Dockerfile best practices.</p>
+        {% else %}
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Code</th>
+                        <th>Line</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for issue in data.issues %}
+                    <tr>
+                        <td>
+                            {% if issue.level == 'error' %}
+                                <span class="badge danger">Error</span>
+                            {% elif issue.level == 'warning' %}
+                                <span class="badge warning">Warning</span>
+                            {% elif issue.level == 'info' %}
+                                <span class="badge info">Info</span>
+                            {% else %}
+                                <span class="badge neutral">{{ issue.level | title }}</span>
+                            {% endif %}
+                        </td>
+                        <td><code>{{ issue.code }}</code></td>
+                        <td>{% if issue.line %}{{ issue.line }}{% else %}-{% endif %}</td>
+                        <td>{{ issue.message }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</article>
+{% endif %}
