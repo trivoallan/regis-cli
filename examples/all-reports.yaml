@@ -1,15 +1,18 @@
+# yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
 name: all-reports
 
-display:
-  analyzers:
-    - endoflife
-    - freshness
-    - image
-    - license
-    - popularity
-    - provenance
-    - scorecarddev
-    - size
-    - tags
-    - trivy
-    - versioning
+sections:
+  - name: All Reports
+    display:
+      analyzers:
+        - endoflife
+        - freshness
+        - image
+        - license
+        - popularity
+        - provenance
+        - scorecarddev
+        - size
+        - tags
+        - trivy
+        - versioning

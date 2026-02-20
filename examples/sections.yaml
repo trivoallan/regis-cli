@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
+name: Image Quality
+description: Combined security and maturity checks
+sections:
+  - name: Security
+    display:
+      analyzers: [trivy]
+      widgets:
+        - label: Critical
+          value: results.trivy.critical_count
+        - label: High
+          value: results.trivy.high_count
+    rules:
+      - name: no-critical-vulns
+        title: No critical vulnerabilities
+        condition:
+          "==": [{ var: results.trivy.critical_count }, 0]
+      - name: no-high-vulns
+        title: No high vulnerabilities
+        condition:
+          "==": [{ var: results.trivy.high_count }, 0]
+
+  - name: Maturity
+    display:
+      analyzers: [freshness]
+    rules:
+      - name: age
+        title: Image is less than 1 year old
+        condition:
+          "<=": [{ var: results.freshness.age_days }, 365]

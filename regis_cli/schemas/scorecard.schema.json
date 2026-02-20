@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://regis-cli.dev/schemas/scorecard.schema.json",
+  "title": "Scorecard Definition",
+  "description": "Schema for regis-cli scorecard definition files (YAML or JSON).",
+  "type": "object",
+  "required": ["name", "sections"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Display name of the scorecard."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what this scorecard evaluates."
+    },
+    "sections": {
+      "type": "array",
+      "description": "List of scorecard sections. Each section groups rules, levels, and display preferences.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    }
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "description": "A scorecard section containing rules, optional levels, and display preferences.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the section."
+        },
+        "display": {
+          "$ref": "#/$defs/display"
+        },
+        "levels": {
+          "type": "array",
+          "description": "Priority/severity levels used to group rules. Built-in fallback order exists for bronze, silver, gold.",
+          "items": {
+            "$ref": "#/$defs/level"
+          }
+        },
+        "rules": {
+          "type": "array",
+          "description": "Evaluation rules with JsonLogic conditions.",
+          "items": {
+            "$ref": "#/$defs/rule"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "display": {
+      "type": "object",
+      "description": "Rendering preferences for the section.",
+      "properties": {
+        "analyzers": {
+          "type": "array",
+          "description": "List of analyzer names whose output should be embedded in this section.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "widgets": {
+          "type": "array",
+          "description": "KPI widgets displayed in the section header.",
+          "items": {
+            "$ref": "#/$defs/widget"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "widget": {
+      "type": "object",
+      "description": "A key-value widget displaying a metric from the analysis report.",
+      "required": ["label", "value"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Display label for the widget."
+        },
+        "value": {
+          "type": "string",
+          "description": "Dot-separated path into the report data, e.g. 'results.trivy.critical_count'."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Emoji or icon displayed alongside the widget."
+        }
+      },
+      "additionalProperties": false
+    },
+    "level": {
+      "type": "object",
+      "description": "A priority/severity level used to group and summarise rules.",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Level identifier referenced by rules."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable display label."
+        },
+        "order": {
+          "type": "integer",
+          "description": "Sort order (lower value = higher priority). Built-in defaults: bronze=1, silver=2, gold=3."
+        }
+      },
+      "additionalProperties": false
+    },
+    "rule": {
+      "type": "object",
+      "description": "An evaluation rule with a JsonLogic condition.",
+      "required": ["name", "condition"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique identifier for the rule."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable title. Defaults to name if omitted."
+        },
+        "level": {
+          "type": "string",
+          "description": "Level this rule belongs to. Must match a level name defined in the section."
+        },
+        "tags": {
+          "type": "array",
+          "description": "Arbitrary tags for filtering or grouping.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "condition": {
+          "description": "JsonLogic expression evaluated against the flattened analysis report. Variables use dot-paths, e.g. {\"var\": \"results.trivy.critical_count\"}. Supported operators: ==, !=, >, >=, <, <=, in, !, and, or."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

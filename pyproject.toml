@@ -35,7 +35,6 @@ size = "regis_cli.analyzers.size:SizeAnalyzer"
 license = "regis_cli.analyzers.license:LicenseAnalyzer"
 freshness = "regis_cli.analyzers.freshness:FreshnessAnalyzer"
 provenance = "regis_cli.analyzers.provenance:ProvenanceAnalyzer"
-deps = "regis_cli.analyzers.deps:DepsAnalyzer"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "pytest-cov>=4.1", "responses>=0.24"]

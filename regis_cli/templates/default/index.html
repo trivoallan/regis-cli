@@ -30,27 +30,18 @@
     {% for sc in report.scorecards %}
         <section id="scorecard-{{ loop.index0 }}">
             {% include theme ~ "/scorecards/default.html" %}
+        </section>
 
-            {# Render this scorecard's analyzers inside the section #}
-            {% if sc.display is defined and sc.display.analyzers is defined %}
-                {% for analyzer_name in sc.display.analyzers %}
-                    {% if analyzer_name in report.results %}
-                        {% set name = analyzer_name %}
-                        {% set data = report.results[analyzer_name] %}
-                        <div id="analyzer-{{ name }}">
-                            {% if data.error %}
-                                {{ m.error_card(name, data.error) }}
-                            {% else %}
-                                {% include [theme ~ "/analyzers/" ~ name ~ ".html", theme ~ "/analyzers/default.html"] %}
-                            {% endif %}
-                        </div>
-                        {% if analyzer_name not in ns.claimed_analyzers %}
-                            {% set ns.claimed_analyzers = ns.claimed_analyzers + [analyzer_name] %}
-                        {% endif %}
+        {# Track claimed analyzers from all sections #}
+        {% for section in sc.sections %}
+            {% if section.display is defined and section.display.analyzers is defined %}
+                {% for analyzer_name in section.display.analyzers %}
+                    {% if analyzer_name not in ns.claimed_analyzers %}
+                        {% set ns.claimed_analyzers = ns.claimed_analyzers + [analyzer_name] %}
                     {% endif %}
                 {% endfor %}
             {% endif %}
-        </section>
+        {% endfor %}
     {% endfor %}
 
     {# Always show error cards for analyzers not already displayed #}

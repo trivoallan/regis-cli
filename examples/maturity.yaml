@@ -1,13 +1,16 @@
+# yaml-language-server: $schema=../regis_cli/schemas/scorecard.schema.json
 name: Maturity
 description: Evaluate container image maturity posture
 
-display:
-  widgets:
-    - label: Image age (days)
-      value: results.freshness.age_days
+sections:
+  - name: Maturity
+    display:
+      widgets:
+        - label: Image age (days)
+          value: results.freshness.age_days
 
-rules:
-  - name: age
-    title: Image is less than 1 year old
-    condition:
-      "<=": [{ var: results.freshness.age_days }, 365]
+    rules:
+      - name: age
+        title: Image is less than 1 year old
+        condition:
+          "<=": [{ var: results.freshness.age_days }, 365]

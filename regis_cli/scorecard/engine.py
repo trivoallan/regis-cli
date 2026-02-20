@@ -143,45 +143,19 @@ def _stringify_condition(condition: Any, context: dict[str, Any]) -> str:
     return f"{op}({', '.join(parts)})"
 
 
-def evaluate(
-    scorecard: dict[str, Any],
-    report: dict[str, Any],
+def _evaluate_section(
+    section: dict[str, Any],
+    raw_context: dict[str, Any],
 ) -> dict[str, Any]:
-    """Evaluate a scorecard against an analysis report.
+    """Evaluate a single scorecard section against an already-flattened report context.
 
-    Returns a result dict with:
-    - ``scorecard_name`` — name of the scorecard
-    - ``level``          — highest achieved level (or ``"none"``)
-    - ``score``          — percentage of rules passed (0–100)
-    - ``rules``          — per-rule breakdown
+    Returns a result dict for the section with rules, levels_summary, display, etc.
     """
-    rules_defs = scorecard.get("rules", [])
-    if not rules_defs:
-        result: dict[str, Any] = {
-            "scorecard_name": scorecard.get("name", "unnamed"),
-            "level": "none",
-            "score": 0,
-            "total_rules": 0,
-            "passed_rules": 0,
-            "levels_summary": {},
-            "rules": [],
-        }
-        display = scorecard.get("display")
-        if display:
-            result["display"] = dict(display)
-        return result
-
-    # Build data context — both the nested original *and* a flat version
-    # so that JsonLogic ``var`` can use dot paths like
-    # ``results.tags.total_tags``.
-    raw_context = _flatten(report)
-    # Also keep the nested structure for advanced rules.
-    raw_context.update(report)
+    rules_defs = section.get("rules", [])
 
     rule_results: list[dict[str, Any]] = []
     for rule in rules_defs:
         condition = rule.get("condition", {})
-        # Use a tracker to detect if None values are accessed during evaluation
         tracker = MissingDataTracker(raw_context)
         try:
             result = jsonLogic(condition, tracker)
@@ -198,8 +172,6 @@ def evaluate(
 
         status = "incomplete" if incomplete else ("passed" if passed else "failed")
 
-        # Extract involved analyzers from accessed keys.
-        # Dot-paths like "results.trivy.vulnerabilities" point to "trivy".
         involved_analyzers = set()
         for key in tracker.accessed_keys:
             if key.startswith("results."):
@@ -224,7 +196,7 @@ def evaluate(
     # Determine summary by level.
     levels_defined = {
         lv["name"]: lv.get("order", _LEVEL_ORDER.get(lv["name"], 0))
-        for lv in scorecard.get("levels", [])
+        for lv in section.get("levels", [])
     }
 
     levels_summary = {}
@@ -241,8 +213,8 @@ def evaluate(
     passed_count = sum(1 for r in rule_results if r["passed"])
     total = len(rule_results)
 
-    result: dict[str, Any] = {
-        "scorecard_name": scorecard.get("name", "unnamed"),
+    section_result: dict[str, Any] = {
+        "name": section.get("name", ""),
         "score": round(passed_count / total * 100) if total else 0,
         "total_rules": total,
         "passed_rules": passed_count,
@@ -250,11 +222,10 @@ def evaluate(
         "rules": rule_results,
     }
 
-    # Forward display preferences and resolve widget values.
-    display = scorecard.get("display")
+    # Resolve display preferences and widget values.
+    display = section.get("display")
     if display:
         display_result = dict(display)
-        # Resolve widget values from the report data.
         widgets = display_result.get("widgets", [])
         if widgets:
             resolved_widgets = []
@@ -265,6 +236,61 @@ def evaluate(
                     resolved["resolved_value"] = raw_context.get(value_path)
                 resolved_widgets.append(resolved)
             display_result["widgets"] = resolved_widgets
-        result["display"] = display_result
+        section_result["display"] = display_result
 
-    return result
+    # Build render_order from the YAML key order.
+    # Python 3.7+ dicts preserve insertion order, so iterating
+    # over the section dict reflects the original YAML order.
+    render_order: list[str] = []
+    for key in section:
+        if key == "display":
+            display_def = section.get("display", {})
+            for display_key in display_def:
+                if display_key in ("analyzers", "widgets"):
+                    render_order.append(display_key)
+        elif key in ("levels", "rules"):
+            render_order.append(key)
+    section_result["render_order"] = render_order
+
+    return section_result
+
+
+def evaluate(
+    scorecard: dict[str, Any],
+    report: dict[str, Any],
+) -> dict[str, Any]:
+    """Evaluate a scorecard against an analysis report.
+
+    Returns a result dict with:
+    - ``scorecard_name`` — name of the scorecard
+    - ``sections``       — per-section breakdown (rules, levels, display, widgets)
+    - ``score``          — overall percentage of rules passed (0–100)
+    """
+    # Build data context.
+    raw_context = _flatten(report)
+    raw_context.update(report)
+
+    # Sections are mandatory.
+    sections_defs = scorecard.get("sections")
+    if not sections_defs:
+        raise ValueError(
+            f"Scorecard '{scorecard.get('name', 'unnamed')}' is missing a "
+            "'sections' key.  Every scorecard must define at least one section."
+        )
+
+    sections_results = []
+    total_rules = 0
+    total_passed = 0
+    for section_def in sections_defs:
+        section_result = _evaluate_section(section_def, raw_context)
+        sections_results.append(section_result)
+        total_rules += section_result["total_rules"]
+        total_passed += section_result["passed_rules"]
+
+    return {
+        "scorecard_name": scorecard.get("name", "unnamed"),
+        "score": round(total_passed / total_rules * 100) if total_rules else 0,
+        "total_rules": total_rules,
+        "passed_rules": total_passed,
+        "sections": sections_results,
+    }

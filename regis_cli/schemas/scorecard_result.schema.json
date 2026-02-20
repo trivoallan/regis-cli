@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Scorecard Result",
   "type": "object",
-  "required": ["scorecard_name", "score", "total_rules", "passed_rules", "levels_summary", "rules"],
+  "required": ["scorecard_name", "score", "total_rules", "passed_rules", "sections"],
   "properties": {
     "scorecard_name": {
       "type": "string"
@@ -20,42 +20,87 @@
       "type": "integer",
       "minimum": 0
     },
-    "levels_summary": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "required": ["total", "passed", "percentage"],
-        "properties": {
-          "total": { "type": "integer", "minimum": 0 },
-          "passed": { "type": "integer", "minimum": 0 },
-          "percentage": { "type": "integer", "minimum": 0, "maximum": 100 }
-        }
-      }
-    },
-    "rules": {
+    "sections": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["name", "title", "passed"],
+        "required": ["name", "score", "total_rules", "passed_rules", "rules"],
         "properties": {
-          "name": {"type": "string"},
-          "title": {"type": "string"},
-          "level": {"type": ["string", "null"]},
-          "tags": {
+          "name": { "type": "string" },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "total_rules": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "passed_rules": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "levels_summary": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["total", "passed", "percentage"],
+              "properties": {
+                "total": { "type": "integer", "minimum": 0 },
+                "passed": { "type": "integer", "minimum": 0 },
+                "percentage": { "type": "integer", "minimum": 0, "maximum": 100 }
+              }
+            }
+          },
+          "rules": {
             "type": "array",
-            "items": {"type": "string"}
+            "items": {
+              "type": "object",
+              "required": ["name", "title", "passed"],
+              "properties": {
+                "name": { "type": "string" },
+                "title": { "type": "string" },
+                "level": { "type": ["string", "null"] },
+                "tags": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "analyzers": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "passed": { "type": "boolean" },
+                "status": {
+                  "type": "string",
+                  "enum": ["passed", "failed", "incomplete"]
+                },
+                "condition": { "type": "string" },
+                "details": { "type": "string" }
+              }
+            }
           },
-          "analyzers": {
-            "type": "array",
-            "items": {"type": "string"}
-          },
-          "passed": {"type": "boolean"},
-          "status": {
-            "type": "string",
-            "enum": ["passed", "failed", "incomplete"]
-          },
-          "condition": {"type": "string"},
-          "details": {"type": "string"}
+          "display": {
+            "type": "object",
+            "properties": {
+              "analyzers": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "widgets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": { "type": "string" },
+                    "value": { "type": "string" },
+                    "icon": { "type": "string" },
+                    "resolved_value": {}
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

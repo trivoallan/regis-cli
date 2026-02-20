@@ -7,73 +7,106 @@
         <h2 style="margin: 0;">{{ sc.scorecard_name|default("Scorecard")|e }}</h2>
     </header>
 
-    {% if sc.display is defined and sc.display.widgets is defined %}
-    <div class="grid">
-        {% for w in sc.display.widgets %}
-            <div>
-                {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
-                <strong>{{ w.label|e }}</strong><br>
-                <span style="font-size: 1.4rem; font-weight: bold;">
-                    {%- if w.resolved_value is sameas true -%}✅
-                    {%- elif w.resolved_value is sameas false -%}❌
-                    {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>
-                    {%- else -%}{{ w.resolved_value }}
-                    {%- endif -%}
-                </span>
-            </div>
-        {% endfor %}
-    </div>
-    <hr>
-    {% endif %}
+    {% for section in sc.sections %}
+        <div class="scorecard-section">
+            <h3>{{ section.name|e }}</h3>
 
-    {% if sc.levels_summary %}
-    <div class="grid">
-        {% for level_name, stats in sc.levels_summary.items() %}
-            {% set level_icon = icons.get(level_name, '') %}
-            <div>
-                <strong>{{ level_icon }} {{ level_name|capitalize }}</strong><br>
-                {{ stats.passed }}/{{ stats.total }} passed ({{ stats.percentage }}%)
-            </div>
-        {% endfor %}
-    </div>
+            {% for block in section.render_order %}
 
-    <hr>
-    {% endif %}
-
-    <div class="overflow-auto">
-        <table class="striped">
-            <thead>
-                <tr>
-                    <th>Status</th>
-                    {% if sc.levels_summary %}<th>Level</th>{% endif %}
-                    <th>Rule</th>
-                    <th>Analyzers</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in sc.rules %}
-                <tr>
-                    <td>{{ m.bool_icon(r.passed) }}</td>
-                    {% if sc.levels_summary %}<td><small>{{ r.level|capitalize }}</small></td>{% endif %}
-                    <td>
-                        <strong>{{ r.title|e }}</strong>
-                        {% if r.tags %}
-                        <div style="margin-top: 0.2rem;">
-                            {% for tag in r.tags %}
-                            {{ m.badge(tag) }}
-                            {% endfor %}
+                {# ── Widgets ─────────────────────────────── #}
+                {% if block == "widgets" and section.display is defined and section.display.widgets is defined %}
+                <div class="grid">
+                    {% for w in section.display.widgets %}
+                        <div>
+                            {% if w.icon %}<span style="font-size: 1.5rem;">{{ w.icon }}</span> {% endif %}
+                            <strong>{{ w.label|e }}</strong><br>
+                            <span style="font-size: 1.4rem; font-weight: bold;">
+                                {%- if w.resolved_value is sameas true -%}✅
+                                {%- elif w.resolved_value is sameas false -%}❌
+                                {%- elif w.resolved_value is none -%}<span style="opacity: 0.5;">N/A</span>
+                                {%- else -%}{{ w.resolved_value }}
+                                {%- endif -%}
+                            </span>
                         </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                {% endif %}
+
+                {# ── Levels summary ──────────────────────── #}
+                {% if block == "levels" and section.levels_summary %}
+                <div class="grid">
+                    {% for level_name, stats in section.levels_summary.items() %}
+                        {% set level_icon = icons.get(level_name, '') %}
+                        <div>
+                            <strong>{{ level_icon }} {{ level_name|capitalize }}</strong><br>
+                            {{ stats.passed }}/{{ stats.total }} passed ({{ stats.percentage }}%)
+                        </div>
+                    {% endfor %}
+                </div>
+                <hr>
+                {% endif %}
+
+                {# ── Rules table ─────────────────────────── #}
+                {% if block == "rules" and section.rules %}
+                <div class="overflow-auto">
+                    <table class="striped">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                {% if section.levels_summary %}<th>Level</th>{% endif %}
+                                <th>Rule</th>
+                                <th>Analyzers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in section.rules %}
+                            <tr>
+                                <td>{{ m.bool_icon(r.passed) }}</td>
+                                {% if section.levels_summary %}<td><small>{{ r.level|capitalize }}</small></td>{% endif %}
+                                <td>
+                                    <strong>{{ r.title|e }}</strong>
+                                    {% if r.tags %}
+                                    <div style="margin-top: 0.2rem;">
+                                        {% for tag in r.tags %}
+                                        {{ m.badge(tag) }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem;">{{ r.details|e }}</div>
+                                </td>
+                                <td>
+                                    {% for analyzer in r.analyzers %}
+                                    <small>{{ m.badge(analyzer, status="outline") }}</small>
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {# ── Analyzers ───────────────────────────── #}
+                {% if block == "analyzers" and section.display is defined and section.display.analyzers is defined %}
+                    {% for analyzer_name in section.display.analyzers %}
+                        {% if analyzer_name in report.results %}
+                            {% set name = analyzer_name %}
+                            {% set data = report.results[analyzer_name] %}
+                            <div id="analyzer-{{ name }}">
+                                {% if data.error %}
+                                    {{ m.error_card(name, data.error) }}
+                                {% else %}
+                                    {% include [theme ~ "/analyzers/" ~ name ~ ".html", theme ~ "/analyzers/default.html"] %}
+                                {% endif %}
+                            </div>
                         {% endif %}
-                        <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem;">{{ r.details|e }}</div>
-                    </td>
-                    <td>
-                        {% for analyzer in r.analyzers %}
-                        <small>{{ m.badge(analyzer, status="outline") }}</small>
-                        {% endfor %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                    {% endfor %}
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+        {% if not loop.last %}<hr>{% endif %}
+    {% endfor %}
 </article>

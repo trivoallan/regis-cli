@@ -26,6 +26,12 @@ article {
     margin-bottom: 2rem;
 }
 
+.scorecard-section {
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--pico-muted-border-color);
+}
+
 .badge {
     display: inline-block;
     padding: 0.2rem 0.6rem;

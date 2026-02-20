@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import pytest
 import yaml
 
 from regis_cli.scorecard.engine import _flatten, evaluate, load_scorecard
@@ -25,37 +26,45 @@ class TestLoadScorecard:
     def test_load_from_file(self, tmp_path):
         custom = {
             "name": "Custom",
-            "levels": [
-                {"name": "bronze", "order": 1},
-            ],
-            "rules": [
+            "sections": [
                 {
-                    "name": "test-rule",
-                    "title": "A test rule",
-                    "level": "bronze",
-                    "condition": {"==": [1, 1]},
-                },
+                    "name": "Main",
+                    "levels": [{"name": "bronze", "order": 1}],
+                    "rules": [
+                        {
+                            "name": "test-rule",
+                            "title": "A test rule",
+                            "level": "bronze",
+                            "condition": {"==": [1, 1]},
+                        },
+                    ],
+                }
             ],
         }
         p = tmp_path / "custom.yaml"
         p.write_text(yaml.dump(custom))
         loaded = load_scorecard(p)
         assert loaded["name"] == "Custom"
-        assert len(loaded["rules"]) == 1
+        assert len(loaded["sections"][0]["rules"]) == 1
 
     def test_load_json(self, tmp_path):
         import json
 
         custom = {
             "name": "JSON Card",
-            "levels": [{"name": "bronze", "order": 1}],
-            "rules": [
+            "sections": [
                 {
-                    "name": "always-pass",
-                    "title": "Always passes",
-                    "level": "bronze",
-                    "condition": {"==": [1, 1]},
-                },
+                    "name": "Main",
+                    "levels": [{"name": "bronze", "order": 1}],
+                    "rules": [
+                        {
+                            "name": "always-pass",
+                            "title": "Always passes",
+                            "level": "bronze",
+                            "condition": {"==": [1, 1]},
+                        },
+                    ],
+                }
             ],
         }
         p = tmp_path / "custom.json"
@@ -69,36 +78,41 @@ class TestEvaluate:
 
     SCORECARD = {
         "name": "Test Scorecard",
-        "levels": [
-            {"name": "bronze", "order": 1},
-            {"name": "silver", "order": 2},
-            {"name": "gold", "order": 3},
-        ],
-        "rules": [
+        "sections": [
             {
-                "name": "has-tags",
-                "title": "Has tags",
-                "level": "bronze",
-                "condition": {">": [{"var": "results.tags.total_tags"}, 0]},
-            },
-            {
-                "name": "has-provenance",
-                "title": "Has provenance",
-                "level": "silver",
-                "condition": {
-                    "==": [{"var": "results.provenance.has_provenance"}, True]
-                },
-            },
-            {
-                "name": "good-score",
-                "title": "Good scorecard",
-                "level": "gold",
-                "condition": {">=": [{"var": "results.scorecarddev.score"}, 7]},
-            },
+                "name": "Test",
+                "levels": [
+                    {"name": "bronze", "order": 1},
+                    {"name": "silver", "order": 2},
+                    {"name": "gold", "order": 3},
+                ],
+                "rules": [
+                    {
+                        "name": "has-tags",
+                        "title": "Has tags",
+                        "level": "bronze",
+                        "condition": {">": [{"var": "results.tags.total_tags"}, 0]},
+                    },
+                    {
+                        "name": "has-provenance",
+                        "title": "Has provenance",
+                        "level": "silver",
+                        "condition": {
+                            "==": [{"var": "results.provenance.has_provenance"}, True]
+                        },
+                    },
+                    {
+                        "name": "good-score",
+                        "title": "Good scorecard",
+                        "level": "gold",
+                        "condition": {">=": [{"var": "results.scorecarddev.score"}, 7]},
+                    },
+                ],
+            }
         ],
     }
 
-    def test_all_pass_gold(self):
+    def test_all_pass(self):
         report = {
             "results": {
                 "tags": {"total_tags": 100},
@@ -107,12 +121,12 @@ class TestEvaluate:
             },
         }
         result = evaluate(self.SCORECARD, report)
-        assert result["level"] == "gold"
         assert result["score"] == 100
         assert result["passed_rules"] == 3
-        assert all(r["passed"] for r in result["rules"])
+        section = result["sections"][0]
+        assert all(r["passed"] for r in section["rules"])
 
-    def test_bronze_only(self):
+    def test_partial_pass(self):
         report = {
             "results": {
                 "tags": {"total_tags": 50},
@@ -121,10 +135,9 @@ class TestEvaluate:
             },
         }
         result = evaluate(self.SCORECARD, report)
-        assert result["level"] == "bronze"
         assert result["passed_rules"] == 1
 
-    def test_silver_level(self):
+    def test_two_pass(self):
         report = {
             "results": {
                 "tags": {"total_tags": 50},
@@ -133,47 +146,56 @@ class TestEvaluate:
             },
         }
         result = evaluate(self.SCORECARD, report)
-        assert result["level"] == "silver"
         assert result["passed_rules"] == 2
 
     def test_tags_propagation(self):
         """Test that tags are correctly copied from rule defs to results."""
         scorecard = {
             "name": "Tags Test",
-            "rules": [
+            "sections": [
                 {
-                    "name": "rule-with-tags",
-                    "tags": ["tag1", "tag2"],
-                    "condition": {"==": [1, 1]},
-                },
-                {
-                    "name": "rule-without-tags",
-                    "condition": {"==": [1, 1]},
-                },
+                    "name": "Main",
+                    "rules": [
+                        {
+                            "name": "rule-with-tags",
+                            "tags": ["tag1", "tag2"],
+                            "condition": {"==": [1, 1]},
+                        },
+                        {
+                            "name": "rule-without-tags",
+                            "condition": {"==": [1, 1]},
+                        },
+                    ],
+                }
             ],
         }
         result = evaluate(scorecard, {})
-        assert result["rules"][0]["tags"] == ["tag1", "tag2"]
-        assert result["rules"][1]["tags"] == []
+        rules = result["sections"][0]["rules"]
+        assert rules[0]["tags"] == ["tag1", "tag2"]
+        assert rules[1]["tags"] == []
 
     def test_incomplete_status(self):
         """Test that missing data results in an 'incomplete' status."""
         scorecard = {
             "name": "Missing Data Test",
-            "rules": [
+            "sections": [
                 {
-                    "name": "missing-var",
-                    "condition": {">": [{"var": "non_existent"}, 0]},
+                    "name": "Main",
+                    "rules": [
+                        {
+                            "name": "missing-var",
+                            "condition": {">": [{"var": "non_existent"}, 0]},
+                        }
+                    ],
                 }
             ],
         }
-        # In JsonLogic, missing var returns None.
-        # My tracker should flag this as incomplete.
         result = evaluate(scorecard, {"some_other_data": 42})
-        assert result["rules"][0]["status"] == "incomplete"
-        assert "MISSING" in result["rules"][0]["details"]
+        rules = result["sections"][0]["rules"]
+        assert rules[0]["status"] == "incomplete"
+        assert "MISSING" in rules[0]["details"]
 
-    def test_none_level(self):
+    def test_no_pass(self):
         report = {
             "results": {
                 "tags": {"total_tags": 0},
@@ -183,12 +205,12 @@ class TestEvaluate:
             },
         }
         result = evaluate(self.SCORECARD, report)
-        assert result["level"] == "none"
         assert result["passed_rules"] == 0
 
     def test_empty_rules(self):
-        result = evaluate({"name": "empty", "rules": []}, {})
-        assert result["level"] == "none"
+        result = evaluate(
+            {"name": "empty", "sections": [{"name": "Main", "rules": []}]}, {}
+        )
         assert result["score"] == 0
 
     def test_score_percentage(self):
@@ -206,7 +228,60 @@ class TestEvaluate:
         """Rules referencing missing data should fail, not crash."""
         report = {"results": {}}
         result = evaluate(self.SCORECARD, report)
-        assert result["level"] == "none"
-        # Some rules might pass if var returns None and comparison works
-        # but the important thing is no exception is raised.
         assert isinstance(result["score"], int)
+
+    def test_missing_sections_raises(self):
+        """Scorecards without sections must raise ValueError."""
+        scorecard = {
+            "name": "Legacy",
+            "rules": [{"name": "r", "condition": {"==": [1, 1]}}],
+        }
+        with pytest.raises(ValueError, match="missing a 'sections' key"):
+            evaluate(scorecard, {})
+
+    def test_multi_section(self):
+        """Multiple sections aggregate correctly."""
+        scorecard = {
+            "name": "Multi",
+            "sections": [
+                {
+                    "name": "A",
+                    "rules": [
+                        {"name": "a1", "title": "A1", "condition": {"==": [1, 1]}},
+                    ],
+                },
+                {
+                    "name": "B",
+                    "rules": [
+                        {"name": "b1", "title": "B1", "condition": {"==": [1, 0]}},
+                    ],
+                },
+            ],
+        }
+        result = evaluate(scorecard, {})
+        assert result["total_rules"] == 2
+        assert result["passed_rules"] == 1
+        assert result["score"] == 50
+        assert len(result["sections"]) == 2
+
+    def test_render_order(self):
+        """render_order reflects the YAML key definition order."""
+        scorecard = {
+            "name": "Order Test",
+            "sections": [
+                {
+                    "name": "Rules First",
+                    "rules": [
+                        {"name": "r1", "title": "R1", "condition": {"==": [1, 1]}},
+                    ],
+                    "display": {
+                        "widgets": [{"label": "W", "value": "x"}],
+                        "analyzers": ["trivy"],
+                    },
+                    "levels": [{"name": "bronze", "order": 1}],
+                },
+            ],
+        }
+        result = evaluate(scorecard, {})
+        order = result["sections"][0]["render_order"]
+        assert order == ["rules", "widgets", "analyzers", "levels"]

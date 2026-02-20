@@ -283,14 +283,12 @@ def analyze(
 
             # Print summary for EACH scorecard if in CLI mode
             if "html" not in formats or len(formats) > 1:
-                level_labels = {
-                    lv["name"]: lv.get("label", lv["name"])
-                    for lv in sc_def.get("levels", [])
-                }
                 summary_parts = []
-                for lv_name, stats in sc_result.get("levels_summary", {}).items():
-                    label = level_labels.get(lv_name, lv_name)
-                    summary_parts.append(f"{label}: {stats['passed']}/{stats['total']}")
+                for section in sc_result.get("sections", []):
+                    for lv_name, stats in section.get("levels_summary", {}).items():
+                        summary_parts.append(
+                            f"{lv_name}: {stats['passed']}/{stats['total']}"
+                        )
 
                 summary_str = " · ".join(summary_parts)
                 click.echo(
