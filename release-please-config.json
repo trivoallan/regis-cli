@@ -1,6 +1,6 @@
 {
   "packages": {
-    ".": {
+    "regis_cli": {
       "release-type": "python",
       "package-name": "regis-cli",
       "extra-files": [
