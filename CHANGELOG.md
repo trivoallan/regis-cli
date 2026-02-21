@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.6.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.6.0)
+
+### Features
+
+- **review**: enhance GitLab CI/CD to specify output filename, run site generation on the default branch, and dynamically configure Pages deployments for review apps and main branch, while updating the project backlog.
+- **doc**: Add 'Get Started' and 'Understand Playbooks' documentation pages and update navigation.
+- **review**: Implement and document a self-service analysis workflow in GitLab CI, including optional report commits to the branch and dynamic Review App links.
+- **review**: Expose analysis reports as Merge Request artifacts instead of deploying to Review Apps and update documentation accordingly.
+- **review**: enhance GitLab CI report delivery by committing to `reports/`, posting direct links to MR comments, and updating documentation.
+- **review**: use GitLab API for merge request creation to enable setting reviewers and assignees, and add `curl` dependency.
+- **review**: Introduce automated GitLab MR labeling and conditional playbook links based on analysis outcomes.
+- Add extensive test coverage for analyzers and core components, integrate Ruff linter, and refine Skopeo schema.
+- configure Antora Mermaid extension with a specific library URL and script stem.
+
 ## [v0.5.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.5.0)
 
 ### Features
