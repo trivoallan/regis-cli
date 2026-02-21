@@ -46,9 +46,29 @@ Once pushed, you can trigger an analysis manually from the GitLab UI:
 3. Enter the `image_url` input.
 4. Click **Run pipeline**.
 
-The analysis results will be published to **GitLab Pages**.
+== Publishing to GitLab Pages
 
-Ensure GitLab Pages is enabled for your project. The reports are automatically written to the `public/` directory, which is the default for GitLab Pages.
+`regis-cli` reports are perfectly suited for GitLab Pages. In GitLab CI, any files placed in a directory named `public` at the end of a job named `pages` will be automatically published.
+
+=== Deployment Job
+
+Add the following job to your `.gitlab-ci.yml`:
+
+[source,yaml]
+----
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp -r reports/* public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+----
+
+The analysis results will be accessible at `https://<your-namespace>.gitlab.io/<your-project-slug>/`.
 
 == Report Versioning
 
@@ -63,3 +83,17 @@ To keep a history of your analysis reports directly in the Git repository, you n
 5. Add a variable named `GITLAB_TOKEN`, paste the token value, and ensure it is **masked**.
 
 When this variable is present, the CI pipeline will automatically commit and push new reports to your branch.
+
+== Adding CI Metadata
+
+You can enrich your reports with GitLab CI metadata using the `--meta` flag. The default playbook uses the following well-known keys:
+
+* `trigger.user`: The user who initiated the analysis (e.g., `$GITLAB_USER_LOGIN`).
+* `trigger.url`: A link to the CI job (e.g., `$CI_JOB_URL`).
+
+[source,bash]
+----
+regis-cli analyze <image-url> \
+  --meta "trigger.user=$GITLAB_USER_LOGIN" \
+  --meta "trigger.url=$CI_JOB_URL"
+----
