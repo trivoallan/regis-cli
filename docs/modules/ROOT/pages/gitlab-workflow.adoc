@@ -117,8 +117,8 @@ sequenceDiagram
     GL->>User: Merge Request opened
     GL->>CI: Job: analyze_image (MR context)
     CI->>Reg: Analyze image
-    CI->>GL: Commit Report (optional)
-    CI->>GL: Expose "Analysis Report" Artifact
+    CI->>GL: Commit Report to reports/
+    CI->>GL: Post MR Comment with Report Link (via API)
 ....
 
 === 1. Trigger the Request
@@ -126,12 +126,12 @@ Go to **Build > Pipelines > Run pipeline**, enter the `image_url`, and run.
 
 === 2. Merge Request Creation
 The pipeline automatically creates a new branch and a Merge Request.
-The MR description contains instructions to find the **Analysis Report** within the Merge Request artifacts.
+The MR description contains instructions to find the **Analysis Report** within the committed \`reports/\` directory or the exposed artifacts.
 
 === 3. Report Inspection
 Once the analysis job completes, the report is:
-*   **Committed** back to the branch (if `GITLAB_TOKEN` is configured).
-*   **Exposed** directly in the Merge Request UI under the "Analysis Report" artifact link.
+*   **Committed** back to the branch in the \`reports/<registry>/<repository>/<tag>/\` directory (if `GITLAB_TOKEN` is configured). You can directly review the HTML and JSON results.
+*   **Linked in a Comment**: The pipeline will automatically post a comment on the Merge Request containing a direct link to view the HTML report directly in your browser.
 
 === 4. Governance
-Security teams can review the MR, check the compliance score via the exposed HTML report, and decide whether to merge the analysis request into the main registry branch.
+Security teams can review the MR, check the compliance score via the direct HTML report link, and decide whether to merge the analysis request into the main registry branch.
