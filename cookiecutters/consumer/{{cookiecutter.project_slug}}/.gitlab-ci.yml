@@ -4,61 +4,105 @@ spec:
       description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
 
 stages:
+  - request
   - analyze
   - deploy
 
-analyze:
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+# Phase 1: Manual trigger creates a branch and an MR
+request_analysis:
+  stage: request
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache git
+  script:
+    - |
+      IMAGE_URL="$[[ inputs.image_url ]]"
+      # Create a unique branch name
+      SAFE_URL=$(echo "$IMAGE_URL" | sed 's/[^a-zA-Z0-9]/_/g')
+      BRANCH_NAME="regis/analyze/${SAFE_URL:0:30}-$CI_PIPELINE_IID"
+
+      echo "Creating analysis request for $IMAGE_URL"
+      echo "{\"image_url\":\"$IMAGE_URL\"}" > analysis-request.json
+
+      git config --global user.name "GitLab CI"
+      git config --global user.email "gitlab-ci@example.com"
+
+      git checkout -b "$BRANCH_NAME"
+      git add analysis-request.json
+      git commit -m "chore: request analysis for $IMAGE_URL"
+
+      # Push and create MR automatically using push options
+      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$BRANCH_NAME" \
+        -o merge_request.create \
+        -o merge_request.target="$CI_DEFAULT_BRANCH" \
+        -o merge_request.title="Analysis Request: $IMAGE_URL" \
+        -o merge_request.description="Report will be available in the Review App." \
+        -o merge_request.remove_source_branch
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
+
+# Phase 2: Analyze the image when the MR is opened/updated
+analyze_image:
   stage: analyze
   image:
     name: "{{ cookiecutter.regis_cli_image_url }}"
     entrypoint: [""]
   before_script:
     - mkdir -p public
-    - ln -s $(pwd)/playbooks /app/playbooks || true
-    - ln -s $(pwd)/public /app/reports || true
   script:
     - |
-      regis-cli analyze "$[[ inputs.image_url ]]" \
+      # Extract image_url from the committed file using python (available in regis-cli image)
+      IMAGE_URL=$(python3 -c "import json; print(json.load(open('analysis-request.json'))['image_url'])")
+      echo "Analyzing $IMAGE_URL..."
+
+      regis-cli analyze "$IMAGE_URL" \
         --site \
         --playbook "{{ cookiecutter.regis_playbook_url }}" \
         --output-dir public \
-        --meta "trigger.user=$GITLAB_USER_LOGIN" \
-        --meta "trigger.url=$CI_PIPELINE_URL" \
         --meta "gitlab.user=$GITLAB_USER_LOGIN" \
         --meta "gitlab.project=$CI_PROJECT_PATH" \
-        --meta "gitlab.job_id=$CI_JOB_ID" \
-        --meta "gitlab.pipeline_url=$CI_PIPELINE_URL"
-    - |
-      if [ -n "$GITLAB_TOKEN" ]; then
-        echo "  Versioning reports in Git..."
-        git config --global user.name "GitLab CI"
-        git config --global user.email "gitlab-ci@example.com"
-        git add public/
-        if git commit -m "chore: update analysis reports [skip ci]"; then
-          git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" HEAD:${CI_COMMIT_BRANCH}
-        else
-          echo "  No changes to commit."
-        fi
-      else
-        echo "  [WARNING] GITLAB_TOKEN not found. Skipping report versioning."
-      fi
+        --meta "gitlab.mr=$CI_MERGE_REQUEST_IID"
   artifacts:
+    path_prefix: "review-$CI_MERGE_REQUEST_IID"
     paths:
       - public
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
-    - if: '$CI_PIPELINE_SOURCE == "trigger" && "$[[ inputs.image_url ]]" != ""'
+    - if: "$CI_MERGE_REQUEST_IID"
 
+# Phase 3: Deploy to Review App (multiple deployments for Pages)
 pages:
   stage: deploy
   image: alpine:latest
+  environment:
+    name: review/$CI_MERGE_REQUEST_IID
+    url: "${CI_PAGES_URL}/review-$CI_MERGE_REQUEST_IID"
+    on_stop: stop_review
   script:
-    - echo "Deploying to GitLab Pages"
+    - echo "Publishing review app to ${CI_PAGES_URL}/review-$CI_MERGE_REQUEST_IID"
   artifacts:
     paths:
       - public
+  publish: public
+  pages:
+    path_prefix: "review-$CI_MERGE_REQUEST_IID"
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
-    - if: '$CI_PIPELINE_SOURCE == "trigger" && "$[[ inputs.image_url ]]" != ""'
-  needs:
-    - analyze
+    - if: "$CI_MERGE_REQUEST_IID"
+
+stop_review:
+  stage: deploy
+  image: alpine:latest
+  environment:
+    name: review/$CI_MERGE_REQUEST_IID
+    action: stop
+  script:
+    - echo "Removing review app"
+  rules:
+    - if: "$CI_MERGE_REQUEST_IID"
+      when: manual
+  allow_failure: true
