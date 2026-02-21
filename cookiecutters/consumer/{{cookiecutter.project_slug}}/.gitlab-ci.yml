@@ -81,13 +81,11 @@ analyze_image:
 pages:
   stage: deploy
   image: alpine:latest
-  variables:
-    PAGES_PREFIX: ""
   environment:
-    name: ${PAGES_PREFIX:-production}
-    url: "${CI_PAGES_URL}/${PAGES_PREFIX}"
+    name: $ENV_NAME
+    url: $ENV_URL
   script:
-    - echo "Publishing review app to ${CI_PAGES_URL}/${PAGES_PREFIX}"
+    - echo "Publishing to $ENV_URL"
   artifacts:
     paths:
       - public
@@ -97,9 +95,13 @@ pages:
     - if: $CI_MERGE_REQUEST_IID
       variables:
         PAGES_PREFIX: "review-$CI_MERGE_REQUEST_IID"
+        ENV_NAME: "review/$CI_MERGE_REQUEST_IID"
+        ENV_URL: "${CI_PAGES_URL}/review-$CI_MERGE_REQUEST_IID"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       variables:
         PAGES_PREFIX: ""
+        ENV_NAME: "production"
+        ENV_URL: "${CI_PAGES_URL}"
 
 stop_review:
   stage: deploy
