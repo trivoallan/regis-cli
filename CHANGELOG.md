@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.5.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.5.0)
+
+### Features
+
+- embed regis-cli version in analysis reports and update cookiecutter image URLs.
+- **report**: Embed regis-cli version into analysis reports and schema
+- **playbooks**: Add support for loading playbooks from remote URLs and update cookiecutters to utilize this feature.
+- **reports**: Implement automatic versioning of analysis reports in GitLab CI and document its configuration.
+- **cli**: Implement `generate` command with `cookiecutter` for project scaffolding and update project templates.
+- **ci**: introduce GitLab CI workflow for image analysis with MR-driven triggers and review app deployments.
+- **cli**: Implement a CLI version command, refactor `importlib.metadata` imports, and update tests and GitLab CI artifact handling.
+
 ## [v0.4.0](https://github.com/trivoallan/regis-cli/releases/tag/v0.4.0)
 
 ### Features
