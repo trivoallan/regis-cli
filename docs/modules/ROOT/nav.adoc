@@ -1,4 +1,5 @@
 * xref:index.adoc[Home]
+* xref:overview.adoc[Architectural Overview]
 * xref:github-workflow.adoc[Using in GitHub Workflows]
 * xref:gitlab-workflow.adoc[Using in GitLab CI]
 * xref:cookiecutter.adoc[Quickstart with Cookiecutter]

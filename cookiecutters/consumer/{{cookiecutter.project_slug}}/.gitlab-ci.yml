@@ -66,7 +66,6 @@ analyze_image:
         --site \
         --playbook "{{ cookiecutter.regis_playbook_url }}" \
         --output-dir public \
-        --output index.html \
         --meta "gitlab.user=$GITLAB_USER_LOGIN" \
         --meta "gitlab.project=$CI_PROJECT_PATH" \
         --meta "gitlab.mr=$CI_MERGE_REQUEST_IID"
@@ -86,6 +85,8 @@ pages:
     url: $ENV_URL
   script:
     - echo "Publishing to $ENV_URL"
+  dependencies:
+    - analyze_image
   artifacts:
     paths:
       - public

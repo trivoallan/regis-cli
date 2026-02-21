@@ -1,0 +1,79 @@
+= Architectural Overview
+
+`regis-cli` is a command-line tool designed to analyze container image registries, evaluate security playbooks, and generate comprehensive reports. It provides deep visibility into container image metadata and security posture, enabling automated policy enforcement in CI/CD environments.
+
+== Purpose
+
+You use `regis-cli` to:
+
+* Analyze multi-architecture container images.
+* Evaluate custom security and compliance rules using JSON logic.
+* Generate human-readable HTML reports and machine-readable JSON reports.
+* Integrate security checks into GitHub Actions or GitLab CI pipelines.
+
+== Architecture
+
+`regis-cli` uses a modular, pluggable architecture that separates data extraction from policy evaluation and reporting.
+
+[mermaid]
+....
+graph TD
+    User["User / CI Pipeline"] --> CLI["CLI Layer (Click)"]
+    CLI --> Engine["Analysis Engine"]
+    
+    subgraph "Data Extraction"
+        Engine --> A1["Skopeo Analyzer"]
+        Engine --> A2["Trivy Analyzer"]
+        Engine --> A3["Hadolint Analyzer"]
+        Engine --> AN["... Other Analyzers"]
+    end
+    
+    A1 & A2 & A3 & AN --> Registry["Container Registry"]
+    
+    Engine --> Playbook["Playbook Engine (JSON Logic)"]
+    Playbook --> Results["Consolidated Results"]
+    
+    Results --> HTML["HTML Report (Jinja2)"]
+    Results --> JSON["JSON Report"]
+    
+    HTML & JSON --> Output["Output Directory"]
+....
+
+== Core Components
+
+The following sections describe the primary components of the `regis-cli` system.
+
+=== CLI Layer
+The command-line interface, built with the `Click` library, handles user input, argument parsing, and command orchestration. It serves as the primary entry point for both manual use and CI/CD integration.
+
+=== Analysis Engine
+The analysis engine orchestrates the execution of pluggable analyzers. It manages common resources, such as registry authentication and caching, ensuring that analyzers can focus on extracting specific metadata.
+
+=== Analyzers
+Analyzers are modular components responsible for gathering data from registries or local files. Current built-in analyzers include:
+
+* **Skopeo**: Extracts multi-architecture metadata, labels, and layer information.
+* **Trivy**: Performs vulnerability scanning and generates Software Bill of Materials (SBOM).
+* **Hadolint**: Lints Dockerfiles for best practices.
+* **Versioning**: Validates semantic versioning consistency.
+* **Freshness**: Calculates image age.
+
+=== Playbook Engine
+The playbook engine evaluates consolidated analyzer results against user-defined rules. These rules use `jsonLogic` to define complex conditional logic for security and compliance checks, such as "no critical vulnerabilities" or "maximum image age."
+
+=== Reporting Layer
+The reporting layer transforms the analysis and playbook results into various formats.
+It uses `Jinja2` templates to produce rich, themeable HTML reports for human review and structured JSON for automated processing.
+
+== Technology Stack
+
+The project uses the following technologies:
+
+* **Language**: Python 3.10+
+* **Dependency Management**: Pipenv
+* **CLI Framework**: Click
+* **Templating**: Jinja2
+* **Linting/Formatting**: Ruff
+* **External Tools**: Skopeo, Trivy, Hadolint
+* **Testing**: Pytest
+* **CI/CD**: GitHub Actions, Release Please, Super-Linter
