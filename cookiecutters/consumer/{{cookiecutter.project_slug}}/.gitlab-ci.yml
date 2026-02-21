@@ -43,7 +43,7 @@ request_analysis:
         -o merge_request.create \
         -o merge_request.target="$CI_DEFAULT_BRANCH" \
         -o merge_request.title="Analysis Request: $IMAGE_URL" \
-        -o merge_request.description="Report will be available in the Review App." \
+        -o merge_request.description="Report will be available in the Review App: ${CI_PAGES_URL}/review-$CI_PIPELINE_IID/" \
         -o merge_request.remove_source_branch
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
@@ -66,9 +66,19 @@ analyze_image:
         --site \
         --playbook "{{ cookiecutter.regis_playbook_url }}" \
         --output-dir public \
-        --meta "gitlab.user=$GITLAB_USER_LOGIN" \
-        --meta "gitlab.project=$CI_PROJECT_PATH" \
+        --meta "trigger.user=$GITLAB_USER_LOGIN" \
+        --meta "trigger.url=$CI_JOB_URL" \
         --meta "gitlab.mr=$CI_MERGE_REQUEST_IID"
+
+      # Optional: Commit results back to the branch if GITLAB_TOKEN is provided
+      if [ -n "$GITLAB_TOKEN" ]; then
+        echo "Pushing report to branch $CI_COMMIT_BRANCH..."
+        git config --global user.name "regis-cli bot"
+        git config --global user.email "regis-cli@example.com"
+        git add public/
+        git commit -m "chore: update analysis report for $IMAGE_URL [skip ci]" || echo "No changes to commit"
+        git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_COMMIT_BRANCH}"
+      fi
   artifacts:
     paths:
       - public

@@ -97,3 +97,43 @@ regis-cli analyze <image-url> \
   --meta "trigger.user=$GITLAB_USER_LOGIN" \
   --meta "trigger.url=$CI_JOB_URL"
 ----
+
+== Self-Service Analysis (Request-to-MR)
+
+The unified GitLab template supports a full "Self-Service" workflow where any user can request an image analysis via a pipeline input. This creates a focused Merge Request with a dedicated report deployed to a Review App.
+
+[mermaid]
+....
+sequenceDiagram
+    actor User as User/Developer
+    participant GL as GitLab UI
+    participant CI as CI Runner
+    participant Reg as Registry
+    participant Pages as Review App
+
+    User->>GL: Run Pipeline with image_url
+    GL->>CI: Job: request_analysis
+    Note over CI: Create branch & commit image_url
+    CI->>GL: Push with MR options
+    GL->>User: Merge Request opened
+    GL->>CI: Job: analyze_image (MR context)
+    CI->>Reg: Analyze image
+    CI->>GL: Commit Report (optional)
+    CI->>Pages: Deploy to Review App
+    Pages->>User: Link in MR description
+....
+
+=== 1. Trigger the Request
+Go to **Build > Pipelines > Run pipeline**, enter the `image_url`, and run.
+
+=== 2. Merge Request Creation
+The pipeline automatically creates a new branch and a Merge Request.
+The MR description contains a link to the **Review App** where the report will be hosted.
+
+=== 3. Report Inspection
+Once the analysis job completes, the report is:
+*   **Committed** back to the branch (if `GITLAB_TOKEN` is configured).
+*   **Deployed** to a GitLab Pages Review App at `https://<namespace>.gitlab.io/<project>/review-<mr-id>/`.
+
+=== 4. Governance
+Security teams can review the MR, check the compliance score in the Review App, and decide whether to merge the analysis request into the main registry branch.
