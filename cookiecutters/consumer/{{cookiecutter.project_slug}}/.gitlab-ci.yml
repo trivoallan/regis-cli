@@ -20,7 +20,7 @@ request_analysis:
   stage: request
   image: alpine:latest
   before_script:
-    - apk add --no-cache git
+    - apk add --no-cache git curl
   script:
     - |
       IMAGE_URL="$[[ inputs.image_url ]]"
@@ -38,15 +38,25 @@ request_analysis:
       git add analysis-request.json
       git commit -m "chore: request analysis for $IMAGE_URL"
 
-      # Push and create MR automatically using push options
-      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$BRANCH_NAME" \
-        -o merge_request.create \
-        -o merge_request.target="$CI_DEFAULT_BRANCH" \
-        -o merge_request.title="Analysis Request: $IMAGE_URL" \
-        -o merge_request.description="The analysis report will be exposed as an artifact in this Merge Request and committed to the \`reports/\` directory." \
-        -o merge_request.remove_source_branch
+      # Push the branch
+      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$BRANCH_NAME"
+
+      # Create MR via API to ensure correct reviewer/assignee
+      # We set the requester as both assignee and reviewer
+      curl --fail --request POST \
+        --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+        --header "Content-Type: application/json" \
+        --data "{
+          \"source_branch\": \"$BRANCH_NAME\",
+          \"target_branch\": \"$CI_DEFAULT_BRANCH\",
+          \"title\": \"Analysis Request: $IMAGE_URL\",
+          \"description\": \"The analysis report will be exposed as an artifact in this Merge Request (see the 'Analysis Report' link) and committed to the \`reports/\` directory.\",
+          \"reviewer_ids\": [${GITLAB_USER_ID}],
+          \"remove_source_branch\": true
+        }" \
+        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests"
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
+    - if: $CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""
 
 # Phase 2: Analyze the image when the MR is opened/updated
 analyze_image:
@@ -71,19 +81,20 @@ analyze_image:
 
       # Optional: Commit results and post link to MR if GITLAB_TOKEN is provided
       if [ -n "$GITLAB_TOKEN" ]; then
-        echo "Pushing report to branch $CI_COMMIT_BRANCH..."
+        echo "Pushing report to branch $CI_COMMIT_REF_NAME..."
+        git config --global --add safe.directory "$CI_PROJECT_DIR"
         git config --global user.name "regis-cli bot"
         git config --global user.email "regis-cli@example.com"
         git add reports/
         git commit -m "chore: update analysis report for $IMAGE_URL [skip ci]" || echo "No changes to commit"
-        git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_COMMIT_BRANCH}"
-        
+        git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_COMMIT_REF_NAME}"
+
         if [ -n "$CI_MERGE_REQUEST_IID" ]; then
           REPORT_INDEX=$(find reports -name index.html | head -n 1)
           if [ -n "$REPORT_INDEX" ]; then
             REPORT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/external_file/${REPORT_INDEX}"
             echo "Posting MR comment with link to report..."
-            curl --silent --request POST --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+            curl --fail --request POST --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
               --header "Content-Type: application/json" \
               --data "{\"body\": \"🚀 **regis-cli Analysis Complete!**\n\nThe full HTML security report is ready: [View Analysis Report]($REPORT_URL)\"}" \
               "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}/notes"
@@ -95,10 +106,10 @@ analyze_image:
     paths:
       - reports/
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
+    - if: $CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""
       when: never
-    - if: "$CI_MERGE_REQUEST_IID"
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 # Phase 3: Deploy to GitLab Pages (Default branch only)
 pages:
@@ -112,6 +123,6 @@ pages:
     paths:
       - reports/
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
+    - if: $CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
