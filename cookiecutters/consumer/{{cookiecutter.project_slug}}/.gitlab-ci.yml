@@ -43,7 +43,7 @@ request_analysis:
         -o merge_request.create \
         -o merge_request.target="$CI_DEFAULT_BRANCH" \
         -o merge_request.title="Analysis Request: $IMAGE_URL" \
-        -o merge_request.description="Report will be available in the Review App: ${CI_PAGES_URL}/review-$CI_PIPELINE_IID/" \
+        -o merge_request.description="Report will be available as an exposed artifact in this Merge Request (see the 'Analysis Report' link)." \
         -o merge_request.remove_source_branch
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web" && "$[[ inputs.image_url ]]" != ""'
@@ -80,49 +80,23 @@ analyze_image:
         git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_COMMIT_BRANCH}"
       fi
   artifacts:
+    expose_as: "Analysis Report"
     paths:
       - public
   rules:
     - if: "$CI_MERGE_REQUEST_IID"
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
 
-# Phase 3: Deploy to Review App (multiple deployments for Pages)
+# Phase 3: Deploy to GitLab Pages (Default branch only)
 pages:
   stage: deploy
   image: alpine:latest
-  environment:
-    name: $ENV_NAME
-    url: $ENV_URL
   script:
-    - echo "Publishing to $ENV_URL"
+    - echo "Publishing to production pages"
   dependencies:
     - analyze_image
   artifacts:
     paths:
       - public
-  pages:
-    path_prefix: "$PAGES_PREFIX"
   rules:
-    - if: $CI_MERGE_REQUEST_IID
-      variables:
-        PAGES_PREFIX: "review-$CI_MERGE_REQUEST_IID"
-        ENV_NAME: "review/$CI_MERGE_REQUEST_IID"
-        ENV_URL: "${CI_PAGES_URL}/review-$CI_MERGE_REQUEST_IID"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      variables:
-        PAGES_PREFIX: ""
-        ENV_NAME: "production"
-        ENV_URL: "${CI_PAGES_URL}"
-
-stop_review:
-  stage: deploy
-  image: alpine:latest
-  environment:
-    name: review/$CI_MERGE_REQUEST_IID
-    action: stop
-  script:
-    - echo "Removing review app"
-  rules:
-    - if: "$CI_MERGE_REQUEST_IID"
-      when: manual
-  allow_failure: true

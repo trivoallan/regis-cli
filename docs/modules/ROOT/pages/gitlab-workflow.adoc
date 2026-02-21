@@ -109,7 +109,6 @@ sequenceDiagram
     participant GL as GitLab UI
     participant CI as CI Runner
     participant Reg as Registry
-    participant Pages as Review App
 
     User->>GL: Run Pipeline with image_url
     GL->>CI: Job: request_analysis
@@ -119,8 +118,7 @@ sequenceDiagram
     GL->>CI: Job: analyze_image (MR context)
     CI->>Reg: Analyze image
     CI->>GL: Commit Report (optional)
-    CI->>Pages: Deploy to Review App
-    Pages->>User: Link in MR description
+    CI->>GL: Expose "Analysis Report" Artifact
 ....
 
 === 1. Trigger the Request
@@ -128,12 +126,12 @@ Go to **Build > Pipelines > Run pipeline**, enter the `image_url`, and run.
 
 === 2. Merge Request Creation
 The pipeline automatically creates a new branch and a Merge Request.
-The MR description contains a link to the **Review App** where the report will be hosted.
+The MR description contains instructions to find the **Analysis Report** within the Merge Request artifacts.
 
 === 3. Report Inspection
 Once the analysis job completes, the report is:
 *   **Committed** back to the branch (if `GITLAB_TOKEN` is configured).
-*   **Deployed** to a GitLab Pages Review App at `https://<namespace>.gitlab.io/<project>/review-<mr-id>/`.
+*   **Exposed** directly in the Merge Request UI under the "Analysis Report" artifact link.
 
 === 4. Governance
-Security teams can review the MR, check the compliance score in the Review App, and decide whether to merge the analysis request into the main registry branch.
+Security teams can review the MR, check the compliance score via the exposed HTML report, and decide whether to merge the analysis request into the main registry branch.
