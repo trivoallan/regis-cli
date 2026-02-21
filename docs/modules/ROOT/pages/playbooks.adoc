@@ -83,4 +83,7 @@ pages:
         widgets:
           - label: Compliance Level
             value: "{{ playbooks.0.score }}%"
+
+> [!TIP]
+> To see the full set of rules and report organization enforced by the tool out-of-the-box, check the xref:default-playbook.adoc[Default Playbook Reference].
 ----

@@ -1,0 +1,81 @@
+= Default Playbook Reference
+
+The RegiS Default Playbook is the standard security and governance profile used by `regis-cli`. It provides a comprehensive set of checks to ensure container images meet baseline security requirements and follow best practices.
+
+== Compliance Levels
+
+The playbook categorizes its security checks into two main levels: **Mandatory** and **Recommended**.
+
+=== Mandatory Requirements (Critical)
+
+These are non-negotiable security requirements. Failing any of these checks marks the image as non-compliant.
+
+[cols="1,3,2"]
+|===
+| Rule | Description | Logic (JSON Logic)
+
+| **No Root**
+| The image must not be configured to run as the `root` user.
+| `{"!=": [{"var": "results.skopeo.platforms.0.user"}, "root"]}`
+
+| **No Critical**
+| No vulnerabilities with a `CRITICAL` severity level found by Trivy.
+| `{"==": [{"var": "results.trivy.critical_count"}, 0]}`
+
+| **Trusted Domain**
+| The image must originate from a trusted container registry (e.g., Docker Hub, Quay, GHCR).
+| `{"in": [{"var": "request.registry"}, ["docker.io", "quay.io", "ghcr.io"]]}`
+|===
+
+=== Recommended Requirements (Warning)
+
+These rules represent security best practices. Failing these checks provides a warning but may not block promotion depending on your policy.
+
+[cols="1,3,2"]
+|===
+| Rule | Description | Logic (JSON Logic)
+
+| **No High**
+| No vulnerabilities with a `HIGH` severity level found by Trivy.
+| `{"==": [{"var": "results.trivy.high_count"}, 0]}`
+
+| **Freshness**
+| The image should have been built or updated within the last 30 days.
+| `{"<": [{"var": "results.freshness.age_days"}, 30]}`
+|===
+
+== Report Organization
+
+The default playbook structures its findings into seven specialized pages to provide a clear and actionable overview.
+
+[cols="1,3"]
+|===
+| Page | Purpose
+
+| **Overview** (`index`)
+| High-level summary of analysis results, creation time, and "GO/NOGO" recommendation.
+| **Compliance** (`compliance`)
+| Detailed breakdown of mandatory and recommended scorecard results.
+| **Security** (`security`)
+| Deep dive into vulnerabilities (Trivy) and image provenance.
+| **Supply Chain** (`supply-chain`)
+| Analysis of the Software Bill of Materials (SBOM) and OpenSSF Scorecard results.
+| **Best Practices** (`best-practices`)
+| Insights from Dockerfile linting (Hadolint) and configuration checks.
+| **Insights** (`insights`)
+| Trends in image freshness, registry popularity, and lifecycle (EndOfLife) status.
+| **Technical Details** (`metadata`)
+| Low-level data including image layers, Skopeo inspection results, and versioning patterns.
+|===
+
+== Standard Metadata
+
+The default playbook automatically consumes "well-known" metadata fields if provided via the `--meta` flag:
+
+*   **`trigger.user`**: Displayed as the initiator of the analysis.
+*   **`trigger.url`**: Used to provide a direct link to the CI job or environment that triggered the analysis.
+
+[TIP]
+====
+For more information on how to define your own compliance rules, see the xref:playbooks.adoc[Understand Playbooks] guide.
+====
