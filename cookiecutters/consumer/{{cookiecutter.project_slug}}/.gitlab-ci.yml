@@ -28,8 +28,8 @@ request_analysis:
       SAFE_URL=$(echo "$IMAGE_URL" | sed 's/[^a-zA-Z0-9]/_/g')
       BRANCH_NAME="regis/analyze/${SAFE_URL:0:30}-$CI_PIPELINE_IID"
 
-      echo "Creating analysis request for $IMAGE_URL"
-      echo "{\"image_url\":\"$IMAGE_URL\"}" > analysis-request.json
+      echo "Creating analysis request for $IMAGE_URL (requested by $GITLAB_USER_LOGIN)"
+      echo "{\"image_url\":\"$IMAGE_URL\", \"requester_id\": $GITLAB_USER_ID, \"requester_login\": \"$GITLAB_USER_LOGIN\"}" > analysis-request.json
 
       git config --global user.name "GitLab CI"
       git config --global user.email "gitlab-ci@example.com"
@@ -68,15 +68,20 @@ analyze_image:
     - mkdir -p reports
   script:
     - |
-      # Extract image_url from the committed file using python (available in regis-cli image)
+      # Extract image_url and requester from the committed file
       IMAGE_URL=$(python3 -c "import json; print(json.load(open('analysis-request.json'))['image_url'])")
-      echo "Analyzing $IMAGE_URL..."
+      REQUESTER_LOGIN=$(python3 -c "import json; print(json.load(open('analysis-request.json')).get('requester_login', '$GITLAB_USER_LOGIN'))")
+      rm analysis-request.json
+      echo "Analyzing $IMAGE_URL requested by $REQUESTER_LOGIN..."
 
       regis-cli analyze "$IMAGE_URL" \
         --site \
+        --output-dir public \
         --playbook "{{ cookiecutter.regis_playbook_url }}" \
         --meta "trigger.user=$GITLAB_USER_LOGIN" \
         --meta "trigger.url=$CI_JOB_URL" \
+        --meta "gitlab.mr_url=$CI_MERGE_REQUEST_URL" \
+        --meta "gitlab.mr_id=$CI_MERGE_REQUEST_IID" \
         --meta "gitlab.mr=$CI_MERGE_REQUEST_IID"
 
       # Optional: Commit results and post link to MR if GITLAB_TOKEN is provided
@@ -86,6 +91,7 @@ analyze_image:
         git config --global user.name "regis-cli bot"
         git config --global user.email "regis-cli@example.com"
         git add reports/
+        git rm analysis-request.json || echo "Analysis request already removed"
         git commit -m "chore: update analysis report for $IMAGE_URL [skip ci]" || echo "No changes to commit"
         git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_COMMIT_REF_NAME}"
 
@@ -93,6 +99,19 @@ analyze_image:
           REPORT_INDEX=$(find reports -name index.html | head -n 1)
           if [ -n "$REPORT_INDEX" ]; then
             REPORT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/external_file/${REPORT_INDEX}"
+
+            # Apply labels if found in report.json
+            REPORT_JSON=$(find reports -name report.json | head -n 1)
+            if [ -n "$REPORT_JSON" ]; then
+              LABELS=$(python3 -c "import json; print(','.join(json.load(open('$REPORT_JSON')).get('labels', [])))")
+              if [ -n "$LABELS" ]; then
+                echo "Applying labels to MR: $LABELS"
+                curl --fail --request PUT --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+                  --data "add_labels=${LABELS}" \
+                  "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
+              fi
+            fi
+
             echo "Posting MR comment with link to report..."
             curl --fail --request POST --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
               --header "Content-Type: application/json" \
@@ -102,7 +121,7 @@ analyze_image:
         fi
       fi
   artifacts:
-    expose_as: "Analysis Report"
+    expose_as: Analysis Report
     paths:
       - reports/
   rules:

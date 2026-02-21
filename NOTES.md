@@ -1,8 +1,11 @@
 # Backlog
 
-- [ ] Implémenter le workflow complet à base de MR pour Gitlab
+- [x] Implémenter le workflow complet à base de MR pour Gitlab
+- [ ] Labels scopés, approval rules, etc.
 - [ ] Générer le dépôt hub2hub et l'intégrer à la merge request
 - [ ] Interface d'administration (requirements manuels) ?
+- [ ] Lien vers la MR dans le rapport d'analyse
+- [ ] Mécanisme configurable pour ajouter du contenu à la MR (via cookiecutter ?)
 - [ ] Recommandation de configuration d'import (regex)
 - [ ] Démo intégration avec PowerBI (idées)
 - [ ] Consolidation de la documentation (docs/)

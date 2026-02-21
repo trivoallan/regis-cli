@@ -98,8 +98,20 @@ regis-cli analyze <image-url> \
   --meta "trigger.url=$CI_JOB_URL"
 ----
 
-== Self-Service Analysis (Request-to-MR)
+== Self-Service Analysis Workflow
 
+This workflow allows authorized users to request a one-off image analysis directly from the GitLab UI.
+
+=== Prerequisites
+
+To enable this workflow, you must configure a **Project Access Token** (or Personal Access Token) as a GitLab CI/CD variable:
+
+*   **Variable Name**: `GITLAB_TOKEN`
+*   **Scopes**: `api`, `write_repository`
+*   **Role**: `Developer` (minimum)
+*   **Protection**: Ensure the variable is **not protected** (or protect the `regis/analyze/*` branch pattern), as it needs to be accessible by pipelines running on dynamically created analysis branches.
+
+=== Request-to-MR Flow
 The unified GitLab template supports a full "Self-Service" workflow where any user can request an image analysis via a pipeline input. This creates a focused Merge Request with a dedicated report deployed to a Review App.
 
 [mermaid]
@@ -135,6 +147,38 @@ Once the analysis job completes, the report is:
 
 === 4. Governance
 Security teams can review the MR, check the compliance score via the direct HTML report link, and decide whether to merge the analysis request into the main registry branch.
+
+== Automated Labeling and Governance
+
+The `regis-cli` integration automatically applies **scoped labels** to the Merge Request based on the analysis results and your playbook configuration.
+
+=== Scoped Labels Configuration
+
+In your `playbook.yaml`, you can define label rules under the `integrations.gitlab.labels` section:
+
+[source,yaml]
+----
+integrations:
+  gitlab:
+    labels:
+      - name: regis::pass
+        condition: {">=": [{var: score}, 90]}
+      - name: security::critical
+        condition: {">": [{var: results.trivy.critical_count}, 0]}
+----
+
+GitLab scoped labels (using the `::` separator) ensure that only one label of a given scope (e.g., `regis::*`) is applied at a time.
+
+=== Integration with Approval Rules
+
+These labels can be used to drive **GitLab Approval Rules** (Premium/Ultimate). You can configure your project settings to require specific approvals when certain labels are present.
+
+*   **Example**: Require `@security-team` approval if the `security::critical` label is applied.
+*   **Workflow**:
+    1.  User requests analysis.
+    2.  `regis-cli` finds a critical vulnerability.
+    3.  Pipeline applies `security::critical` label via the GitLab API.
+    4.  GitLab Approval Rule detects the label and blocks the Merge Request until a security officer approves it.
 
 == Review Apps (Premium/Ultimate Only)
 

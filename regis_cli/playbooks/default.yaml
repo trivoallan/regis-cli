@@ -48,6 +48,10 @@ pages:
           - label: Triggered by
             value: "{{ request.metadata.trigger.user | default('Unknown Emiter') }}"
             url: "{{ request.metadata.trigger.url | default('') }}"
+          - label: Merge Request
+            value: "!{{ request.metadata['gitlab.mr_id'] | default('N/A') }}"
+            url: "{{ request.metadata['gitlab.mr_url'] }}"
+            condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }
           - template: request/table.html
             options:
               title: Request Parameters
@@ -185,7 +189,10 @@ pages:
 
       - name: Popularity & Community
         widgets:
-          - template: analyzers/popularity/cards.html
+          - label: Pulls
+            value: "{{ results.popularity.pull_count | format_number }}"
+          - label: Stars
+            value: "{{ results.popularity.star_count | format_number }}"
           - template: analyzers/popularity/table.html
             options:
               title: Registry Stats
@@ -225,3 +232,27 @@ pages:
             options:
               title: Tag Logic & Patterns
               collapsed: true
+
+integrations:
+  gitlab:
+    labels:
+      - name: regis::pass
+        condition: { ">=": [{ var: playbook.score }, 90] }
+      - name: regis::warn
+        condition:
+          {
+            and:
+              [
+                { ">=": [{ var: playbook.score }, 70] },
+                { "<": [{ var: playbook.score }, 90] },
+              ],
+          }
+      - name: regis::fail
+        condition: { "<": [{ var: playbook.score }, 70] }
+      - name: security::critical
+        condition: { ">": [{ var: results.trivy.critical_count }, 0] }
+
+links:
+  - label: Return to Merge Request
+    url: "{{ request.metadata['gitlab.mr_url'] }}"
+    condition: { "!!": [{ var: request.metadata.gitlab.mr_url }] }

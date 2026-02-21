@@ -31,7 +31,8 @@
         "required": ["label", "url"],
         "properties": {
           "label": { "type": "string" },
-          "url": { "type": "string", "description": "URL template which can use {metadata[key]} placeholders" }
+          "url": { "type": "string", "description": "URL template which can use {metadata[key]} placeholders or Jinja2 syntax." },
+          "condition": { "description": "Optional JsonLogic expression to determine if the link should be displayed." }
         }
       }
     },
@@ -90,9 +91,33 @@
           }
         }
       }
+    },
+    "integrations": {
+      "type": "object",
+      "description": "Optional third-party platform integrations (e.g. GitLab, GitHub).",
+      "properties": {
+        "gitlab": {
+          "type": "object",
+          "properties": {
+            "labels": {
+              "type": "array",
+              "description": "Custom scoped labels applied to GitLab Merge Requests based on conditions.",
+              "items": {
+                "type": "object",
+                "required": ["name", "condition"],
+                "properties": {
+                  "name": { "type": "string", "description": "Label name, e.g. 'regis::fail' or 'security::critical'." },
+                  "condition": { "type": "object", "description": "JsonLogic expression evaluated against the analysis report." }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
+
     "page": {
       "type": "object",
       "description": "A playbook page containing sections.",

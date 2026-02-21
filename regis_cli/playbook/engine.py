@@ -48,7 +48,9 @@ def _format_time(v: str) -> str:
         return v
 
 
-_WIDGET_ENV = Environment(loader=BaseLoader(), undefined=ChainableUndefined)
+_WIDGET_ENV = Environment(
+    loader=BaseLoader(), undefined=ChainableUndefined, autoescape=True
+)
 _WIDGET_ENV.filters["format_date"] = _format_date
 _WIDGET_ENV.filters["format_datetime"] = _format_datetime
 _WIDGET_ENV.filters["format_time"] = _format_time
@@ -511,29 +513,7 @@ def evaluate(
         total_scorecards_all += page_total_scorecards
         total_passed_all += page_passed_scorecards
 
-    # Resolve format strings for any playbook-level links using the report context
-    resolved_links = []
-    for link_def in playbook.get("links", []):
-        if not isinstance(link_def, dict):
-            continue
-
-        url_tmpl = link_def.get("url")
-        if not isinstance(url_tmpl, str):
-            continue
-
-        # Format against original report dictionary
-        try:
-            url = url_tmpl.format(**report)
-            resolved_links.append({"label": link_def.get("label", ""), "url": url})
-        except (KeyError, IndexError, ValueError) as e:
-            logger.warning(
-                "Could not format link '%s': %s",
-                link_def.get("label"),
-                e,
-            )
-            # Add as-is if formatting fails, or skip? Let's skip for safety
-            # but maybe the user wants it anyway. For now, strictly format it.
-
+    # Result object setup
     result = {
         "playbook_name": playbook.get("name", "unnamed"),
         "score": (
@@ -633,7 +613,69 @@ def evaluate(
     if meta:
         result["_meta"] = meta
 
+    # Resolve format strings for any playbook-level links using the report context
+    resolved_links = []
+    for link_def in playbook.get("links", []):
+        if not isinstance(link_def, dict):
+            continue
+
+        # Evaluate condition if present
+        condition = link_def.get("condition")
+        if condition:
+            try:
+                if not jsonLogic(condition, full_context):
+                    continue
+            except Exception as exc:
+                logger.warning(
+                    "Failed to evaluate link condition for '%s': %s",
+                    link_def.get("label"),
+                    exc,
+                )
+                continue
+
+        url_tmpl = link_def.get("url")
+        if not isinstance(url_tmpl, str):
+            continue
+
+        # Try to resolve as Jinja2 template (new) or fall back to old .format()
+        try:
+            if "{{" in url_tmpl or "{%" in url_tmpl:
+                url = _resolve_template(
+                    url_tmpl, full_context, nested_context=full_context
+                )
+            else:
+                url = url_tmpl.format(**report)
+
+            if url:
+                resolved_links.append({"label": link_def.get("label", ""), "url": url})
+        except Exception as e:
+            logger.warning(
+                "Could not resolve link '%s': %s",
+                link_def.get("label"),
+                e,
+            )
+
     if resolved_links:
         result["links"] = resolved_links
+
+    # Evaluate GitLab integration labels
+    gitlab_integration = playbook.get("integrations", {}).get("gitlab", {})
+    label_defs = gitlab_integration.get("labels", [])
+    if label_defs:
+        resolved_labels = []
+        for label_def in label_defs:
+            condition = label_def.get("condition")
+            if condition:
+                try:
+                    # Use full_context which includes final score and result summary
+                    if jsonLogic(condition, full_context):
+                        resolved_labels.append(label_def["name"])
+                except Exception as exc:
+                    logger.warning(
+                        "Failed to evaluate label condition for '%s': %s",
+                        label_def.get("name"),
+                        exc,
+                    )
+        result["labels"] = list(set(resolved_labels))
 
     return result
