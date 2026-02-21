@@ -2,7 +2,7 @@
 
 - [x] Implémenter le workflow complet à base de MR pour Gitlab
 - [x] Labels scopés, approval rules, etc.
-- [ ] rendu mermaid dans les docs avec antora
+- [x] rendu mermaid dans les docs avec antora
 - [ ] Générer le dépôt hub2hub et l'intégrer à la merge request
 - [ ] Interface d'administration (requirements manuels) ?
 - [x] Lien vers la MR dans le rapport d'analyse
