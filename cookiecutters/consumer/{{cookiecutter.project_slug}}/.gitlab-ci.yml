@@ -66,6 +66,7 @@ analyze_image:
         --site \
         --playbook "{{ cookiecutter.regis_playbook_url }}" \
         --output-dir public \
+        --output index.html \
         --meta "gitlab.user=$GITLAB_USER_LOGIN" \
         --meta "gitlab.project=$CI_PROJECT_PATH" \
         --meta "gitlab.mr=$CI_MERGE_REQUEST_IID"
@@ -74,24 +75,31 @@ analyze_image:
       - public
   rules:
     - if: "$CI_MERGE_REQUEST_IID"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
 
 # Phase 3: Deploy to Review App (multiple deployments for Pages)
 pages:
   stage: deploy
   image: alpine:latest
+  variables:
+    PAGES_PREFIX: ""
   environment:
-    name: review/$CI_MERGE_REQUEST_IID
-    url: "${CI_PAGES_URL}/review-$CI_MERGE_REQUEST_IID"
-    on_stop: stop_review
+    name: ${PAGES_PREFIX:-production}
+    url: "${CI_PAGES_URL}/${PAGES_PREFIX}"
   script:
-    - echo "Publishing review app to ${CI_PAGES_URL}/review-$CI_MERGE_REQUEST_IID"
+    - echo "Publishing review app to ${CI_PAGES_URL}/${PAGES_PREFIX}"
   artifacts:
     paths:
       - public
   pages:
-    path_prefix: "review-$CI_MERGE_REQUEST_IID"
+    path_prefix: "$PAGES_PREFIX"
   rules:
-    - if: "$CI_MERGE_REQUEST_IID"
+    - if: $CI_MERGE_REQUEST_IID
+      variables:
+        PAGES_PREFIX: "review-$CI_MERGE_REQUEST_IID"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        PAGES_PREFIX: ""
 
 stop_review:
   stage: deploy
