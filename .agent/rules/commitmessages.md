@@ -6,6 +6,7 @@ trigger: always_on
 
 - Must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. Allowed types : https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#type
 - Scopes are **mandatory** and must be extrapolated from the architectural component modified.
+- Styleguide : https://developers.google.com/blockly/guides/contribute/get-started/commits
 
 ## Defined Scopes
 
