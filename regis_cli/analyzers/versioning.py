@@ -167,6 +167,7 @@ class VersioningAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         """Classify all tags and summarize versioning patterns using skopeo."""
         registry = client.registry

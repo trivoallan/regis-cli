@@ -137,6 +137,7 @@ class EndOfLifeAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         """Fetch lifecycle data and match against the image tag."""
         product = _image_to_product(repository)

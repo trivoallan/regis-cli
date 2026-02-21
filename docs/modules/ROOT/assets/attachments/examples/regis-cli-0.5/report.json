@@ -18,7 +18,7 @@
       "trivy",
       "versioning"
     ],
-    "timestamp": "2026-02-21T09:56:31.240487+00:00",
+    "timestamp": "2026-02-21T10:00:42.198935+00:00",
     "metadata": {
       "trigger": {
         "user": "Antigravity",
@@ -448,6 +448,13 @@
           ]
         },
         {
+          "name": "debian",
+          "version": "13.3",
+          "type": "operating-system",
+          "purl": null,
+          "licenses": []
+        },
+        {
           "name": "regis-cli",
           "version": "0.4.0",
           "type": "library",
@@ -455,13 +462,6 @@
           "licenses": [
             "MIT"
           ]
-        },
-        {
-          "name": "debian",
-          "version": "13.3",
-          "type": "operating-system",
-          "purl": null,
-          "licenses": []
         },
         {
           "name": "usr/local/bin/trivy",
@@ -6067,12 +6067,6 @@
           "compressed_bytes": 206297810,
           "compressed_human": "196.7 MB",
           "layer_count": 13
-        },
-        {
-          "platform": "unknown/unknown",
-          "compressed_bytes": 34286,
-          "compressed_human": "33.5 KB",
-          "layer_count": 1
         }
       ]
     },
@@ -6085,7 +6079,6 @@
         {
           "architecture": "amd64",
           "os": "linux",
-          "digest": "sha256:85426ed2ba5d922faafdec06f5e9c80525e5a8db4d23e4574687b862f6e66da6",
           "created": "2026-02-21T06:39:08.572363241Z",
           "labels": {
             "org.opencontainers.image.created": "2026-02-21T06:38:45.189Z",
@@ -6098,16 +6091,8 @@
             "org.opencontainers.image.version": "0.5.0"
           },
           "layers_count": 13,
+          "digest": "sha256:bd09fc1ddb732d3e547e49f61086e04a1432cdcda72899b204c0388a837a6e71",
           "user": "regis"
-        },
-        {
-          "architecture": "unknown",
-          "os": "unknown",
-          "digest": "sha256:34c88d12799671dff40626525d517081b0568ac4d91a6eb8a9847634824f7c7b",
-          "created": null,
-          "labels": {},
-          "layers_count": 1,
-          "user": ""
         }
       ],
       "tags": [
@@ -7844,7 +7829,7 @@
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
                   "resolved_value": "2026-02-21",
-                  "resolved_subvalue": "09:56:31"
+                  "resolved_subvalue": "10:00:42"
                 },
                 {
                   "label": "Triggered by",
@@ -8497,7 +8482,7 @@
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
                 "resolved_value": "2026-02-21",
-                "resolved_subvalue": "09:56:31"
+                "resolved_subvalue": "10:00:42"
               },
               {
                 "label": "Triggered by",

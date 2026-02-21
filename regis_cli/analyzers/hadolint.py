@@ -24,6 +24,7 @@ class HadolintAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         """Return a report with hadolint violations."""
         registry = client.registry
@@ -32,15 +33,24 @@ class HadolintAnalyzer(BaseAnalyzer):
 
         target = f"docker://{registry}/{repository}:{tag}"
 
-        # 1. Fetch image configuration using Skopeo (forcing linux/amd64 to avoid host mismatch on multi-arch)
+        # 1. Fetch image configuration using Skopeo
+        if platform:
+            if "/" in platform:
+                os_name, arch = platform.split("/", 1)
+            else:
+                os_name, arch = "linux", platform
+        else:
+            # Fallback for Hadolint to ensure we get something coherent if not specified
+            os_name, arch = "linux", "amd64"
+
         cmd_skopeo = [
             "skopeo",
             "inspect",
             "--config",
             "--override-os",
-            "linux",
+            os_name,
             "--override-arch",
-            "amd64",
+            arch,
             target,
         ]
         if client.username and client.password:

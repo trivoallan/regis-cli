@@ -199,6 +199,10 @@ def main(verbose: bool) -> None:
     is_flag=True,
     help="Use existing report.json as cache if available.",
 )
+@click.option(
+    "--platform",
+    help="Target platform for multi-arch images (e.g. linux/amd64).",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -211,6 +215,7 @@ def analyze(
     meta: tuple[str, ...],
     auth: tuple[str, ...],
     cache: bool,
+    platform: str | None = None,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -307,7 +312,9 @@ def analyze(
             click.echo(f"  Running analyzer: {name}...", err=True)
             analyzer = analyzer_cls()
             try:
-                report = analyzer.analyze(client, ref.repository, ref.tag)
+                report = analyzer.analyze(
+                    client, ref.repository, ref.tag, platform=platform
+                )
                 analyzer.validate(report)
                 reports[name] = report
             except RegistryError as exc:

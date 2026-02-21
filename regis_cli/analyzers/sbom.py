@@ -19,6 +19,7 @@ def _run_trivy_sbom(
     image: str,
     username: str | None = None,
     password: str | None = None,
+    platform: str | None = None,
 ) -> dict[str, Any]:
     """Run ``trivy image --format cyclonedx`` and return parsed CycloneDX JSON."""
     trivy_path = shutil.which("trivy")
@@ -43,8 +44,11 @@ def _run_trivy_sbom(
         "cyclonedx",
         "--quiet",
         "--no-progress",
-        image,
     ]
+    if platform:
+        cmd.extend(["--platform", platform])
+
+    cmd.append(image)
 
     logger.debug("Running trivy SBOM: %s", " ".join(cmd))
     try:
@@ -85,6 +89,7 @@ class SbomAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         # Build full image reference — same logic as TrivyAnalyzer.
         if client.registry in ("docker.io", "registry-1.docker.io"):
@@ -93,7 +98,10 @@ class SbomAnalyzer(BaseAnalyzer):
             full_image = f"{client.registry}/{repository}:{tag}"
 
         data = _run_trivy_sbom(
-            full_image, username=client.username, password=client.password
+            full_image,
+            username=client.username,
+            password=client.password,
+            platform=platform,
         )
 
         # Parse CycloneDX structure.

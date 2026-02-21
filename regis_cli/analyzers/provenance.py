@@ -29,6 +29,7 @@ class ProvenanceAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         labels: dict[str, str] = {}
         image_digest: str | None = None
@@ -62,44 +63,54 @@ class ProvenanceAnalyzer(BaseAnalyzer):
         # OCI annotations for build source.
         oci_source = labels.get("org.opencontainers.image.source")
         if oci_source:
-            provenance_indicators.append({
-                "type": "oci-annotation",
-                "key": "org.opencontainers.image.source",
-                "value": oci_source,
-            })
+            provenance_indicators.append(
+                {
+                    "type": "oci-annotation",
+                    "key": "org.opencontainers.image.source",
+                    "value": oci_source,
+                }
+            )
 
         oci_revision = labels.get("org.opencontainers.image.revision")
         if oci_revision:
-            provenance_indicators.append({
-                "type": "oci-annotation",
-                "key": "org.opencontainers.image.revision",
-                "value": oci_revision,
-            })
+            provenance_indicators.append(
+                {
+                    "type": "oci-annotation",
+                    "key": "org.opencontainers.image.revision",
+                    "value": oci_revision,
+                }
+            )
 
         oci_created = labels.get("org.opencontainers.image.created")
         if oci_created:
-            provenance_indicators.append({
-                "type": "oci-annotation",
-                "key": "org.opencontainers.image.created",
-                "value": oci_created,
-            })
+            provenance_indicators.append(
+                {
+                    "type": "oci-annotation",
+                    "key": "org.opencontainers.image.created",
+                    "value": oci_created,
+                }
+            )
 
         oci_vendor = labels.get("org.opencontainers.image.vendor")
         if oci_vendor:
-            provenance_indicators.append({
-                "type": "oci-annotation",
-                "key": "org.opencontainers.image.vendor",
-                "value": oci_vendor,
-            })
+            provenance_indicators.append(
+                {
+                    "type": "oci-annotation",
+                    "key": "org.opencontainers.image.vendor",
+                    "value": oci_vendor,
+                }
+            )
 
         # Check for Docker BuildKit build info.
         buildkit_src = labels.get("org.mobyproject.buildkit.source.ref")
         if buildkit_src:
-            provenance_indicators.append({
-                "type": "buildkit",
-                "key": "org.mobyproject.buildkit.source.ref",
-                "value": buildkit_src,
-            })
+            provenance_indicators.append(
+                {
+                    "type": "buildkit",
+                    "key": "org.mobyproject.buildkit.source.ref",
+                    "value": buildkit_src,
+                }
+            )
 
         # Try to detect cosign signatures by fetching the tag with cosign suffix.
         has_cosign_signature = False
@@ -109,18 +120,21 @@ class ProvenanceAnalyzer(BaseAnalyzer):
                 sig_manifest = client.get_manifest(cosign_tag)
                 if sig_manifest.get("layers") or sig_manifest.get("manifests"):
                     has_cosign_signature = True
-                    provenance_indicators.append({
-                        "type": "cosign-signature",
-                        "key": "signature-tag",
-                        "value": cosign_tag,
-                    })
+                    provenance_indicators.append(
+                        {
+                            "type": "cosign-signature",
+                            "key": "signature-tag",
+                            "value": cosign_tag,
+                        }
+                    )
             except Exception:
                 pass  # No cosign signature found.
 
         # Determine has_provenance and score.
         has_provenance = len(provenance_indicators) > 0
         source_tracked = any(
-            i["key"] in ("org.opencontainers.image.source", "org.opencontainers.image.revision")
+            i["key"]
+            in ("org.opencontainers.image.source", "org.opencontainers.image.revision")
             for i in provenance_indicators
         )
 

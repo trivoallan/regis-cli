@@ -19,6 +19,7 @@ def _run_trivy(
     image: str,
     username: str | None = None,
     password: str | None = None,
+    platform: str | None = None,
 ) -> dict[str, Any]:
     """Run trivy image scan and return parsed JSON."""
     trivy_path = shutil.which("trivy")
@@ -43,8 +44,11 @@ def _run_trivy(
         "json",
         "--quiet",
         "--no-progress",
-        image,
     ]
+    if platform:
+        cmd.extend(["--platform", platform])
+
+    cmd.append(image)
 
     logger.debug("Running trivy: %s", " ".join(cmd))
     try:
@@ -73,6 +77,7 @@ class TrivyAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         """Run trivy analysis."""
         # We need the full image reference for trivy (e.g. registry/repo:tag)
@@ -85,7 +90,10 @@ class TrivyAnalyzer(BaseAnalyzer):
 
         try:
             data = _run_trivy(
-                full_image, username=client.username, password=client.password
+                full_image,
+                username=client.username,
+                password=client.password,
+                platform=platform,
             )
         except AnalyzerError as exc:
             # If analysis fails, we return a partial report or raise?

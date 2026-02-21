@@ -129,19 +129,19 @@ These examples demonstrate how `regis-cli` adapts its recommendations based on t
 **Insight:** Even if an image is currently "secure" at the vulnerability level, lifecycle checks flag it as a maintenance risk. The playbook recommends a rebuild to ensure continued support and freshness.
 ****
 
-== Benchmark: The `regis-cli` Image
+=== Benchmark: `regis-cli`
 
-As a tool dedicated to security, the `regis-cli` Docker image serves as its own benchmark for compliance and best practices.
+Finally, we analyze link:https://github.com/trivoallan/regis-cli[regis-cli] itself. As a tool designed to enforce security, its own image is built following all the "Gold Standard" practices: minimal base image, no vulnerabilities, and full provenance.
 
-[sidebar]
---
-**`trivoallan/regis-cli:latest` Analysis Summary:**
-
+[TIP]
+====
+You can view the live result of this analysis here:
+link:{attachmentsdir}/examples/regis-cli-0.5/index.html[**Live `regis-cli:0.5` Benchmark Report**]
+====
 *   **100% Mandatory Compliance**: Passes all critical checks (No Root, No Critical, Trusted Registry).
 *   **Minimal Attack Surface**: Built on a slim Python/Alpine base.
 *   **Full Supply Chain Evidence**: Provides both SBOM (CycloneDX) and Provenance indicators.
 *   **Active Maintenance**: Regularly rebuilt to maintain a "Fresh" status (< 30 days).
---
 
 [TIP]
 ====

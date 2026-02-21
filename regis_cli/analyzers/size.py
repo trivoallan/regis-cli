@@ -43,6 +43,7 @@ class SizeAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         registry = client.registry
         if registry == "registry-1.docker.io":
@@ -66,7 +67,9 @@ class SizeAnalyzer(BaseAnalyzer):
 
         # Handle manifest list / OCI index.
         if "list" in media_type or "index" in media_type:
-            return self._analyze_multiarch(client, registry, repository, tag, manifest)
+            return self._analyze_multiarch(
+                client, registry, repository, tag, manifest, platform=platform
+            )
 
         return self._analyze_single(repository, tag, manifest)
 
@@ -109,9 +112,27 @@ class SizeAnalyzer(BaseAnalyzer):
         repository: str,
         tag: str,
         manifest_list: dict[str, Any],
+        platform: str | None = None,
     ) -> dict[str, Any]:
         entries = manifest_list.get("manifests", [])
         platforms = []
+
+        # Filter platforms if override is provided
+        if platform:
+            if "/" in platform:
+                os_override, arch_override = platform.split("/", 1)
+            else:
+                os_override, arch_override = "linux", platform
+
+            # Filter entries to find matching platform
+            entries = [
+                e
+                for e in entries
+                if e.get("platform", {}).get("os") == os_override
+                and e.get("platform", {}).get("architecture") == arch_override
+            ]
+            if not entries:
+                logger.warning(f"Platform {platform} not found in manifest index")
 
         for entry in entries:
             platform = entry.get("platform", {})

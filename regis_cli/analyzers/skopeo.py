@@ -34,6 +34,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         """Return a report with raw skopeo inspect data and per-platform metadata."""
         # 'registry-1.docker.io' -> 'docker.io' for skopeo compatibility
@@ -60,20 +61,22 @@ class SkopeoAnalyzer(BaseAnalyzer):
         media_type = manifest.get("mediaType", "")
         platforms: list[dict[str, Any]] = []
 
-        # 3. Fetch primary inspect data (raw metadata) if NOT an index.
-        # Calling high-level inspect on an index from a machine with different architecture
-        # (e.g. arm64 local vs amd64 remote) often fails with 'no image found'.
-        inspect_data: dict[str, Any] = {}
-        if media_type not in _INDEX_TYPES:
-            try:
-                primary_inspect_stdout = self._run_skopeo(client, ["inspect", target])
-                inspect_data = json.loads(primary_inspect_stdout)
-            except Exception as e:
-                logger.warning(
-                    "Could not fetch primary inspect data for %s: %s", target, e
-                )
+        # 3. Handle platform override
+        if platform:
+            if "/" in platform:
+                os_name, arch = platform.split("/", 1)
+            else:
+                os_name, arch = "linux", platform
 
-        if media_type in _INDEX_TYPES:
+            # Find the specific platform in the manifest or assume it exists
+            # For brevity and robustness, we explicitly inspect the requested platform.
+            detail = self._inspect_platform(
+                client, registry, repository, tag, {"os": os_name, "architecture": arch}
+            )
+            platforms.append(detail)
+            inspect_data = {}  # Will be fetched inside _inspect_platform if needed,
+            # but we'll stick to platforms list for consistency.
+        elif media_type in _INDEX_TYPES:
             # Multi-arch image — iterate over each platform manifest in parallel.
             entries = manifest.get("manifests", [])
             # Limit workers to avoid overwhelming the system
@@ -105,6 +108,17 @@ class SkopeoAnalyzer(BaseAnalyzer):
             if "layers" in manifest:
                 detail["layers_count"] = len(manifest["layers"])
             platforms.append(detail)
+
+        # 4. Fetch primary inspect data (raw metadata) if NOT an index and NO platform override.
+        inspect_data: dict[str, Any] = {}
+        if not platform and media_type not in _INDEX_TYPES:
+            try:
+                primary_inspect_stdout = self._run_skopeo(client, ["inspect", target])
+                inspect_data = json.loads(primary_inspect_stdout)
+            except Exception as e:
+                logger.warning(
+                    "Could not fetch primary inspect data for %s: %s", target, e
+                )
 
         # 4. List tags
         tags: list[str] = []

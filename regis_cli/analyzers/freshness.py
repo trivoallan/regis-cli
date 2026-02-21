@@ -58,6 +58,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         # Get creation date for the analyzed tag.
         tag_created = _get_created_date(client, repository, tag)

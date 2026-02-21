@@ -26,6 +26,7 @@ class PopularityAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         url = f"{_DOCKERHUB_API}/{repository}"
         logger.debug("Fetching Docker Hub stats: %s", url)

@@ -38,6 +38,7 @@ class BaseAnalyzer(ABC):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         """Run the analysis and return a report dict.
 

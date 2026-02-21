@@ -52,7 +52,10 @@ def _source_repo_from_labels(
         config = client.get_blob(config_digest)
         labels: dict[str, str] = config.get("config", {}).get("Labels") or {}
 
-        for label_key in ("org.opencontainers.image.source", "org.label-schema.vcs-url"):
+        for label_key in (
+            "org.opencontainers.image.source",
+            "org.label-schema.vcs-url",
+        ):
             url = labels.get(label_key, "")
             if url:
                 return url
@@ -135,6 +138,7 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
         client: RegistryClient,
         repository: str,
         tag: str,
+        platform: str | None = None,
     ) -> dict[str, Any]:
         """Resolve the source repo and fetch its OpenSSF Scorecard."""
         source_url = _resolve_source_repo(client, repository, tag)
@@ -177,11 +181,13 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
         checks = []
         for check in raw.get("checks", []):
             score = check.get("score", -1)
-            checks.append({
-                "name": check["name"],
-                "score": score,
-                "reason": check.get("reason", ""),
-            })
+            checks.append(
+                {
+                    "name": check["name"],
+                    "score": score,
+                    "reason": check.get("reason", ""),
+                }
+            )
 
         return {
             "analyzer": self.name,
