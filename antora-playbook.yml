@@ -13,7 +13,7 @@ ui:
     snapshot: true
 antora:
   extensions:
-    - "@antora/mermaid-extension"
+    - "@sntke/antora-mermaid-extension"
 
 output:
   dir: ./build/site
