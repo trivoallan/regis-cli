@@ -87,6 +87,7 @@ jobs:
         with:
           name: regis-security-report
           path: reports/
+----
 
 == Publishing to GitHub Pages
 
@@ -129,7 +130,6 @@ Add the following job to your workflow to deploy the generated site:
         uses: actions/upload-pages-artifact@v3
         with:
           path: reports/
-----
 ----
 
 == Advanced Configuration

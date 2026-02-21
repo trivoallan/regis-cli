@@ -1,5 +1,5 @@
 {% set data = report.results.get('size', {}) %}
-{% if data %}
+{% if data and not data.error %}
     {% if data.platforms %}
     <div class="overflow-auto">
         <table class="striped">

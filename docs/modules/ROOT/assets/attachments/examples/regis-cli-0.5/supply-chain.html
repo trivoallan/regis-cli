@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>regis-cli Report — trivoallan/regis-cli:0.5</title>
+<style>
+  @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
+
+:root {
+    --pico-font-size: 16px;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+#layout-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+#sidebar {
+    width: 280px;
+    background: var(--pico-card-background-color);
+    border-right: 1px solid var(--pico-muted-border-color);
+    padding: 1.5rem;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+}
+
+#sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar nav details {
+    border-bottom: none;
+    margin-bottom: 1rem;
+}
+
+#sidebar nav summary {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+}
+
+#sidebar nav a {
+    display: block;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--pico-border-radius);
+    text-decoration: none;
+    color: var(--pico-color);
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+
+#sidebar nav a:hover {
+    background: var(--pico-primary-background);
+    color: var(--pico-primary-inverse);
+    font-weight: bold;
+}
+
+#sidebar nav a.active {
+    background: var(--pico-primary-background);
+    color: var(--pico-primary-inverse);
+    font-weight: bold;
+}
+
+main.container {
+    flex: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+}
+
+header {
+    margin-bottom: 3rem;
+}
+
+header h1 {
+    margin-bottom: 0.5rem;
+}
+
+.meta {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+article {
+    margin-bottom: 2rem;
+}
+
+.playbook-section {
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--pico-muted-border-color);
+}
+
+.section-hint {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    background: var(--pico-secondary-background);
+    color: var(--pico-secondary-inverse);
+    margin-right: 0.3rem;
+    white-space: nowrap;
+}
+
+.badge.success {
+    background: #22c55e;
+    color: white;
+}
+
+.badge.error {
+    background: #ef4444;
+    color: white;
+}
+
+.badge.outline {
+    background: transparent;
+    border: 1px solid var(--pico-muted-border-color);
+    color: inherit;
+}
+
+.status-passed {
+    color: #22c55e;
+}
+
+.status-failed {
+    color: #ef4444;
+}
+
+summary {
+    font-weight: bold;
+}
+
+footer {
+    text-align: center;
+    border-top: 1px solid var(--pico-muted-border-color);
+    padding-top: 2rem;
+    margin-top: 4rem;
+}
+
+.playbook-section .recommandation-nogo {
+    color: #ef4444;
+}
+
+.playbook-section .recommandation-go {
+    color: #22c55e;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+header h2 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+<div id="layout-wrapper">
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <nav>
+      
+      
+      <details open inner>
+        <summary>Navigation</summary>
+        <ul>
+          
+          <li>
+            <a href="index.html" >
+              Overview
+            </a>
+          </li>
+          
+          <li>
+            <a href="compliance.html" >
+              Compliance
+            </a>
+          </li>
+          
+          <li>
+            <a href="security.html" >
+              Security
+            </a>
+          </li>
+          
+          <li>
+            <a href="supply-chain.html" aria-current="page" class="active">
+              Supply Chain &amp; Quality
+            </a>
+          </li>
+          
+          <li>
+            <a href="best-practices.html" >
+              Best Practices
+            </a>
+          </li>
+          
+          <li>
+            <a href="insights.html" >
+              Insights &amp; Lifecycle
+            </a>
+          </li>
+          
+          <li>
+            <a href="metadata.html" >
+              Technical Details
+            </a>
+          </li>
+          
+        </ul>
+      </details>
+      
+
+      
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="container">
+    <header>
+      <h1>ghcr.io/trivoallan/regis-cli:0.5</h1>
+      
+    </header>
+
+    
+    
+    
+
+    
+        <section id="playbook-0">
+            
+
+
+
+<article>
+
+
+    
+        
+
+        
+            <div class="playbook-section">
+                <h4>Software Bill of Materials (SBOM)</h4>
+                
+
+            
+
+                
+                <!-- prettier-ignore-start -->
+                
+                <div style="margin-bottom: calc(2 * var(--pico-spacing));">
+                    
+                    
+                        
+                        
+                        
+                        
+                        
+
+                        
+                            
+                            <div class="widget-template " style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: left; margin-bottom: calc(3 * var(--pico-spacing));">
+                                
+
+                                
+
+<div class="grid">
+    <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+        <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">COMPONENTS</strong><br>
+        <span style="font-size: 2rem; font-weight: bold; line-height: 1;">606</span>
+    </div>
+    <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+        <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">DEPENDENCIES</strong><br>
+        <span style="font-size: 2rem; font-weight: bold; line-height: 1;">607</span>
+    </div>
+    <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
+        <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">LICENSES</strong><br>
+        <span style="font-size: 2rem; font-weight: bold; line-height: 1;">176</span>
+    </div>
+</div>
+
+
+                                
+                            </div>
+                        
+                    
+                        
+                        
+                        
+                        
+                        
+
+                        
+                            
+                            <div class="widget-template " style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: left; margin-bottom: calc(3 * var(--pico-spacing));">
+                                
+                                <details>
+                                    <summary style="font-weight: bold; color: var(--pico-secondary); margin-bottom: 0.5rem; font-size: 1.125rem;">Component Inventory Preview</summary>
+                                
+
+                                
+
+
+
+
+
+    
+    
+    <details style="margin-bottom: 1rem;">
+        <summary>Component types Distribution</summary>
+        <table class="striped">
+            <thead>
+                <tr><th>Type</th><th>Count</th></tr>
+            </thead>
+            <tbody>
+                
+                <tr><td>application</td><td>1</td></tr>
+                
+                <tr><td>library</td><td>604</td></tr>
+                
+                <tr><td>operating-system</td><td>1</td></tr>
+                
+            </tbody>
+        </table>
+    </details>
+    
+
+    
+    
+    <details style="margin-bottom: 1rem;">
+        <summary>License Inventory (176)</summary>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.5rem 0;">
+            
+                <span class="badge ">
+    0BSD
+</span>
+            
+                <span class="badge ">
+    Apache-2.0
+</span>
+            
+                <span class="badge ">
+    Apache-2.0-and-or-Expat
+</span>
+            
+                <span class="badge ">
+    Artistic-1
+</span>
+            
+                <span class="badge ">
+    Artistic-2
+</span>
+            
+                <span class="badge ">
+    Artistic-2.0
+</span>
+            
+                <span class="badge ">
+    Artistic-dist
+</span>
+            
+                <span class="badge ">
+    BSD-2-Clause
+</span>
+            
+                <span class="badge ">
+    BSD-2-Clause-NetBSD
+</span>
+            
+                <span class="badge ">
+    BSD-2-clause-author
+</span>
+            
+                <span class="badge ">
+    BSD-2-clause-verbatim
+</span>
+            
+                <span class="badge ">
+    BSD-2.2-clause
+</span>
+            
+                <span class="badge ">
+    BSD-3-Clause
+</span>
+            
+                <span class="badge ">
+    BSD-3-Clause WITH weird-numbering
+</span>
+            
+                <span class="badge ">
+    BSD-3-Clause-Attribution
+</span>
+            
+                <span class="badge ">
+    BSD-3-Clause-Attribution and IBM-as-is
+</span>
+            
+                <span class="badge ">
+    BSD-3-Clause-Variant
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-Aaron-D-Gifford
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-Berkeley
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-California
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-Cambridge WITH BINARY-LIBRARY-LIKE-PACKAGES-exception
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-Carnegie
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-GENERIC
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-JANET
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-John-Birrell
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-Oracle
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-PADL
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-Regents
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-WIDE
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-author
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-fjord
+</span>
+            
+                <span class="badge ">
+    BSD-3-clause-variant
+</span>
+            
+                <span class="badge ">
+    BSD-4-Clause
+</span>
+            
+                <span class="badge ">
+    BSD-4-Clause-CMU
+</span>
+            
+                <span class="badge ">
+    BSD-4-Clause-UC
+</span>
+            
+                <span class="badge ">
+    BSD-4-clause-California
+</span>
+            
+                <span class="badge ">
+    BSD-4-clause-POWERDOG
+</span>
+            
+                <span class="badge ">
+    BSD-5-clause-Peter-Wemm
+</span>
+            
+                <span class="badge ">
+    BSD-like-Spencer
+</span>
+            
+                <span class="badge ">
+    BSD-tcp-wrappers
+</span>
+            
+                <span class="badge ">
+    BSL-1
+</span>
+            
+                <span class="badge ">
+    BSL-1.0
+</span>
+            
+                <span class="badge ">
+    BSLA
+</span>
+            
+                <span class="badge ">
+    BZIP
+</span>
+            
+                <span class="badge ">
+    Beerware
+</span>
+            
+                <span class="badge ">
+    CC-BY-3.0
+</span>
+            
+                <span class="badge ">
+    CC0-1.0
+</span>
+            
+                <span class="badge ">
+    CORE-MATH
+</span>
+            
+                <span class="badge ">
+    Carnegie
+</span>
+            
+                <span class="badge ">
+    Chromium
+</span>
+            
+                <span class="badge ">
+    DEC
+</span>
+            
+                <span class="badge ">
+    DONT-CHANGE-THE-GPL
+</span>
+            
+                <span class="badge ">
+    Expat-ISC
+</span>
+            
+                <span class="badge ">
+    Expat-UNM
+</span>
+            
+                <span class="badge ">
+    F5
+</span>
+            
+                <span class="badge ">
+    FSF-manpages
+</span>
+            
+                <span class="badge ">
+    FSF-unlimited
+</span>
+            
+                <span class="badge ">
+    FSFAP
+</span>
+            
+                <span class="badge ">
+    FSFUL
+</span>
+            
+                <span class="badge ">
+    FSFULLR
+</span>
+            
+                <span class="badge ">
+    FSFULLRWD
+</span>
+            
+                <span class="badge ">
+    FreeSoftware
+</span>
+            
+                <span class="badge ">
+    GAP
+</span>
+            
+                <span class="badge ">
+    GFDL-1.2-only
+</span>
+            
+                <span class="badge ">
+    GFDL-1.2-or-later
+</span>
+            
+                <span class="badge ">
+    GFDL-1.3--no-invariant
+</span>
+            
+                <span class="badge ">
+    GFDL-1.3-no-invariants-only
+</span>
+            
+                <span class="badge ">
+    GFDL-1.3-no-invariants-or-later
+</span>
+            
+                <span class="badge ">
+    GFDL-1.3-only
+</span>
+            
+                <span class="badge ">
+    GFDL-1.3-or-later
+</span>
+            
+                <span class="badge ">
+    GFDL-3
+</span>
+            
+                <span class="badge ">
+    GPL-1.0-only
+</span>
+            
+                <span class="badge ">
+    GPL-1.0-or-later
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-only
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-only WITH Linux-syscall-note-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-only WITH autoconf-exception+
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-only WITH bison-exception+
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH Autoconf-data-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH Autoconf-generic-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH Libtool-Exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH Libtool-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH Texinfo-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH automake-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH distribution-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.0-or-later WITH link-exception
+</span>
+            
+                <span class="badge ">
+    GPL-2.with.nonstandard.Autoconf-data.exception
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-only
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-only WITH autoconf-exception+
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH Autoconf-2.0-Archive-exception
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH Autoconf-data-exception
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH Autoconf-exception-macro
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH Autoconf-generic-exception
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH Bison-2.2-exception
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH Bison-exception
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH Libtool-exception
+</span>
+            
+                <span class="badge ">
+    GPL-3.0-or-later WITH texinfo-exception
+</span>
+            
+                <span class="badge ">
+    IBM
+</span>
+            
+                <span class="badge ">
+    IBM-as-is
+</span>
+            
+                <span class="badge ">
+    ISC
+</span>
+            
+                <span class="badge ">
+    ISC-Original
+</span>
+            
+                <span class="badge ">
+    ISC-no-attribution
+</span>
+            
+                <span class="badge ">
+    Inner-Net
+</span>
+            
+                <span class="badge ">
+    JCG
+</span>
+            
+                <span class="badge ">
+    Kazlib
+</span>
+            
+                <span class="badge ">
+    LGPL-2.0-only
+</span>
+            
+                <span class="badge ">
+    LGPL-2.0-or-later
+</span>
+            
+                <span class="badge ">
+    LGPL-2.1-only
+</span>
+            
+                <span class="badge ">
+    LGPL-2.1-or-later
+</span>
+            
+                <span class="badge ">
+    LGPL-2.1-or-later WITH link-exception
+</span>
+            
+                <span class="badge ">
+    LGPL-3.0-only
+</span>
+            
+                <span class="badge ">
+    LGPL-3.0-or-later
+</span>
+            
+                <span class="badge ">
+    Latex2e
+</span>
+            
+                <span class="badge ">
+    Less
+</span>
+            
+                <span class="badge ">
+    MIT
+</span>
+            
+                <span class="badge ">
+    MIT WITH advertising-restriction
+</span>
+            
+                <span class="badge ">
+    MIT-CMU
+</span>
+            
+                <span class="badge ">
+    MIT-Export
+</span>
+            
+                <span class="badge ">
+    MIT-OpenVision
+</span>
+            
+                <span class="badge ">
+    MIT-US-export
+</span>
+            
+                <span class="badge ">
+    MIT-X11
+</span>
+            
+                <span class="badge ">
+    MIT-XC
+</span>
+            
+                <span class="badge ">
+    MIT-like-Lord
+</span>
+            
+                <span class="badge ">
+    MIT-old
+</span>
+            
+                <span class="badge ">
+    MPL-1.1
+</span>
+            
+                <span class="badge ">
+    MPL-2.0
+</span>
+            
+                <span class="badge ">
+    MS-PL
+</span>
+            
+                <span class="badge ">
+    Mazieres-BSD-style
+</span>
+            
+                <span class="badge ">
+    NeoSoft-permissive
+</span>
+            
+                <span class="badge ">
+    OLDAP-2.8
+</span>
+            
+                <span class="badge ">
+    OpenLDAP
+</span>
+            
+                <span class="badge ">
+    OpenLDAP-2.8
+</span>
+            
+                <span class="badge ">
+    OpenSSH
+</span>
+            
+                <span class="badge ">
+    PCRE
+</span>
+            
+                <span class="badge ">
+    PD
+</span>
+            
+                <span class="badge ">
+    PD-debian
+</span>
+            
+                <span class="badge ">
+    PSF-2.0
+</span>
+            
+                <span class="badge ">
+    Powell-BSD-style
+</span>
+            
+                <span class="badge ">
+    REGCOMP
+</span>
+            
+                <span class="badge ">
+    RFC-Reference
+</span>
+            
+                <span class="badge ">
+    RSA-MD
+</span>
+            
+                <span class="badge ">
+    SDBM-PUBLIC-DOMAIN
+</span>
+            
+                <span class="badge ">
+    SMAIL-GPL
+</span>
+            
+                <span class="badge ">
+    Sleepycat
+</span>
+            
+                <span class="badge ">
+    Spencer-86
+</span>
+            
+                <span class="badge ">
+    SunPro
+</span>
+            
+                <span class="badge ">
+    TCL-like
+</span>
+            
+                <span class="badge ">
+    TEXT-TABS
+</span>
+            
+                <span class="badge ">
+    TinySCHEME
+</span>
+            
+                <span class="badge ">
+    UMich
+</span>
+            
+                <span class="badge ">
+    Unicode
+</span>
+            
+                <span class="badge ">
+    Unicode-DFS-2016
+</span>
+            
+                <span class="badge ">
+    Univ-Coimbra
+</span>
+            
+                <span class="badge ">
+    X11
+</span>
+            
+                <span class="badge ">
+    Zlib
+</span>
+            
+                <span class="badge ">
+    all-permissive
+</span>
+            
+                <span class="badge ">
+    curl
+</span>
+            
+                <span class="badge ">
+    custom
+</span>
+            
+                <span class="badge ">
+    customFSFUL
+</span>
+            
+                <span class="badge ">
+    customFSFULLRWD
+</span>
+            
+                <span class="badge ">
+    dlmalloc
+</span>
+            
+                <span class="badge ">
+    g10-permissive
+</span>
+            
+                <span class="badge ">
+    gnulib
+</span>
+            
+                <span class="badge ">
+    mingw-runtime
+</span>
+            
+                <span class="badge ">
+    noderivs
+</span>
+            
+                <span class="badge ">
+    none
+</span>
+            
+                <span class="badge ">
+    pcre
+</span>
+            
+                <span class="badge ">
+    permissive
+</span>
+            
+                <span class="badge ">
+    permissive-nowarranty
+</span>
+            
+                <span class="badge ">
+    public-domain
+</span>
+            
+                <span class="badge ">
+    public-domain-md4
+</span>
+            
+                <span class="badge ">
+    public-domain-md5
+</span>
+            
+                <span class="badge ">
+    public-domain-s-s-d
+</span>
+            
+                <span class="badge ">
+    public-domain-sha1
+</span>
+            
+                <span class="badge ">
+    verbatim
+</span>
+            
+        </div>
+    </details>
+    
+
+    
+    
+    <div class="overflow-auto">
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Package Name</th>
+                    <th>Version</th>
+                    <th>Type</th>
+                    <th>License</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td><code>regis-cli</code></td>
+                    <td>0.4.0</td>
+                    <td><small>library</small></td>
+                    <td>MIT</td>
+                </tr>
+                
+                <tr>
+                    <td><code>regis-cli</code></td>
+                    <td>0.4.0</td>
+                    <td><small>library</small></td>
+                    <td>MIT</td>
+                </tr>
+                
+                <tr>
+                    <td><code>debian</code></td>
+                    <td>13.3</td>
+                    <td><small>operating-system</small></td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td><code>usr/local/bin/trivy</code></td>
+                    <td>None</td>
+                    <td><small>application</small></td>
+                    <td></td>
+                </tr>
+                
+                <tr>
+                    <td><code>adduser</code></td>
+                    <td>3.152</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>apt</code></td>
+                    <td>3.0.3</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, curl, BSD-3-Clause, MIT, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>base-files</code></td>
+                    <td>13.8+deb13u3</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, verbatim</td>
+                </tr>
+                
+                <tr>
+                    <td><code>base-passwd</code></td>
+                    <td>3.6.7</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-only, public-domain</td>
+                </tr>
+                
+                <tr>
+                    <td><code>bash</code></td>
+                    <td>5.2.37-2+b7</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, GPL-3.0-only, GPL-3.0-or-later WITH Bison-exception, GPL-2.0-or-later, GPL-2.0-only, GFDL-1.3-no-invariants-only, GFDL-1.3-only, Latex2e, BSD-4-Clause-UC, MIT, permissive</td>
+                </tr>
+                
+                <tr>
+                    <td><code>bsdutils</code></td>
+                    <td>1:2.41-5</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-2.0-only, GPL-3.0-or-later, LGPL-2.1-or-later, public-domain, BSD-4-Clause, MIT, ISC, BSD-3-Clause, BSLA, LGPL-2.0-or-later, BSD-2-Clause, LGPL-3.0-or-later, GPL-3.0-only, LGPL-2.0-only, LGPL-2.1-only, LGPL-3.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ca-certificates</code></td>
+                    <td>20250419</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-2.0-only, MPL-2.0</td>
+                </tr>
+                
+                <tr>
+                    <td><code>containernetworking-plugins</code></td>
+                    <td>1.1.1+ds1-3+b17</td>
+                    <td><small>library</small></td>
+                    <td>Apache-2.0</td>
+                </tr>
+                
+                <tr>
+                    <td><code>coreutils</code></td>
+                    <td>9.7-3</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, BSD-4-Clause-UC, GPL-3.0-only, ISC, FSFULLR, GFDL-1.3-no-invariants-only, GFDL-1.3-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>curl</code></td>
+                    <td>8.14.1-2+deb13u2</td>
+                    <td><small>library</small></td>
+                    <td>curl, OLDAP-2.8, ISC, GPL-2.0-or-later WITH Autoconf-data-exception, GPL-3.0-or-later WITH Autoconf-data-exception, GPL-2.0-or-later WITH Libtool-exception, BSD-3-Clause, BSD-4-Clause-UC, FSFULLR, X11, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>dash</code></td>
+                    <td>0.5.12-12</td>
+                    <td><small>library</small></td>
+                    <td>BSD-3-Clause, public-domain, GPL-2.0-or-later, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>debconf</code></td>
+                    <td>1.5.91</td>
+                    <td><small>library</small></td>
+                    <td>BSD-2-Clause</td>
+                </tr>
+                
+                <tr>
+                    <td><code>debian-archive-keyring</code></td>
+                    <td>2025.1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later</td>
+                </tr>
+                
+                <tr>
+                    <td><code>debianutils</code></td>
+                    <td>5.23.2</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-2.0-only, public-domain, SMAIL-GPL</td>
+                </tr>
+                
+                <tr>
+                    <td><code>diffutils</code></td>
+                    <td>1:3.10-4</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, FSFULLR, LGPL-2.1-or-later, GPL-3.0-only WITH autoconf-exception+, GPL-3.0-only, GPL-3.0-or-later WITH texinfo-exception, LGPL-2.0-or-later, GPL-2.0-or-later, X11, FSFAP, GFDL-1.3-no-invariants-only, LGPL-3.0-or-later, LGPL-3.0-only, public-domain, LGPL-2.0-only, LGPL-2.1-only, GPL-2.0-only, GFDL-1.3-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>dirmngr</code></td>
+                    <td>2.4.7-21+deb13u1+b1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, permissive, LGPL-2.1-or-later, LGPL-3.0-or-later, GPL-2.0-or-later, MIT, BSD-3-Clause, RFC-Reference, TinySCHEME, CC0-1.0, GPL-3.0-only, LGPL-3.0-only, LGPL-2.1-only, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>dpkg</code></td>
+                    <td>1.22.21</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, public-domain-s-s-d, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>findutils</code></td>
+                    <td>4.10.0-3</td>
+                    <td><small>library</small></td>
+                    <td>GFDL-1.3-no-invariants-or-later, GPL-3.0-or-later, FSFAP, GPL-2.0-or-later WITH Autoconf-data-exception, GPL-3.0-or-later WITH Autoconf-data-exception, FSFULLR, GPL-2.0-or-later, X11, public-domain, LGPL-2.1-or-later, GPL-2.0-or-later WITH automake-exception, LGPL-2.0-or-later, LGPL-3.0-or-later, BSD-3-Clause, GPL-3.0-or-later WITH Bison-2.2-exception, LGPL-3.0-only, ISC, GFDL-1.3-only, GPL-2.0-only, GPL-3.0-only, LGPL-2.0-only, LGPL-2.1-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gcc-14-base</code></td>
+                    <td>14.2.0-19</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-3.0-only, GFDL-1.2-only, Artistic-2.0, LGPL-2.0-or-later</td>
+                </tr>
+                
+                <tr>
+                    <td><code>git-man</code></td>
+                    <td>1:2.47.3-0+deb13u1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-only, BSD-3-Clause, Zlib, LGPL-2.1-or-later, GPL-2.0-or-later, MIT, GPL-1.0-or-later, Artistic-1, Artistic-2.0, ISC, mingw-runtime, BSL-1.0, dlmalloc, Apache-2.0, LGPL-2.0-or-later, LGPL-2.0-only, LGPL-2.1-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>git</code></td>
+                    <td>1:2.47.3-0+deb13u1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-only, BSD-3-Clause, Zlib, LGPL-2.1-or-later, GPL-2.0-or-later, MIT, GPL-1.0-or-later, Artistic-1, Artistic-2.0, ISC, mingw-runtime, BSL-1.0, dlmalloc, Apache-2.0, LGPL-2.0-or-later, LGPL-2.0-only, LGPL-2.1-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gnupg-l10n</code></td>
+                    <td>2.4.7-21+deb13u1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, permissive, LGPL-2.1-or-later, LGPL-3.0-or-later, GPL-2.0-or-later, MIT, BSD-3-Clause, RFC-Reference, TinySCHEME, CC0-1.0, GPL-3.0-only, LGPL-3.0-only, LGPL-2.1-only, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gnupg</code></td>
+                    <td>2.4.7-21+deb13u1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, permissive, LGPL-2.1-or-later, LGPL-3.0-or-later, GPL-2.0-or-later, MIT, BSD-3-Clause, RFC-Reference, TinySCHEME, CC0-1.0, GPL-3.0-only, LGPL-3.0-only, LGPL-2.1-only, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>golang-github-containers-common</code></td>
+                    <td>0.62.2+ds1-2</td>
+                    <td><small>library</small></td>
+                    <td>Apache-2.0, MIT</td>
+                </tr>
+                
+                <tr>
+                    <td><code>golang-github-containers-image</code></td>
+                    <td>5.34.2-1</td>
+                    <td><small>library</small></td>
+                    <td>Apache-2.0</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gpg-agent</code></td>
+                    <td>2.4.7-21+deb13u1+b1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, permissive, LGPL-2.1-or-later, LGPL-3.0-or-later, GPL-2.0-or-later, MIT, BSD-3-Clause, RFC-Reference, TinySCHEME, CC0-1.0, GPL-3.0-only, LGPL-3.0-only, LGPL-2.1-only, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gpg</code></td>
+                    <td>2.4.7-21+deb13u1+b1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, permissive, LGPL-2.1-or-later, LGPL-3.0-or-later, GPL-2.0-or-later, MIT, BSD-3-Clause, RFC-Reference, TinySCHEME, CC0-1.0, GPL-3.0-only, LGPL-3.0-only, LGPL-2.1-only, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gpgconf</code></td>
+                    <td>2.4.7-21+deb13u1+b1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, permissive, LGPL-2.1-or-later, LGPL-3.0-or-later, GPL-2.0-or-later, MIT, BSD-3-Clause, RFC-Reference, TinySCHEME, CC0-1.0, GPL-3.0-only, LGPL-3.0-only, LGPL-2.1-only, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gpgsm</code></td>
+                    <td>2.4.7-21+deb13u1+b1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, permissive, LGPL-2.1-or-later, LGPL-3.0-or-later, GPL-2.0-or-later, MIT, BSD-3-Clause, RFC-Reference, TinySCHEME, CC0-1.0, GPL-3.0-only, LGPL-3.0-only, LGPL-2.1-only, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>grep</code></td>
+                    <td>3.11-4</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, GPL-3.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>gzip</code></td>
+                    <td>1.13-1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, GFDL-1.3--no-invariant, FSF-manpages, GPL-3.0-only, GFDL-3</td>
+                </tr>
+                
+                <tr>
+                    <td><code>hostname</code></td>
+                    <td>3.25</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>init-system-helpers</code></td>
+                    <td>1.69~deb13u1</td>
+                    <td><small>library</small></td>
+                    <td>BSD-3-Clause, GPL-2.0-or-later, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>iptables</code></td>
+                    <td>1.8.11-2</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-only, Artistic-2.0, GPL-2.0-or-later, custom</td>
+                </tr>
+                
+                <tr>
+                    <td><code>less</code></td>
+                    <td>668-1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-3.0-or-later, Less, GPL-3.0-only, X11, Spencer-86, public-domain</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libacl1</code></td>
+                    <td>2.3.2-2+b1</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-2.0-only, LGPL-2.0-or-later, LGPL-2.1-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libapt-pkg7.0</code></td>
+                    <td>3.0.3</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, curl, BSD-3-Clause, MIT, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libassuan9</code></td>
+                    <td>3.0.2-2</td>
+                    <td><small>library</small></td>
+                    <td>LGPL-2.1-or-later, FSFULLR, FSFULLRWD, GPL-2.0-or-later WITH Autoconf-data-exception, GPL-3.0-or-later WITH Autoconf-data-exception, X11, GPL-2.0-or-later WITH Libtool-exception, GPL-3.0-or-later, LGPL-3.0-or-later, LGPL-2.1-only, GPL-2.with.nonstandard.Autoconf-data.exception, GPL-3.0-or-later WITH Autoconf-2.0-Archive-exception, GPL-2.0-only, GPL-3.0-only, LGPL-3.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libattr1</code></td>
+                    <td>1:2.5.2-3</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-2.0-only, LGPL-2.0-or-later, LGPL-2.1-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libaudit-common</code></td>
+                    <td>1:4.0.2-2</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-only, LGPL-2.1-only, GPL-1.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libaudit1</code></td>
+                    <td>1:4.0.2-2+b2</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-only, LGPL-2.1-only, GPL-1.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libblkid1</code></td>
+                    <td>2.41-5</td>
+                    <td><small>library</small></td>
+                    <td>GPL-2.0-or-later, GPL-2.0-only, GPL-3.0-or-later, LGPL-2.1-or-later, public-domain, BSD-4-Clause, MIT, ISC, BSD-3-Clause, BSLA, LGPL-2.0-or-later, BSD-2-Clause, LGPL-3.0-or-later, GPL-3.0-only, LGPL-2.0-only, LGPL-2.1-only, LGPL-3.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libbrotli1</code></td>
+                    <td>1.1.0-2+b7</td>
+                    <td><small>library</small></td>
+                    <td>MIT</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libbsd0</code></td>
+                    <td>0.12.2-2</td>
+                    <td><small>library</small></td>
+                    <td>BSD-3-Clause, BSD-3-clause-Regents, BSD-2-Clause-NetBSD, BSD-3-clause-author, BSD-3-clause-John-Birrell, BSD-5-clause-Peter-Wemm, BSD-2-Clause, BSD-2-clause-verbatim, BSD-2-clause-author, ISC, ISC-Original, MIT, public-domain, Beerware</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libbz2-1.0</code></td>
+                    <td>1.0.8-6</td>
+                    <td><small>library</small></td>
+                    <td>BSD-3-Clause, GPL-2.0-only</td>
+                </tr>
+                
+                <tr>
+                    <td><code>libc-bin</code></td>
+                    <td>2.41-12+deb13u1</td>
+                    <td><small>library</small></td>
+                    <td>LGPL-2.1-or-later, LGPL-2.0-or-later, LGPL-2.1-or-later WITH link-exception, LGPL-3.0-or-later, GPL-2.0-or-later, GPL-2.0-or-later WITH link-exception, GPL-2.0-only, GPL-3.0-or-later, FSFAP, Carnegie, Inner-Net, MIT-like-Lord, BSD-like-Spencer, PCRE, BSD-3-clause-Carnegie, Unicode-DFS-2016, BSL-1.0, SunPro, CORE-MATH, BSD-3-clause-Berkeley, BSD-3-clause-WIDE, BSD-2-Clause, BSD-3-clause-Oracle, DEC, IBM, ISC, Univ-Coimbra, public-domain, GPL-3.0-only, LGPL-2.0-only, LGPL-2.1-only, LGPL-3.0-only</td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+    
+        <p><small>… showing top 50 of 606 components.</small></p>
+    
+    
+
+
+                                
+                                </details>
+                                
+                            </div>
+                        
+                    
+                    
+                </div>
+                <!-- prettier-ignore-end -->
+                <hr>
+                
+
+                
+                
+
+                
+                
+
+                
+                
+
+                
+                
+
+            
+        </div>
+        <hr>
+
+        
+            <div class="playbook-section">
+                <h4>OpenSSF Scorecard</h4>
+                
+
+            
+
+                
+                <!-- prettier-ignore-start -->
+                
+                <div style="margin-bottom: calc(2 * var(--pico-spacing));">
+                    
+                    
+                        
+                        
+                        
+                        
+                        
+
+                        
+                            
+                            <div class="widget-template " style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: left; margin-bottom: calc(3 * var(--pico-spacing));">
+                                
+
+                                
+
+    <p><em>Scorecard data unavailable.</em></p>
+
+
+                                
+                            </div>
+                        
+                    
+                        
+                        
+                        
+                        
+                        
+
+                        
+                            
+                            <div class="widget-template " style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: left; margin-bottom: calc(3 * var(--pico-spacing));">
+                                
+                                <details>
+                                    <summary style="font-weight: bold; color: var(--pico-secondary); margin-bottom: 0.5rem; font-size: 1.125rem;">Detailed Check Results</summary>
+                                
+
+                                
+
+
+
+
+    <p>⚠️ OpenSSF Scorecard data unavailable for this image.</p>
+
+
+                                
+                                </details>
+                                
+                            </div>
+                        
+                    
+                    
+                </div>
+                <!-- prettier-ignore-end -->
+                <hr>
+                
+
+                
+                
+
+                
+                
+
+                
+                
+
+                
+                
+
+            
+        </div>
+        
+
+        
+
+        
+    
+</article>
+        </section>
+
+        
+        
+            
+                
+            
+                
+            
+        
+    
+
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+
+    <footer>
+      <small>
+        Generated by <strong>regis-cli</strong> ·
+        <a href="report.json" target="_blank">JSON Report</a>
+      </small>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
