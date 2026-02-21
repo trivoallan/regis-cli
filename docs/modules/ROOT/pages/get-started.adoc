@@ -1,0 +1,64 @@
+= Get Started
+
+This guide helps you install `regis-cli` and run your first container image analysis.
+
+== Prerequisites
+
+Before you install `regis-cli`, ensure that your environment meets the following requirements:
+
+* **Python**: Version 3.10 or later.
+* **Pipenv**: For managing dependencies and virtual environments.
+* **External Tools**:
+** **Skopeo**: Used for multi-architecture registry inspection.
+** **Trivy**: Required for vulnerability scanning and SBOM generation.
+** **Hadolint** (Optional): Required for Dockerfile linting.
+
+== Installation
+
+To install `regis-cli` in your project, follow these steps:
+
+1. Clone the repository or navigate to your project directory.
+2. Install the dependencies using Pipenv:
+
+[source,bash]
+----
+pipenv install
+----
+
+This command creates a virtual environment and installs all required packages as defined in the `Pipfile`.
+
+== Run your first analysis
+
+You can analyze any public container image without additional configuration. To analyze the latest `nginx` image and view the results in your terminal as JSON, run the following command:
+
+[source,bash]
+----
+pipenv run regis-cli analyze nginx:latest
+----
+
+== Generate a report site
+
+To generate a rich HTML report instead of JSON output, use the `--site` (or `-s`) flag:
+
+[source,bash]
+----
+pipenv run regis-cli analyze nginx:latest --site
+----
+
+By default, the tool writes reports to the `reports/` directory. You can find the HTML report at `reports/docker.io/library/nginx/latest/index.html`.
+
+== Use the security playbook
+
+To get the most out of `regis-cli`, you should evaluate your images against a security playbook. We recommend starting with our default playbook, which includes rules for vulnerability counts and image freshness:
+
+[source,bash]
+----
+pipenv run regis-cli analyze nginx:latest --site \
+  -p https://raw.githubusercontent.com/trivoallan/regis-cli/refs/heads/main/regis_cli/playbooks/default.yaml
+----
+
+== Next steps
+
+* **Registry Authentication**: Learn how to analyze private images by providing credentials.
+* **Custom Playbooks**: Define your own security and compliance rules in the xref:playbooks.adoc[Understand Playbooks] guide.
+* **CI/CD Integration**: See our guides for xref:github-workflow.adoc[GitHub Workflows] and xref:gitlab-workflow.adoc[GitLab CI].

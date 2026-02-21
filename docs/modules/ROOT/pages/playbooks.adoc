@@ -1,0 +1,86 @@
+= Understand Playbooks
+
+Playbooks are the core of the `regis-cli` evaluation engine. They define the security and compliance rules that the tool evaluates against container image metadata.
+
+== Purpose
+
+A playbook serves two primary functions:
+
+1.  **Policy Enforcement**: It defines a set of "scorecards" (rules) that an image must pass to be considered compliant.
+2.  **Report Structuring**: It defines the layout and content of the generated HTML report, including pages, sections, and widgets.
+
+By using playbooks, you can decouple the raw data extraction (performed by analyzers like Skopeo or Trivy) from the business logic used to evaluate that data. This allow you to apply different compliance standards to different environments or projects without changing the underlying analysis code.
+
+== Core Concepts
+
+The following concepts are central to understanding and creating playbooks.
+
+=== Scorecards
+
+A scorecard is a single evaluation rule. It defines a condition that must evaluate to true for the scorecard to pass. Scorecards are typically grouped into sections and can be assigned to priority levels (such as critical, warning, or info).
+
+=== UI Structure
+
+Playbooks define how analysis results are presented in the HTML report through a hierarchical structure:
+
+*   **Pages**: The top-level containers in the report. Each page generates a separate HTML file.
+*   **Sections**: Groups of related scorecards and widgets within a page.
+*   **Widgets**: UI components that display specific values or metrics. Widgets can be key-value summaries, KPI cards, or detailed tables rendered from templates.
+
+== Evaluation Mechanism
+
+`regis-cli` uses two powerful technologies to evaluate and present data in playbooks.
+
+=== JSON Logic
+
+Scorecard conditions and widget display preferences use **JSON Logic**. This is a lightweight, language-agnostic way to define complex conditional logic as JSON objects.
+
+You use JSON Logic to access analysis results and perform comparisons. For example, to check if an image has no critical vulnerabilities, you would use:
+
+[source,json]
+----
+{ "==": [ { "var": "results.trivy.critical_count" }, 0 ] }
+----
+
+Commonly used operators include:
+
+*   `==`, `!=`: Equality and inequality.
+*   `>`, `>=`, `<`, `<=`: Numeric comparisons.
+*   `in`: Checks if a value is present in a list.
+*   `!`, `!!`: Logical NOT and non-null checks.
+*   `and`, `or`: Logical combinations.
+
+=== Jinja2 Templates
+
+While JSON Logic handles the evaluation "truth," **Jinja2** handles the "display." You use Jinja2 templates within widgets to format values, calculate percentages, or render complex HTML components.
+
+For example, to display the overall compliance score in a widget, you might use:
+
+[source,yaml]
+----
+- label: Overall Compliance
+  value: "{{ playbooks.0.score }}%"
+----
+
+== Example Playbook
+
+The following example shows a simplified playbook definition:
+
+[source,yaml]
+----
+name: Minimal Playbook
+slug: minimal
+pages:
+  - title: Compliance Overview
+    slug: index
+    sections:
+      - name: Security Checks
+        scorecards:
+          - name: no-root
+            title: Image must not run as root
+            condition:
+              "!=": [{ var: results.skopeo.platforms.0.user }, root]
+        widgets:
+          - label: Compliance Level
+            value: "{{ playbooks.0.score }}%"
+----

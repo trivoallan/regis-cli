@@ -1,4 +1,6 @@
 * xref:index.adoc[Home]
+* xref:get-started.adoc[Get Started]
+* xref:playbooks.adoc[Understand Playbooks]
 * xref:overview.adoc[Architectural Overview]
 * xref:github-workflow.adoc[Using in GitHub Workflows]
 * xref:gitlab-workflow.adoc[Using in GitLab CI]
