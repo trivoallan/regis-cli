@@ -5,7 +5,7 @@
     {# Track which analyzers are claimed by scorecards #}
     {% set ns = namespace(claimed_analyzers=[]) %}
 
-    {% for pb in report.playbooks %}
+    {% for pb in report.playbooks|default([]) %}
         <section id="playbook-{{ loop.index0 }}">
             {% include theme ~ "/playbooks/default.html" with context %}
         </section>

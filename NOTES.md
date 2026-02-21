@@ -1,14 +1,15 @@
 # Backlog
 
 - [x] Implémenter le workflow complet à base de MR pour Gitlab
-- [ ] Labels scopés, approval rules, etc.
+- [x] Labels scopés, approval rules, etc.
+- [ ] rendu mermaid dans les docs avec antora
 - [ ] Générer le dépôt hub2hub et l'intégrer à la merge request
 - [ ] Interface d'administration (requirements manuels) ?
-- [ ] Lien vers la MR dans le rapport d'analyse
+- [x] Lien vers la MR dans le rapport d'analyse
 - [ ] Mécanisme configurable pour ajouter du contenu à la MR (via cookiecutter ?)
 - [ ] Recommandation de configuration d'import (regex)
 - [ ] Démo intégration avec PowerBI (idées)
-- [ ] Consolidation de la documentation (docs/)
+- [x] Consolidation de la documentation (docs/)
 - [ ] Versioning de la documentation
 - [ ] meilleure contrôle des versions de regis-cli
 - [x] Tests unitaires pour cookiecutter

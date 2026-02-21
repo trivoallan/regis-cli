@@ -138,6 +138,8 @@ pages:
     - echo "Publishing to production pages"
   dependencies:
     - analyze_image
+  pages:
+    publish: reports
   artifacts:
     paths:
       - reports/

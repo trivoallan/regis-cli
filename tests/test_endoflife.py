@@ -1,6 +1,5 @@
 """Tests for the end-of-life analyzer."""
 
-import pytest
 
 from regis_cli.analyzers.endoflife import (
     EndOfLifeAnalyzer,

@@ -147,7 +147,9 @@ class RegistryClient:
         service = params.get("service", _DOCKER_AUTH_SERVICE)
         scope = params.get("scope", f"repository:{self.repository}:pull")
 
-        logger.debug("Authenticating: realm=%s service=%s scope=%s", realm, service, scope)
+        logger.debug(
+            "Authenticating: realm=%s service=%s scope=%s", realm, service, scope
+        )
 
         auth = None
         if self.username and self.password:

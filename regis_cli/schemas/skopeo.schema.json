@@ -27,7 +27,7 @@
         "properties": {
           "architecture": { "type": "string" },
           "os": { "type": "string" },
-          "variant": { "type": "string" },
+          "variant": { "type": ["string", "null"] },
           "digest": { "type": "string" },
           "created": { "type": ["string", "null"] },
           "labels": {
@@ -35,7 +35,7 @@
             "additionalProperties": { "type": "string" }
           },
           "layers_count": { "type": "integer", "minimum": 0 },
-          "user": { "type": "string" }
+          "user": { "type": ["string", "null"] }
         }
       }
     },

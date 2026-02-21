@@ -46,7 +46,6 @@ CYCLONEDX_SAMPLE = {
 
 
 class TestRunTrivySbom:
-
     @patch("regis_cli.analyzers.sbom.shutil.which")
     def test_trivy_not_found(self, mock_which):
         mock_which.return_value = None
@@ -81,7 +80,6 @@ class TestRunTrivySbom:
 
 
 class TestSbomAnalyzer:
-
     @pytest.fixture
     def analyzer(self):
         return SbomAnalyzer()
@@ -140,7 +138,12 @@ class TestSbomAnalyzer:
 
         analyzer.analyze(client, "my-repo", "v1")
 
-        mock_run.assert_called_with("my.registry.com/my-repo:v1")
+        mock_run.assert_called_with(
+            "my.registry.com/my-repo:v1",
+            username=client.username,
+            password=client.password,
+            platform=None,
+        )
 
     @patch("regis_cli.analyzers.sbom._run_trivy_sbom")
     def test_docker_hub_image_ref(self, mock_run, analyzer, mock_client):
@@ -154,4 +157,9 @@ class TestSbomAnalyzer:
         analyzer.analyze(mock_client, "library/nginx", "1.25")
 
         # Docker Hub should NOT include registry prefix.
-        mock_run.assert_called_with("library/nginx:1.25")
+        mock_run.assert_called_with(
+            "library/nginx:1.25",
+            username=mock_client.username,
+            password=mock_client.password,
+            platform=None,
+        )

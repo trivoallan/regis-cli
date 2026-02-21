@@ -165,9 +165,9 @@ class TestCliBasics:
             )
             assert result.exit_code == 0
 
-            # Default HTML report filename is report.html when no playbooks are used
+            # Default HTML report filename is index.html (from first page of default playbook)
             report_file = Path(
-                "reports/registry-1.docker.io/library-nginx/latest/report.html"
+                "reports/registry-1.docker.io/library-nginx/latest/index.html"
             )
             html_content = report_file.read_text(encoding="utf-8")
 

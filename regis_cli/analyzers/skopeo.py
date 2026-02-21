@@ -214,6 +214,8 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 result["architecture"] = data.get("Architecture", "unknown")
             if result["os"] == "unknown":
                 result["os"] = data.get("Os", "unknown")
+            if "variant" not in result or not result["variant"]:
+                result["variant"] = data.get("Variant")
             if "digest" not in result or not result["digest"]:
                 result["digest"] = data.get("Digest")
 

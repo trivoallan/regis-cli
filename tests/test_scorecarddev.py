@@ -1,6 +1,5 @@
 """Tests for the scorecard analyzer."""
 
-import pytest
 
 from regis_cli.analyzers.scorecarddev import (
     ScorecardDevAnalyzer,

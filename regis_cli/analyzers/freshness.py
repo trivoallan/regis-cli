@@ -8,7 +8,7 @@ import subprocess
 from datetime import datetime, timezone
 from typing import Any
 
-from regis_cli.analyzers.base import AnalyzerError, BaseAnalyzer
+from regis_cli.analyzers.base import BaseAnalyzer
 from regis_cli.registry.client import RegistryClient
 
 logger = logging.getLogger(__name__)

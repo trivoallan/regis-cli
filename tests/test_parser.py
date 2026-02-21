@@ -17,17 +17,13 @@ class TestParseDockerHubUrls:
         assert ref == RegistryRef("registry-1.docker.io", "library/nginx", "latest")
 
     def test_user_image_with_r_prefix(self):
-        ref = parse_image_url(
-            "https://hub.docker.com/r/nginxinc/nginx-unprivileged"
-        )
+        ref = parse_image_url("https://hub.docker.com/r/nginxinc/nginx-unprivileged")
         assert ref == RegistryRef(
             "registry-1.docker.io", "nginxinc/nginx-unprivileged", "latest"
         )
 
     def test_user_image_without_r_prefix(self):
-        ref = parse_image_url(
-            "https://hub.docker.com/nginxinc/nginx-unprivileged"
-        )
+        ref = parse_image_url("https://hub.docker.com/nginxinc/nginx-unprivileged")
         assert ref == RegistryRef(
             "registry-1.docker.io", "nginxinc/nginx-unprivileged", "latest"
         )
@@ -63,7 +59,9 @@ class TestRegistryRef:
         assert ref.image_name == "nginx"
 
     def test_image_name_with_org(self):
-        ref = RegistryRef("registry-1.docker.io", "nginxinc/nginx-unprivileged", "latest")
+        ref = RegistryRef(
+            "registry-1.docker.io", "nginxinc/nginx-unprivileged", "latest"
+        )
         assert ref.image_name == "nginx-unprivileged"
 
 

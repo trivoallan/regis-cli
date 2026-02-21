@@ -3,6 +3,7 @@ import shutil
 
 PLATFORM = "{{ cookiecutter.platform }}"
 
+
 def cleanup():
     if PLATFORM == "github":
         if os.path.exists(".gitlab-ci.yml"):
@@ -10,6 +11,7 @@ def cleanup():
     elif PLATFORM == "gitlab":
         if os.path.exists(".github"):
             shutil.rmtree(".github")
+
 
 if __name__ == "__main__":
     cleanup()
