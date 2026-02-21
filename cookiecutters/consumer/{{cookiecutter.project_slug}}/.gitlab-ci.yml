@@ -2,7 +2,8 @@ spec:
   inputs:
     image_url:
       description: Image URL to analyze (e.g. ghcr.io/username/my-image:latest)
-
+      default: ~
+---
 stages:
   - request
   - analyze
@@ -69,7 +70,6 @@ analyze_image:
         --meta "gitlab.project=$CI_PROJECT_PATH" \
         --meta "gitlab.mr=$CI_MERGE_REQUEST_IID"
   artifacts:
-    path_prefix: "review-$CI_MERGE_REQUEST_IID"
     paths:
       - public
   rules:
@@ -88,7 +88,6 @@ pages:
   artifacts:
     paths:
       - public
-  publish: public
   pages:
     path_prefix: "review-$CI_MERGE_REQUEST_IID"
   rules:

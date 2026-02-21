@@ -1,5 +1,8 @@
 """Tests for the CLI."""
 
+import json
+import re
+from pathlib import Path
 from unittest.mock import patch
 
 from click.testing import CliRunner
@@ -29,6 +32,13 @@ class TestCliBasics:
         # The built-in analyzers should appear.
         assert "skopeo" in result.output
         assert "versioning" in result.output
+
+    def test_version_command(self):
+        runner = CliRunner()
+        result = runner.invoke(main, ["version"])
+        assert result.exit_code == 0
+        assert "regis-cli version" in result.output
+        assert re.search(r"\d+\.\d+\.\d+", result.output)
 
     def test_analyze_invalid_url(self):
         runner = CliRunner()
@@ -72,9 +82,6 @@ class TestCliBasics:
             )
             assert result.exit_code == 0
 
-            import json
-            from pathlib import Path
-
             report_file = Path(
                 "reports/registry-1.docker.io/library-nginx/latest/report.json"
             )
@@ -114,12 +121,7 @@ class TestCliBasics:
                     "project=regis",
                 ],
             )
-            if result.exit_code != 0:
-                print(result.output)
             assert result.exit_code == 0
-
-            import json
-            from pathlib import Path
 
             report_file = Path(
                 "reports/registry-1.docker.io/library-nginx/latest/report.json"
@@ -154,8 +156,7 @@ class TestCliBasics:
                 [
                     "analyze",
                     "nginx:latest",
-                    "--format",
-                    "html",
+                    "--site",
                     "--meta",
                     "build=123",
                     "--meta",
@@ -164,10 +165,9 @@ class TestCliBasics:
             )
             assert result.exit_code == 0
 
-            from pathlib import Path
-
+            # Default HTML report filename is report.html when no playbooks are used
             report_file = Path(
-                "reports/registry-1.docker.io/library-nginx/latest/index.html"
+                "reports/registry-1.docker.io/library-nginx/latest/report.html"
             )
             html_content = report_file.read_text(encoding="utf-8")
 

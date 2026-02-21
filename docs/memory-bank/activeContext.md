@@ -1,9 +1,12 @@
 # Active Context
 
 ## Current Objective
-Initialize the project's documentation and fix security-related workflow permission issues.
+Implement the `version` command in the CLI and ensure all tests are up to date.
 
 ## Recent Changes
+- Added a `version` command to the CLI to display the current package version.
+- Refactored `importlib.metadata` imports in `cli.py` for better organization.
+- Fixed an outdated test case in `test_cli.py` that used defunct CLI options.
 - Fixed Docker permission issues by creating a home directory for the `regis` user (UID 1001), adjusting volume permissions in the workflow, and adding a fallback output mechanism in `cli.py`.
 - Resolved `(MISSING)` playbook values by exposing analyzer results at the root of the evaluation context in `engine.py`.
 - Implemented dynamic filename logic for reports: prioritized by `html.filename` in playbook, then playbook basename, then fallback to `report.html`.

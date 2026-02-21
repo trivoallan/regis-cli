@@ -7,7 +7,7 @@ import logging
 import sys
 from datetime import datetime, timezone
 from importlib import resources
-from importlib.metadata import entry_points
+from importlib.metadata import entry_points, version
 from pathlib import Path
 from typing import Any
 
@@ -341,8 +341,6 @@ def analyze(
             else:
                 _set_nested_value(metadata_dict, item, "true")
 
-        from importlib.metadata import version
-
         analysis_report: dict[str, Any] = {
             "version": version("regis-cli"),
             "request": {
@@ -598,6 +596,12 @@ def generate(template_path: str, output_dir: str, no_input: bool) -> None:
         click.echo("Success!", err=True)
     except Exception as exc:
         raise click.ClickException(str(exc)) from exc
+
+
+@main.command(name="version")
+def version_cmd() -> None:
+    """Display regis-cli version."""
+    click.echo(f"regis-cli version {version('regis-cli')}")
 
 
 if __name__ == "__main__":
