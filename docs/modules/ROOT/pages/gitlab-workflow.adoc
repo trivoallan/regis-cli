@@ -135,3 +135,32 @@ Once the analysis job completes, the report is:
 
 === 4. Governance
 Security teams can review the MR, check the compliance score via the direct HTML report link, and decide whether to merge the analysis request into the main registry branch.
+
+== Review Apps (Premium/Ultimate Only)
+
+If you are using a **GitLab Premium** or **Ultimate** tier, you can take advantage of parallel GitLab Pages deployments to host a live "Review App" for every Merge Request instead of relying on raw artifacts.
+
+To enable this, update your `.gitlab-ci.yml`:
+
+[source,yaml]
+----
+pages:
+  stage: deploy
+  script:
+    - echo "Publishing report..."
+  artifacts:
+    paths:
+      - reports/
+  pages:
+    path_prefix: "$PAGES_PREFIX"
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+      variables:
+        PAGES_PREFIX: "review-$CI_MERGE_REQUEST_IID"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        PAGES_PREFIX: ""
+----
+
+This configuration generates a unique URL for each Merge Request (e.g., `\https://<namespace>.gitlab.io/<project>/review-123/`).
+
