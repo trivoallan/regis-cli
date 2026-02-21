@@ -13,7 +13,9 @@ ui:
     snapshot: true
 antora:
   extensions:
-    - "@sntke/antora-mermaid-extension"
+    - require: "@sntke/antora-mermaid-extension"
+      mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs
+      script_stem: header-scripts
 
 output:
   dir: ./build/site
