@@ -2,7 +2,6 @@
   "packages": {
     ".": {
       "release-type": "python",
-      "package-name": "regis-cli",
       "extra-files": [
         "cookiecutters/consumer/cookiecutter.json"
       ]
