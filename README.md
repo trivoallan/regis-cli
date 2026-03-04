@@ -21,6 +21,7 @@
 | `trivy`        | Integrates vulnerability scanning results.                                   |
 | `endoflife`    | Checks for EOL status of base images via `endoflife.date`.                  |
 | `hadolint`     | Lints Dockerfiles for best practices (if reconstructed).                    |
+| `dockle`       | Container image linter for security and best practices.                     |
 | `sbom`         | Generates/Retrieves Software Bill of Materials (SBOM).                      |
 | `provenance`   | Verifies image build provenance and SLSA metadata.                          |
 | `size`         | Analyzes image size and layer distribution.                                 |

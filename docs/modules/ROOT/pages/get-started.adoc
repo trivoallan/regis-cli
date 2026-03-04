@@ -10,8 +10,9 @@ Before you install `regis-cli`, ensure that your environment meets the following
 * **Pipenv**: For managing dependencies and virtual environments.
 * **External Tools**:
 ** **Skopeo**: Used for multi-architecture registry inspection.
-** **Trivy**: Required for vulnerability scanning and SBOM generation.
+** **Trivy** (Optional): Required for SBOM and vulnerability analysis.
 ** **Hadolint** (Optional): Required for Dockerfile linting.
+** **Dockle** (Optional): Required for container image security linting.
 
 == Installation
 

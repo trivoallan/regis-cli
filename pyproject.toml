@@ -12,7 +12,7 @@ license = { text = "MIT" }
 authors = [{ name = "TTC" }]
 dependencies = [
   "click>=8.1",
-  "requests>=2.31",
+  "requests>=2.32.2",
   "jsonschema>=4.20",
   "semver>=3.0",
   "json-logic-qubit>=0.9",
@@ -36,6 +36,7 @@ freshness = "regis_cli.analyzers.freshness:FreshnessAnalyzer"
 provenance = "regis_cli.analyzers.provenance:ProvenanceAnalyzer"
 sbom = "regis_cli.analyzers.sbom:SbomAnalyzer"
 hadolint = "regis_cli.analyzers.hadolint:HadolintAnalyzer"
+dockle = "regis_cli.analyzers.dockle:DockleAnalyzer"
 
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "pytest-cov>=4.1", "responses>=0.24"]

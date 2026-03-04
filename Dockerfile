@@ -29,6 +29,16 @@ RUN arch=$(uname -m) && \
     curl -sSfL "https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}" -o /usr/local/bin/hadolint && \
     chmod +x /usr/local/bin/hadolint
 
+# Install Dockle
+ENV DOCKLE_VERSION="0.4.15"
+RUN arch=$(uname -m) && \
+    if [ "$arch" = "x86_64" ]; then dockle_arch="64bit"; else dockle_arch="ARM64"; fi && \
+    curl -L -o dockle.tar.gz https://github.com/goodwithtech/dockle/releases/download/v${DOCKLE_VERSION}/dockle_${DOCKLE_VERSION}_Linux-${dockle_arch}.tar.gz && \
+    tar zxvf dockle.tar.gz dockle && \
+    mv dockle /usr/local/bin/dockle && \
+    rm dockle.tar.gz && \
+    chmod +x /usr/local/bin/dockle
+
 # Set work directory and ensure it's owned by regis
 WORKDIR /app
 RUN chown regis:regis /app && chmod 777 /app
