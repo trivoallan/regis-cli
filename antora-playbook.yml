@@ -5,7 +5,8 @@ site:
 content:
   sources:
     - url: .
-      branches: HEAD
+      branches: [main]
+      # tags: 'v*' # Disabled due to historical version conflicts (all tags have version 0.1.0)
       start_path: docs
 ui:
   bundle:
