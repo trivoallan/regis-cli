@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.10.0](https://github.com/trivoallan/regis-cli/compare/v0.9.0...v0.10.0) (2026-03-04)
+
+
+### Features
+
+* **analyzer/size:** add layer digest to the size analysis output for individual layers ([9393b48](https://github.com/trivoallan/regis-cli/commit/9393b48d6ebda82b7be2e9db5aad74a014f415f3))
+* **ci:** Add a configurable playbook URL input to GitLab CI/CD. ([801dd3c](https://github.com/trivoallan/regis-cli/commit/801dd3c861b0fbc0af4b279204affd4d06c352cc))
+* **ci:** make regis-cli image version configurable in generated GitLab CI. ([8da67d0](https://github.com/trivoallan/regis-cli/commit/8da67d08b4e12433157cb67a9516e269c732a5c3))
+* **gitlab:** append review checklist from `report.json` to merge request descriptions and unquote `$REGIS_CLI_IMAGE` in CI. ([08211a2](https://github.com/trivoallan/regis-cli/commit/08211a264c32147c22e4c98aae089fdf02514501))
+* **playbook:** Enhance GitLab MR checklist items with `show_if` and `check_if` conditions. ([ccde35e](https://github.com/trivoallan/regis-cli/commit/ccde35eb51a62199cb07113d9da1dda0240e2184))
+
+
+### Bug Fixes
+
+* **gitlab:** Fix report generation path ([4a1cfe7](https://github.com/trivoallan/regis-cli/commit/4a1cfe7f141b41736dbc928abcf4367c93b5476d))
+
 ## [0.9.0](https://github.com/trivoallan/regis-cli/compare/v0.8.0...v0.9.0) (2026-03-04)
 
 
