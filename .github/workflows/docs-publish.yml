@@ -42,6 +42,9 @@ jobs:
       - name: Generate Schema Docs
         run: pipenv run python scripts/generate_schema_docs.py
 
+      - name: Generate Example Reports
+        run: pipenv run python scripts/generate_example_reports.py
+
       - name: Install Antora
         run: npm install @antora/cli@3.1 @antora/site-generator@3.1 @sntke/antora-mermaid-extension
 

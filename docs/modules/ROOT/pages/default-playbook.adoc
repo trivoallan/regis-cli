@@ -96,6 +96,11 @@ These examples demonstrate how `regis-cli` adapts its recommendations based on t
 | **Findings** | Image is lightweight, runs as a non-root user (if configured), and uses a trusted registry. View the link:{attachmentsdir}/examples/alpine/index.html[Live Security Report].
 |===
 
+[source,bash]
+----
+regis-cli analyze alpine:latest -s -D docs/modules/ROOT/assets/attachments/examples/alpine
+----
+
 ****
 **Why it passes:** Minimal images significantly reduce the attack surface. By maintaining zero high-severity vulnerabilities and a small footprint, they represent the ideal state for production deployments.
 ****
@@ -140,7 +145,12 @@ Finally, we analyze link:https://github.com/trivoallan/regis-cli[regis-cli] itse
 [TIP]
 ====
 You can view the live result of this analysis here:
-link:{attachmentsdir}/examples/regis-cli-0.5/index.html[**Live `regis-cli:0.5` Benchmark Report**]
+link:{attachmentsdir}/examples/regis-cli/index.html[**Live `regis-cli:latest` Benchmark Report**]
+
+[source,bash]
+----
+regis-cli analyze ghcr.io/trivoallan/regis-cli:latest -s -D docs/modules/ROOT/assets/attachments/examples/regis-cli
+----
 ====
 *   **100% Mandatory Compliance**: Passes all critical checks (No Root, No Critical, Trusted Registry).
 *   **Minimal Attack Surface**: Built on a slim Python/Alpine base.

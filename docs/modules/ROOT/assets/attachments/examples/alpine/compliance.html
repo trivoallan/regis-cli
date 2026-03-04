@@ -289,7 +289,7 @@ header h2 {
                                 
                                 <div class="" style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: center; ">
                                     <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">Overall Compliance</strong><br>
-                                    <span style="font-size: 2rem; font-weight: bold; line-height: 1;">100%</span>
+                                    <span style="font-size: 2rem; font-weight: bold; line-height: 1;">67%</span>
                                     </div>
                             
                         
@@ -305,7 +305,7 @@ header h2 {
                                 
                                 <div class="" style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: center; ">
                                     <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">Mandatory Requirements</strong><br>
-                                    <span style="font-size: 2rem; font-weight: bold; line-height: 1;">100%</span>
+                                    <span style="font-size: 2rem; font-weight: bold; line-height: 1;">75%</span>
                                     </div>
                             
                         
@@ -321,7 +321,7 @@ header h2 {
                                 
                                 <div class="" style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: center; ">
                                     <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">Recommended Requirements</strong><br>
-                                    <span style="font-size: 2rem; font-weight: bold; line-height: 1;">100%</span>
+                                    <span style="font-size: 2rem; font-weight: bold; line-height: 1;">50%</span>
                                     </div>
                             
                         
@@ -371,9 +371,9 @@ header h2 {
                         <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
                             <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">security</strong><br>
                             <span style="font-size: 1.8rem; font-weight: bold; line-height: 1.2;">
-                                3<small style="font-size: 1rem; opacity: 0.5;">/3</small>
+                                3<small style="font-size: 1rem; opacity: 0.5;">/4</small>
                             </span>
-                            <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.7;">100% pass</div>
+                            <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.7;">75% pass</div>
                         </div>
                     
                 </div>
@@ -463,6 +463,31 @@ header h2 {
                             </tr>
                             
                             <tr>
+                                <td><span class="status-failed">❌</span></td>
+                                
+                                <td>
+                                    <strong>No FATAL issues found by Dockle.</strong>
+                                    
+                                    <div style="margin-top: 0.2rem;">
+                                        
+                                        <span class="badge ">
+    security
+</span>
+                                        
+                                    </div>
+                                    
+                                    <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem;">results.dockle.issues_by_level.FATAL (MISSING) == 0</div>
+                                </td>
+                                <td>
+                                    
+                                    <small><span class="badge outline">
+    dockle
+</span></small>
+                                    
+                                </td>
+                            </tr>
+                            
+                            <tr>
                                 <td><span class="status-passed">✅</span></td>
                                 
                                 <td>
@@ -516,9 +541,9 @@ header h2 {
                         <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
                             <strong style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">freshness</strong><br>
                             <span style="font-size: 1.8rem; font-weight: bold; line-height: 1.2;">
-                                1<small style="font-size: 1rem; opacity: 0.5;">/1</small>
+                                0<small style="font-size: 1rem; opacity: 0.5;">/1</small>
                             </span>
-                            <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.7;">100% pass</div>
+                            <div style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.7;">0% pass</div>
                         </div>
                     
                         <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
@@ -591,7 +616,7 @@ header h2 {
                             </tr>
                             
                             <tr>
-                                <td><span class="status-passed">✅</span></td>
+                                <td><span class="status-failed">❌</span></td>
                                 
                                 <td>
                                     <strong>Image should be less than 30 days old.</strong>
@@ -604,7 +629,7 @@ header h2 {
                                         
                                     </div>
                                     
-                                    <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem;">results.freshness.age_days (24) &lt; 30</div>
+                                    <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem;">results.freshness.age_days (35) &lt; 30</div>
                                 </td>
                                 <td>
                                     
@@ -647,6 +672,17 @@ header h2 {
     
 
     
+    
+        
+            
+<article style="border-left: 5px solid #ef4444;">
+    <header>
+        <h3 style="color: #ef4444; margin: 0;">⚠️ dockle Analyzer Error</h3>
+    </header>
+    <p><strong>validation:</strong> Dockle execution failed. Ensure dockle is installed and in PATH.</p>
+</article>
+
+        
     
         
     

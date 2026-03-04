@@ -1,11 +1,12 @@
 {
-  "version": "0.3.0",
+  "version": "0.7.0",
   "request": {
     "url": "alpine:latest",
     "registry": "registry-1.docker.io",
     "repository": "library/alpine",
     "tag": "latest",
     "analyzers": [
+      "dockle",
       "endoflife",
       "freshness",
       "hadolint",
@@ -18,15 +19,16 @@
       "trivy",
       "versioning"
     ],
-    "timestamp": "2026-02-21T09:53:15.982382+00:00",
-    "metadata": {
-      "trigger": {
-        "user": "Antigravity",
-        "url": "https://github.com/trivoallan/regis-cli"
-      }
-    }
+    "timestamp": "2026-03-04T19:07:58.573003+00:00"
   },
   "results": {
+    "dockle": {
+      "analyzer": "dockle",
+      "error": {
+        "type": "validation",
+        "message": "Dockle execution failed. Ensure dockle is installed and in PATH."
+      }
+    },
     "endoflife": {
       "analyzer": "endoflife",
       "repository": "library/alpine",
@@ -44,7 +46,7 @@
       "tag": "latest",
       "tag_created": "2026-01-28T01:18:04.977843834Z",
       "latest_created": null,
-      "age_days": 24,
+      "age_days": 35,
       "behind_latest_days": null,
       "is_latest": true
     },
@@ -74,8 +76,8 @@
       "analyzer": "popularity",
       "repository": "library/alpine",
       "available": true,
-      "pull_count": 11674475820,
-      "star_count": 11469,
+      "pull_count": 11696404986,
+      "star_count": 11471,
       "description": "A minimal Docker image based on Alpine Linux with a complete package index and only 5 MB in size!",
       "last_updated": "2026-01-28T04:26:42.651499Z",
       "date_registered": "2015-03-17T23:16:05.407728Z",
@@ -400,6 +402,7 @@
           "created": "2026-01-28T01:18:04.977843834Z",
           "labels": {},
           "layers_count": 1,
+          "variant": null,
           "user": ""
         },
         {
@@ -409,6 +412,7 @@
           "created": null,
           "labels": {},
           "layers_count": 2,
+          "variant": null,
           "user": ""
         },
         {
@@ -428,6 +432,7 @@
           "created": null,
           "labels": {},
           "layers_count": 1,
+          "variant": null,
           "user": ""
         },
         {
@@ -447,6 +452,7 @@
           "created": null,
           "labels": {},
           "layers_count": 2,
+          "variant": null,
           "user": ""
         },
         {
@@ -466,6 +472,7 @@
           "created": null,
           "labels": {},
           "layers_count": 2,
+          "variant": null,
           "user": ""
         },
         {
@@ -475,6 +482,7 @@
           "created": "2026-01-28T01:18:11.21663297Z",
           "labels": {},
           "layers_count": 1,
+          "variant": null,
           "user": ""
         },
         {
@@ -484,6 +492,7 @@
           "created": null,
           "labels": {},
           "layers_count": 2,
+          "variant": null,
           "user": ""
         },
         {
@@ -493,6 +502,7 @@
           "created": "2026-01-28T01:17:01.283668436Z",
           "labels": {},
           "layers_count": 1,
+          "variant": null,
           "user": ""
         },
         {
@@ -502,6 +512,7 @@
           "created": null,
           "labels": {},
           "layers_count": 2,
+          "variant": null,
           "user": ""
         },
         {
@@ -511,6 +522,7 @@
           "created": "2026-01-28T03:47:28.804077286Z",
           "labels": {},
           "layers_count": 1,
+          "variant": null,
           "user": ""
         },
         {
@@ -520,6 +532,7 @@
           "created": null,
           "labels": {},
           "layers_count": 2,
+          "variant": null,
           "user": ""
         },
         {
@@ -529,6 +542,7 @@
           "created": "2026-01-28T01:17:06.556946466Z",
           "labels": {},
           "layers_count": 1,
+          "variant": null,
           "user": ""
         },
         {
@@ -538,6 +552,7 @@
           "created": null,
           "labels": {},
           "layers_count": 2,
+          "variant": null,
           "user": ""
         }
       ],
@@ -835,18 +850,12 @@
       "variants": []
     }
   },
-  "metadata": {
-    "trigger": {
-      "user": "Antigravity",
-      "url": "https://github.com/trivoallan/regis-cli"
-    }
-  },
   "playbooks": [
     {
       "playbook_name": "RegiS Default Playbook",
-      "score": 100,
-      "total_scorecards": 5,
-      "passed_scorecards": 5,
+      "score": 67,
+      "total_scorecards": 6,
+      "passed_scorecards": 4,
       "pages": [
         {
           "title": "Overview",
@@ -866,20 +875,20 @@
               "widgets": [
                 {
                   "label": "Recommandation",
-                  "value": "{{ 'GO' }}",
+                  "value": "{{ 'NOGO' }}",
                   "options": {
-                    "class": "recommandation-go",
+                    "class": "recommandation-nogo",
                     "align": "center"
                   },
                   "condition": {
-                    ">=": [
+                    "<": [
                       {
-                        "var": "playbooks.0.pages.1.sections.1.score"
+                        "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
                       },
                       90
                     ]
                   },
-                  "resolved_value": "GO"
+                  "resolved_value": "NOGO"
                 }
               ],
               "render_order": [
@@ -902,27 +911,27 @@
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "100%",
+                  "resolved_value": "67%",
                   "resolved_url": "compliance.html"
                 },
                 {
                   "label": "Mandatory Requirements",
-                  "value": "{{ playbooks.0.pages.1.sections.1.passed_scorecards }} / {{ playbooks.0.pages.1.sections.1.total_scorecards }}",
+                  "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.mandatory_requirements.total_scorecards }}",
                   "url": "compliance.html",
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "3 / 3",
+                  "resolved_value": "3 / 4",
                   "resolved_url": "compliance.html"
                 },
                 {
                   "label": "Recommended Requirements",
-                  "value": "{{ playbooks.0.pages.1.sections.2.passed_scorecards }} / {{ playbooks.0.pages.1.sections.2.total_scorecards }}",
+                  "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.recommended_requirements.total_scorecards }}",
                   "url": "compliance.html",
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "2 / 2",
+                  "resolved_value": "1 / 2",
                   "resolved_url": "compliance.html"
                 }
               ],
@@ -945,33 +954,20 @@
                   "options": {
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
-                  "resolved_value": "2026-02-21",
-                  "resolved_subvalue": "09:53:15"
+                  "resolved_value": "2026-03-04",
+                  "resolved_subvalue": "19:07:58"
                 },
                 {
                   "label": "Triggered by",
                   "value": "{{ request.metadata.trigger.user | default('Unknown Emiter') }}",
                   "url": "{{ request.metadata.trigger.url | default('') }}",
-                  "resolved_value": "Antigravity",
-                  "resolved_url": "https://github.com/trivoallan/regis-cli"
+                  "resolved_value": "Unknown Emiter",
+                  "resolved_url": ""
                 },
                 {
                   "template": "request/table.html",
                   "options": {
                     "title": "Request Parameters"
-                  }
-                },
-                {
-                  "template": "metadata/table.html",
-                  "options": {
-                    "title": "Additional Metadata"
-                  },
-                  "condition": {
-                    "!!": [
-                      {
-                        "var": "request.metadata"
-                      }
-                    ]
                   }
                 }
               ],
@@ -1013,9 +1009,9 @@
         {
           "title": "Compliance",
           "slug": "compliance",
-          "score": 100,
-          "total_scorecards": 5,
-          "passed_scorecards": 5,
+          "score": 67,
+          "total_scorecards": 6,
+          "passed_scorecards": 4,
           "sections": [
             {
               "name": " ",
@@ -1032,23 +1028,23 @@
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "100%"
+                  "resolved_value": "67%"
                 },
                 {
                   "label": "Mandatory Requirements",
-                  "value": "{{ playbooks.0.pages.1.sections.1.score }}%",
+                  "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.score }}%",
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "100%"
+                  "resolved_value": "75%"
                 },
                 {
                   "label": "Recommended Requirements",
-                  "value": "{{ playbooks.0.pages.1.sections.2.score }}%",
+                  "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.score }}%",
                   "options": {
                     "align": "center"
                   },
-                  "resolved_value": "100%"
+                  "resolved_value": "50%"
                 }
               ],
               "render_order": [
@@ -1057,15 +1053,15 @@
             },
             {
               "name": "Mandatory Requirements",
-              "score": 100,
-              "total_scorecards": 3,
+              "score": 75,
+              "total_scorecards": 4,
               "passed_scorecards": 3,
               "levels_summary": {},
               "tags_summary": {
                 "security": {
-                  "total": 3,
+                  "total": 4,
                   "passed": 3,
-                  "percentage": 100
+                  "percentage": 75
                 }
               },
               "scorecards": [
@@ -1100,6 +1096,21 @@
                   "details": "results.trivy.critical_count (0) == 0"
                 },
                 {
+                  "name": "no-fatal",
+                  "title": "No FATAL issues found by Dockle.",
+                  "level": "critical",
+                  "tags": [
+                    "security"
+                  ],
+                  "analyzers": [
+                    "dockle"
+                  ],
+                  "passed": false,
+                  "status": "incomplete",
+                  "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
+                  "details": "results.dockle.issues_by_level.FATAL (MISSING) == 0"
+                },
+                {
                   "name": "trusted-domain",
                   "title": "Image must originate from a trusted domain.",
                   "level": null,
@@ -1121,15 +1132,15 @@
             },
             {
               "name": "Recommended Requirements",
-              "score": 100,
+              "score": 50,
               "total_scorecards": 2,
-              "passed_scorecards": 2,
+              "passed_scorecards": 1,
               "levels_summary": {},
               "tags_summary": {
                 "freshness": {
                   "total": 1,
-                  "passed": 1,
-                  "percentage": 100
+                  "passed": 0,
+                  "percentage": 0
                 },
                 "security": {
                   "total": 1,
@@ -1163,10 +1174,10 @@
                   "analyzers": [
                     "freshness"
                   ],
-                  "passed": true,
-                  "status": "passed",
+                  "passed": false,
+                  "status": "failed",
                   "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
-                  "details": "results.freshness.age_days (24) < 30"
+                  "details": "results.freshness.age_days (35) < 30"
                 }
               ],
               "render_order": [
@@ -1301,7 +1312,7 @@
           "passed_scorecards": 0,
           "sections": [
             {
-              "name": "Dockerfile Linting",
+              "name": "Dockerfile Linting (Hadolint)",
               "score": 0,
               "total_scorecards": 0,
               "passed_scorecards": 0,
@@ -1316,6 +1327,30 @@
                   "template": "analyzers/hadolint/table.html",
                   "options": {
                     "title": "Linting Issues & Recommendations",
+                    "collapsed": true
+                  }
+                }
+              ],
+              "render_order": [
+                "widgets"
+              ]
+            },
+            {
+              "name": "Security & Best Practices (Dockle)",
+              "score": 0,
+              "total_scorecards": 0,
+              "passed_scorecards": 0,
+              "levels_summary": {},
+              "tags_summary": {},
+              "scorecards": [],
+              "widgets": [
+                {
+                  "template": "analyzers/dockle/cards.html"
+                },
+                {
+                  "template": "analyzers/dockle/table.html",
+                  "options": {
+                    "title": "Security Issues & Recommendations",
                     "collapsed": true
                   }
                 }
@@ -1367,7 +1402,14 @@
               "scorecards": [],
               "widgets": [
                 {
-                  "template": "analyzers/popularity/cards.html"
+                  "label": "Pulls",
+                  "value": "{{ results.popularity.pull_count | format_number }}",
+                  "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+                },
+                {
+                  "label": "Stars",
+                  "value": "{{ results.popularity.star_count | format_number }}",
+                  "resolved_value": "{{ results.popularity.star_count | format_number }}"
                 },
                 {
                   "template": "analyzers/popularity/table.html",
@@ -1492,14 +1534,17 @@
       "slug": null,
       "_meta": {
         "source_name": "default"
-      }
+      },
+      "labels": [
+        "regis::fail"
+      ]
     }
   ],
   "playbook": {
     "playbook_name": "RegiS Default Playbook",
-    "score": 100,
-    "total_scorecards": 5,
-    "passed_scorecards": 5,
+    "score": 67,
+    "total_scorecards": 6,
+    "passed_scorecards": 4,
     "pages": [
       {
         "title": "Overview",
@@ -1519,20 +1564,20 @@
             "widgets": [
               {
                 "label": "Recommandation",
-                "value": "{{ 'GO' }}",
+                "value": "{{ 'NOGO' }}",
                 "options": {
-                  "class": "recommandation-go",
+                  "class": "recommandation-nogo",
                   "align": "center"
                 },
                 "condition": {
-                  ">=": [
+                  "<": [
                     {
-                      "var": "playbooks.0.pages.1.sections.1.score"
+                      "var": "playbooks.0.pages.compliance.sections.mandatory_requirements.score"
                     },
                     90
                   ]
                 },
-                "resolved_value": "GO"
+                "resolved_value": "NOGO"
               }
             ],
             "render_order": [
@@ -1555,27 +1600,27 @@
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "100%",
+                "resolved_value": "67%",
                 "resolved_url": "compliance.html"
               },
               {
                 "label": "Mandatory Requirements",
-                "value": "{{ playbooks.0.pages.1.sections.1.passed_scorecards }} / {{ playbooks.0.pages.1.sections.1.total_scorecards }}",
+                "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.mandatory_requirements.total_scorecards }}",
                 "url": "compliance.html",
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "3 / 3",
+                "resolved_value": "3 / 4",
                 "resolved_url": "compliance.html"
               },
               {
                 "label": "Recommended Requirements",
-                "value": "{{ playbooks.0.pages.1.sections.2.passed_scorecards }} / {{ playbooks.0.pages.1.sections.2.total_scorecards }}",
+                "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.passed_scorecards }} / {{ playbooks.0.pages.compliance.sections.recommended_requirements.total_scorecards }}",
                 "url": "compliance.html",
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "2 / 2",
+                "resolved_value": "1 / 2",
                 "resolved_url": "compliance.html"
               }
             ],
@@ -1598,33 +1643,20 @@
                 "options": {
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
-                "resolved_value": "2026-02-21",
-                "resolved_subvalue": "09:53:15"
+                "resolved_value": "2026-03-04",
+                "resolved_subvalue": "19:07:58"
               },
               {
                 "label": "Triggered by",
                 "value": "{{ request.metadata.trigger.user | default('Unknown Emiter') }}",
                 "url": "{{ request.metadata.trigger.url | default('') }}",
-                "resolved_value": "Antigravity",
-                "resolved_url": "https://github.com/trivoallan/regis-cli"
+                "resolved_value": "Unknown Emiter",
+                "resolved_url": ""
               },
               {
                 "template": "request/table.html",
                 "options": {
                   "title": "Request Parameters"
-                }
-              },
-              {
-                "template": "metadata/table.html",
-                "options": {
-                  "title": "Additional Metadata"
-                },
-                "condition": {
-                  "!!": [
-                    {
-                      "var": "request.metadata"
-                    }
-                  ]
                 }
               }
             ],
@@ -1666,9 +1698,9 @@
       {
         "title": "Compliance",
         "slug": "compliance",
-        "score": 100,
-        "total_scorecards": 5,
-        "passed_scorecards": 5,
+        "score": 67,
+        "total_scorecards": 6,
+        "passed_scorecards": 4,
         "sections": [
           {
             "name": " ",
@@ -1685,23 +1717,23 @@
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "100%"
+                "resolved_value": "67%"
               },
               {
                 "label": "Mandatory Requirements",
-                "value": "{{ playbooks.0.pages.1.sections.1.score }}%",
+                "value": "{{ playbooks.0.pages.compliance.sections.mandatory_requirements.score }}%",
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "100%"
+                "resolved_value": "75%"
               },
               {
                 "label": "Recommended Requirements",
-                "value": "{{ playbooks.0.pages.1.sections.2.score }}%",
+                "value": "{{ playbooks.0.pages.compliance.sections.recommended_requirements.score }}%",
                 "options": {
                   "align": "center"
                 },
-                "resolved_value": "100%"
+                "resolved_value": "50%"
               }
             ],
             "render_order": [
@@ -1710,15 +1742,15 @@
           },
           {
             "name": "Mandatory Requirements",
-            "score": 100,
-            "total_scorecards": 3,
+            "score": 75,
+            "total_scorecards": 4,
             "passed_scorecards": 3,
             "levels_summary": {},
             "tags_summary": {
               "security": {
-                "total": 3,
+                "total": 4,
                 "passed": 3,
-                "percentage": 100
+                "percentage": 75
               }
             },
             "scorecards": [
@@ -1753,6 +1785,21 @@
                 "details": "results.trivy.critical_count (0) == 0"
               },
               {
+                "name": "no-fatal",
+                "title": "No FATAL issues found by Dockle.",
+                "level": "critical",
+                "tags": [
+                  "security"
+                ],
+                "analyzers": [
+                  "dockle"
+                ],
+                "passed": false,
+                "status": "incomplete",
+                "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
+                "details": "results.dockle.issues_by_level.FATAL (MISSING) == 0"
+              },
+              {
                 "name": "trusted-domain",
                 "title": "Image must originate from a trusted domain.",
                 "level": null,
@@ -1774,15 +1821,15 @@
           },
           {
             "name": "Recommended Requirements",
-            "score": 100,
+            "score": 50,
             "total_scorecards": 2,
-            "passed_scorecards": 2,
+            "passed_scorecards": 1,
             "levels_summary": {},
             "tags_summary": {
               "freshness": {
                 "total": 1,
-                "passed": 1,
-                "percentage": 100
+                "passed": 0,
+                "percentage": 0
               },
               "security": {
                 "total": 1,
@@ -1816,10 +1863,10 @@
                 "analyzers": [
                   "freshness"
                 ],
-                "passed": true,
-                "status": "passed",
+                "passed": false,
+                "status": "failed",
                 "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
-                "details": "results.freshness.age_days (24) < 30"
+                "details": "results.freshness.age_days (35) < 30"
               }
             ],
             "render_order": [
@@ -1954,7 +2001,7 @@
         "passed_scorecards": 0,
         "sections": [
           {
-            "name": "Dockerfile Linting",
+            "name": "Dockerfile Linting (Hadolint)",
             "score": 0,
             "total_scorecards": 0,
             "passed_scorecards": 0,
@@ -1969,6 +2016,30 @@
                 "template": "analyzers/hadolint/table.html",
                 "options": {
                   "title": "Linting Issues & Recommendations",
+                  "collapsed": true
+                }
+              }
+            ],
+            "render_order": [
+              "widgets"
+            ]
+          },
+          {
+            "name": "Security & Best Practices (Dockle)",
+            "score": 0,
+            "total_scorecards": 0,
+            "passed_scorecards": 0,
+            "levels_summary": {},
+            "tags_summary": {},
+            "scorecards": [],
+            "widgets": [
+              {
+                "template": "analyzers/dockle/cards.html"
+              },
+              {
+                "template": "analyzers/dockle/table.html",
+                "options": {
+                  "title": "Security Issues & Recommendations",
                   "collapsed": true
                 }
               }
@@ -2020,7 +2091,14 @@
             "scorecards": [],
             "widgets": [
               {
-                "template": "analyzers/popularity/cards.html"
+                "label": "Pulls",
+                "value": "{{ results.popularity.pull_count | format_number }}",
+                "resolved_value": "{{ results.popularity.pull_count | format_number }}"
+              },
+              {
+                "label": "Stars",
+                "value": "{{ results.popularity.star_count | format_number }}",
+                "resolved_value": "{{ results.popularity.star_count | format_number }}"
               },
               {
                 "template": "analyzers/popularity/table.html",
@@ -2145,6 +2223,9 @@
     "slug": null,
     "_meta": {
       "source_name": "default"
-    }
+    },
+    "labels": [
+      "regis::fail"
+    ]
   }
 }
