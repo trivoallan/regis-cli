@@ -81,6 +81,50 @@ For example, to display the overall compliance score in a widget, you might use:
   value: "{{ playbooks.0.pages.compliance.sections.security_checks.score }}%"
 ----
 
+== GitLab Integration
+
+Playbooks can automate Merge Request (MR) management in GitLab through the `integrations.gitlab` key.
+
+=== Scoped Labels
+
+The `labels` list applies scoped labels to the MR based on JSON Logic conditions evaluated against the final analysis result. Each label is applied only when its condition is truthy.
+
+[source,yaml]
+----
+integrations:
+  gitlab:
+    labels:
+      - name: regis::pass
+        condition: { ">=": [{ var: playbook.score }, 90] }
+      - name: regis::fail
+        condition: { "<": [{ var: playbook.score }, 70] }
+      - name: security::critical
+        condition: { ">": [{ var: results.trivy.critical_count }, 0] }
+----
+
+=== MR Description Checklist
+
+The `checklist` list adds unchecked checkboxes (`- [ ] label`) to the body of the Merge Request description. This lets you define manual verification steps that reviewers must tick off before approving the MR.
+
+Each item has a mandatory `label` and an optional `condition`. Items whose condition is falsy—or references data that is unavailable—are automatically excluded from the generated checklist.
+
+[source,yaml]
+----
+integrations:
+  gitlab:
+    checklist:
+      - label: Security review completed         # <1>
+      - label: No critical vulnerabilities found
+        condition: { "==": [{ var: results.trivy.critical_count }, 0] }  # <2>
+      - label: Image from a trusted registry
+        condition:
+          { "in": [{ var: request.registry }, [docker.io, quay.io, ghcr.io]] }
+----
+<1> Unconditional item — always included.
+<2> Conditional item — only included when `critical_count` equals 0.
+
+The engine exposes the resolved checklist as `mr_description_checklist` (a list of strings) in the playbook evaluation result. The GitLab integration layer is responsible for converting this list to Markdown and appending it to the MR description.
+
 == Example Playbook
 
 The following example shows a simplified playbook definition:

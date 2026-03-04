@@ -722,4 +722,29 @@ def evaluate(
                     )
         result["labels"] = list(set(resolved_labels))
 
+    # Evaluate GitLab MR description checklist items
+    checklist_defs = gitlab_integration.get("checklist", [])
+    if checklist_defs:
+        resolved_checklist: list[str] = []
+        for item_def in checklist_defs:
+            label = item_def.get("label", "")
+            if not label:
+                continue
+            condition = item_def.get("condition")
+            if condition:
+                try:
+                    tracker = MissingDataTracker(full_context)
+                    is_active = jsonLogic(condition, tracker)
+                    if not is_active or tracker.missing_accessed:
+                        continue
+                except Exception as exc:
+                    logger.warning(
+                        "Failed to evaluate checklist condition for '%s': %s",
+                        label,
+                        exc,
+                    )
+                    continue
+            resolved_checklist.append(label)
+        result["mr_description_checklist"] = resolved_checklist
+
     return result

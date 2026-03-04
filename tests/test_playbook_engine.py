@@ -319,3 +319,101 @@ class TestEvaluate:
         # Display widgets merged at end
         assert widgets[2]["label"] == "W2"
         assert widgets[2]["resolved_value"] == "B"
+
+
+class TestGitLabChecklist:
+    """Test GitLab MR description checklist item evaluation."""
+
+    BASE_PLAYBOOK = {
+        "name": "Checklist Test",
+        "sections": [
+            {
+                "name": "Main",
+                "scorecards": [{"name": "always-pass", "condition": {"==": [1, 1]}}],
+            }
+        ],
+    }
+
+    def _make_playbook(self, checklist: list) -> dict:
+        import copy
+
+        pb = copy.deepcopy(self.BASE_PLAYBOOK)
+        pb["integrations"] = {"gitlab": {"checklist": checklist}}
+        return pb
+
+    def test_unconditional_item_always_included(self):
+        """Items with no condition are always added to the checklist."""
+        pb = self._make_playbook([{"label": "Manual review done"}])
+        result = evaluate(pb, {})
+        assert result["mr_description_checklist"] == ["Manual review done"]
+
+    def test_truthy_condition_includes_item(self):
+        """Items whose condition evaluates to True are included."""
+        pb = self._make_playbook(
+            [
+                {
+                    "label": "No critical CVEs",
+                    "condition": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                }
+            ]
+        )
+        report = {"results": {"trivy": {"critical_count": 0}}}
+        result = evaluate(pb, report)
+        assert result["mr_description_checklist"] == ["No critical CVEs"]
+
+    def test_falsy_condition_excludes_item(self):
+        """Items whose condition evaluates to False are excluded."""
+        pb = self._make_playbook(
+            [
+                {
+                    "label": "No critical CVEs",
+                    "condition": {"==": [{"var": "results.trivy.critical_count"}, 0]},
+                }
+            ]
+        )
+        report = {"results": {"trivy": {"critical_count": 5}}}
+        result = evaluate(pb, report)
+        assert result["mr_description_checklist"] == []
+
+    def test_missing_data_excludes_item(self):
+        """Items whose condition references missing data are excluded."""
+        pb = self._make_playbook(
+            [
+                {
+                    "label": "Item needs missing data",
+                    "condition": {"==": [{"var": "non_existent_key"}, 0]},
+                }
+            ]
+        )
+        result = evaluate(pb, {})
+        assert result["mr_description_checklist"] == []
+
+    def test_mixed_items(self):
+        """Mixed conditional and unconditional items produce correct subset."""
+        pb = self._make_playbook(
+            [
+                {"label": "Always here"},
+                {
+                    "label": "Included: truthy",
+                    "condition": {"==": [{"var": "results.ok"}, True]},
+                },
+                {
+                    "label": "Excluded: falsy",
+                    "condition": {"==": [{"var": "results.ok"}, False]},
+                },
+            ]
+        )
+        report = {"results": {"ok": True}}
+        result = evaluate(pb, report)
+        assert result["mr_description_checklist"] == ["Always here", "Included: truthy"]
+
+    def test_no_checklist_key_absent(self):
+        """When checklist is not defined, mr_description_checklist is absent."""
+        result = evaluate(self.BASE_PLAYBOOK, {})
+        assert "mr_description_checklist" not in result
+
+    def test_empty_checklist_key_absent(self):
+        """When checklist is an empty list, mr_description_checklist is absent."""
+        pb = self._make_playbook([])
+        result = evaluate(pb, {})
+        assert "mr_description_checklist" not in result

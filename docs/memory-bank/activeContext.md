@@ -1,26 +1,22 @@
 # Active Context
 
 ## Current Objective
-Implement the `version` command in the CLI and ensure all tests are up to date.
+
+Documentation update following the implementation of the MR description checklist feature.
 
 ## Recent Changes
-- Added a `version` command to the CLI to display the current package version.
-- Refactored `importlib.metadata` imports in `cli.py` for better organization.
-- Fixed an outdated test case in `test_cli.py` that used defunct CLI options.
-- Fixed Docker permission issues by creating a home directory for the `regis` user (UID 1001), adjusting volume permissions in the workflow, and adding a fallback output mechanism in `cli.py`.
-- Resolved `(MISSING)` playbook values by exposing analyzer results at the root of the evaluation context in `engine.py`.
-- Implemented dynamic filename logic for reports: prioritized by `html.filename` in playbook, then playbook basename, then fallback to `report.html`.
-- Updated CLI to unconditionally generate a unified `report.json`, but generate distinct HTML files for each playbook (e.g., `security.html`, `maturity.html`).
+
+- Added `integrations.gitlab.checklist` support to the playbook engine: items with an optional jsonLogic `condition` are evaluated at the end of `evaluate()` and exposed as `mr_description_checklist` in the result.
+- Updated `playbook.schema.json` to include the `checklist` array definition under `integrations.gitlab`.
+- Added example checklist items to `default.yaml` (three items including two conditional ones).
+- Added `TestGitLabChecklist` unit tests (7 tests) in `test_playbook_engine.py` — all 24 tests pass.
+- Updated `docs/modules/ROOT/pages/playbooks.adoc` with a new "GitLab Integration" section covering labels and the checklist feature.
+- Updated `docs/modules/ROOT/pages/default-playbook.adoc` with a "GitLab Integrations" section documenting the default label and checklist configurations.
 - Added support for a `hint` field on playbook sections to display explanatory text under section titles.
 - Integrated GitHub Actions metadata (requester, workflow, run ID) into the template workflow for better traceability.
-- Enhanced playbook reports to display rule descriptions instead of technical names, improving readability.
 - Created comprehensive Cookiecutter usage guide in `docs/modules/ROOT/pages/cookiecutter.adoc`.
 - Fixed Skopeo architecture mismatch error by skipping high-level `inspect` on image indexes.
-- Modified `.github/workflows/docker-publish.yml` to use least-privilege top-level permissions (`contents: read`).
-- Modified `.github/workflows/releaser-pleaser.yml` to use least-privilege top-level permissions.
-- Initialized Antora documentation structure in `docs/`.
-- Created GitHub workflow integration guide in `docs/modules/ROOT/pages/github-workflow.adoc`.
 
 ## Next Steps
-- Verify the documentation build process.
-- Ensure all CI/CD workflows are functioning correctly.
+
+- Implement the CLI/GitLab layer that reads `mr_description_checklist` from the playbook result and appends Markdown checkboxes to the MR description.
