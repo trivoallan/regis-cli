@@ -6,6 +6,9 @@ spec:
     regis_cli_version:
       description: Version of regis-cli to use (e.g. latest, 1.2.0)
       default: "{{ cookiecutter.version }}"
+    playbook_url:
+      description: URL of the regis-cli playbook to use
+      default: "{{ cookiecutter.regis_playbook_url }}"
 ---
 variables:
   REGIS_CLI_IMAGE: "{{ cookiecutter.regis_cli_image_base }}:$[[ inputs.regis_cli_version ]]"
@@ -82,7 +85,7 @@ analyze_image:
       regis-cli analyze "$IMAGE_URL" \
         --site \
         --output-dir public \
-        --playbook "{{ cookiecutter.regis_playbook_url }}" \
+        --playbook "$[[ inputs.playbook_url ]]" \
         --meta "trigger.user=$GITLAB_USER_LOGIN" \
         --meta "trigger.url=$CI_JOB_URL" \
         --meta "gitlab.mr_url=$CI_MERGE_REQUEST_URL" \
