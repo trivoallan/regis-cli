@@ -13,6 +13,7 @@ pyyaml = "*"
 jinja2 = "*"
 regis-cli = {file = ".", editable = true}
 cookiecutter = "*"
+referencing = "<0.37.0"
 
 [dev-packages]
 pytest = ">=7.4"

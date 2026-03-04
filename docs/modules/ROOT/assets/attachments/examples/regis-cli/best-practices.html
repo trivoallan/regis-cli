@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>regis-cli Report — trivoallan/regis-cli:0.5</title>
+<title>regis-cli Report — trivoallan/regis-cli:latest</title>
 <style>
   @import url("https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css");
 
@@ -242,7 +242,7 @@ header h2 {
   <!-- Main Content -->
   <main class="container">
     <header>
-      <h1>ghcr.io/trivoallan/regis-cli:0.5</h1>
+      <h1>ghcr.io/trivoallan/regis-cli:latest</h1>
       
     </header>
 
@@ -264,7 +264,7 @@ header h2 {
 
         
             <div class="playbook-section">
-                <h4>Dockerfile Linting</h4>
+                <h4>Dockerfile Linting (Hadolint)</h4>
                 
 
             
@@ -310,7 +310,7 @@ header h2 {
             <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
                 <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">warning</strong><br>
                 <span style="font-size: 2rem; font-weight: bold; line-height: 1; color: var(--pico-del-color);">
-                    10
+                    11
                 </span>
             </div>
             
@@ -319,7 +319,7 @@ header h2 {
             <div style="text-align: center; padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow);">
                 <strong style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8;">info</strong><br>
                 <span style="font-size: 2rem; font-weight: bold; line-height: 1; ">
-                    13
+                    14
                 </span>
             </div>
             
@@ -538,17 +538,6 @@ header h2 {
                                 <span class="badge warning">Warning</span>
                             
                         </td>
-                        <td><code>DL4001</code></td>
-                        <td>17</td>
-                        <td>Either use Wget or Curl but not both</td>
-                    </tr>
-                    
-                    <tr>
-                        <td>
-                            
-                                <span class="badge warning">Warning</span>
-                            
-                        </td>
                         <td><code>SC2154</code></td>
                         <td>17</td>
                         <td>arch is referenced but not assigned.</td>
@@ -560,8 +549,41 @@ header h2 {
                                 <span class="badge warning">Warning</span>
                             
                         </td>
+                        <td><code>DL4001</code></td>
+                        <td>17</td>
+                        <td>Either use Wget or Curl but not both</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge info">Info</span>
+                            
+                        </td>
+                        <td><code>SC2086</code></td>
+                        <td>19</td>
+                        <td>Double quote to prevent globbing and word splitting.</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge warning">Warning</span>
+                            
+                        </td>
+                        <td><code>DL4001</code></td>
+                        <td>19</td>
+                        <td>Either use Wget or Curl but not both</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge warning">Warning</span>
+                            
+                        </td>
                         <td><code>DL3008</code></td>
-                        <td>21</td>
+                        <td>23</td>
                         <td>Pin versions in apt get install. Instead of `apt-get install &lt;package&gt;` use `apt-get install &lt;package&gt;=&lt;version&gt;`</td>
                     </tr>
                     
@@ -572,41 +594,8 @@ header h2 {
                             
                         </td>
                         <td><code>DL3015</code></td>
-                        <td>21</td>
+                        <td>23</td>
                         <td>Avoid additional packages by specifying `--no-install-recommends`</td>
-                    </tr>
-                    
-                    <tr>
-                        <td>
-                            
-                                <span class="badge danger">Error</span>
-                            
-                        </td>
-                        <td><code>SC1072</code></td>
-                        <td>23</td>
-                        <td>Expected comparison operator (don&#39;t wrap commands in []/[[]]). Fix any mentioned problems and try again.</td>
-                    </tr>
-                    
-                    <tr>
-                        <td>
-                            
-                                <span class="badge info">Info</span>
-                            
-                        </td>
-                        <td><code>DL3059</code></td>
-                        <td>23</td>
-                        <td>Multiple consecutive `RUN` instructions. Consider consolidation.</td>
-                    </tr>
-                    
-                    <tr>
-                        <td>
-                            
-                                <span class="badge info">Info</span>
-                            
-                        </td>
-                        <td><code>DL3059</code></td>
-                        <td>24</td>
-                        <td>Multiple consecutive `RUN` instructions. Consider consolidation.</td>
                     </tr>
                     
                     <tr>
@@ -623,11 +612,44 @@ header h2 {
                     <tr>
                         <td>
                             
+                                <span class="badge danger">Error</span>
+                            
+                        </td>
+                        <td><code>SC1072</code></td>
+                        <td>25</td>
+                        <td>Expected comparison operator (don&#39;t wrap commands in []/[[]]). Fix any mentioned problems and try again.</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
                                 <span class="badge info">Info</span>
                             
                         </td>
                         <td><code>DL3059</code></td>
                         <td>26</td>
+                        <td>Multiple consecutive `RUN` instructions. Consider consolidation.</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge info">Info</span>
+                            
+                        </td>
+                        <td><code>DL3059</code></td>
+                        <td>27</td>
+                        <td>Multiple consecutive `RUN` instructions. Consider consolidation.</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            
+                                <span class="badge info">Info</span>
+                            
+                        </td>
+                        <td><code>DL3059</code></td>
+                        <td>28</td>
                         <td>Multiple consecutive `RUN` instructions. Consider consolidation.</td>
                     </tr>
                     
@@ -641,13 +663,13 @@ header h2 {
     <details>
         <summary>Reconstructed Dockerfile</summary>
         <pre><code style="font-size: 0.85rem;">FROM scratch
-RUN # debian.sh --arch &#39;amd64&#39; out/ &#39;trixie&#39; &#39;@1769990400&#39;
+RUN # debian.sh --arch &#39;amd64&#39; out/ &#39;trixie&#39; &#39;@1771804800&#39;
 RUN ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 RUN ENV LANG=C.UTF-8
 RUN RUN /bin/sh -c set -eux; 	apt-get update; 	apt-get install -y --no-install-recommends 		ca-certificates 		netbase 		tzdata 	; 	apt-get dist-clean # buildkit
 RUN ENV GPG_KEY=7169605F62C751356D054A26A821E680E5FA6305
-RUN ENV PYTHON_VERSION=3.12.12
-RUN ENV PYTHON_SHA256=fb85a13414b028c49ba18bbd523c2d055a30b56b18b92ce454ea2c51edc656c4
+RUN ENV PYTHON_VERSION=3.12.13
+RUN ENV PYTHON_SHA256=c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684
 RUN RUN /bin/sh -c set -eux; 		savedAptMark=&#34;$(apt-mark showmanual)&#34;; 	apt-get update; 	apt-get install -y --no-install-recommends 		dpkg-dev 		gcc 		gnupg 		libbluetooth-dev 		libbz2-dev 		libc6-dev 		libdb-dev 		libffi-dev 		libgdbm-dev 		liblzma-dev 		libncursesw5-dev 		libreadline-dev 		libsqlite3-dev 		libssl-dev 		make 		tk-dev 		uuid-dev 		wget 		xz-utils 		zlib1g-dev 	; 		wget -O python.tar.xz &#34;https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz&#34;; 	echo &#34;$PYTHON_SHA256 *python.tar.xz&#34; | sha256sum -c -; 	wget -O python.tar.xz.asc &#34;https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc&#34;; 	GNUPGHOME=&#34;$(mktemp -d)&#34;; export GNUPGHOME; 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys &#34;$GPG_KEY&#34;; 	gpg --batch --verify python.tar.xz.asc python.tar.xz; 	gpgconf --kill all; 	rm -rf &#34;$GNUPGHOME&#34; python.tar.xz.asc; 	mkdir -p /usr/src/python; 	tar --extract --directory /usr/src/python --strip-components=1 --file python.tar.xz; 	rm python.tar.xz; 		cd /usr/src/python; 	gnuArch=&#34;$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)&#34;; 	./configure 		--build=&#34;$gnuArch&#34; 		--enable-loadable-sqlite-extensions 		--enable-optimizations 		--enable-option-checking=fatal 		--enable-shared 		$(test &#34;${gnuArch%%-*}&#34; != &#39;riscv64&#39; &amp;&amp; echo &#39;--with-lto&#39;) 		--with-ensurepip 	; 	nproc=&#34;$(nproc)&#34;; 	EXTRA_CFLAGS=&#34;$(dpkg-buildflags --get CFLAGS)&#34;; 	LDFLAGS=&#34;$(dpkg-buildflags --get LDFLAGS)&#34;; 	LDFLAGS=&#34;${LDFLAGS:-} -Wl,--strip-all&#34;; 	arch=&#34;$(dpkg --print-architecture)&#34;; arch=&#34;${arch##*-}&#34;; 	case &#34;$arch&#34; in 		amd64|arm64) 			EXTRA_CFLAGS=&#34;${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer&#34;; 			;; 		i386) 			;; 		*) 			EXTRA_CFLAGS=&#34;${EXTRA_CFLAGS:-} -fno-omit-frame-pointer&#34;; 			;; 	esac; 	make -j &#34;$nproc&#34; 		&#34;EXTRA_CFLAGS=${EXTRA_CFLAGS:-}&#34; 		&#34;LDFLAGS=${LDFLAGS:-}&#34; 	; 	rm python; 	make -j &#34;$nproc&#34; 		&#34;EXTRA_CFLAGS=${EXTRA_CFLAGS:-}&#34; 		&#34;LDFLAGS=${LDFLAGS:-} -Wl,-rpath=&#39;\$\$ORIGIN/../lib&#39;&#34; 		python 	; 	make install; 		cd /; 	rm -rf /usr/src/python; 		find /usr/local -depth 		\( 			\( -type d -a \( -name test -o -name tests -o -name idle_test \) \) 			-o \( -type f -a \( -name &#39;*.pyc&#39; -o -name &#39;*.pyo&#39; -o -name &#39;libpython*.a&#39; \) \) 		\) -exec rm -rf &#39;{}&#39; + 	; 		ldconfig; 		apt-mark auto &#39;.*&#39; &gt; /dev/null; 	apt-mark manual $savedAptMark; 	find /usr/local -type f -executable -not \( -name &#39;*tkinter*&#39; \) -exec ldd &#39;{}&#39; &#39;;&#39; 		| awk &#39;/=&gt;/ { so = $(NF-1); if (index(so, &#34;/usr/local/&#34;) == 1) { next }; gsub(&#34;^/(usr/)?&#34;, &#34;&#34;, so); printf &#34;*%s\n&#34;, so }&#39; 		| sort -u 		| xargs -rt dpkg-query --search 		| awk &#39;sub(&#34;:$&#34;, &#34;&#34;, $1) { print $1 }&#39; 		| sort -u 		| xargs -r apt-mark manual 	; 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; 	apt-get dist-clean; 		export PYTHONDONTWRITEBYTECODE=1; 	python3 --version; 	pip3 --version # buildkit
 RUN RUN /bin/sh -c set -eux; 	for src in idle3 pip3 pydoc3 python3 python3-config; do 		dst=&#34;$(echo &#34;$src&#34; | tr -d 3)&#34;; 		[ -s &#34;/usr/local/bin/$src&#34; ]; 		[ ! -e &#34;/usr/local/bin/$dst&#34; ]; 		ln -svT &#34;$src&#34; &#34;/usr/local/bin/$dst&#34;; 	done # buildkit
 RUN CMD [&#34;python3&#34;]
@@ -657,6 +679,8 @@ RUN RUN /bin/sh -c groupadd -g 1001 regis &amp;&amp;     useradd -u 1001 -g regi
 RUN ENV HOME=/home/regis
 RUN RUN /bin/sh -c curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin # buildkit
 RUN RUN /bin/sh -c arch=$(uname -m) &amp;&amp;     if [ &#34;$arch&#34; = &#34;x86_64&#34; ]; then hadolint_arch=&#34;x86_64&#34;; else hadolint_arch=&#34;arm64&#34;; fi &amp;&amp;     curl -sSfL &#34;https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}&#34; -o /usr/local/bin/hadolint &amp;&amp;     chmod +x /usr/local/bin/hadolint # buildkit
+RUN ENV DOCKLE_VERSION=0.4.15
+RUN RUN /bin/sh -c arch=$(uname -m) &amp;&amp;     if [ &#34;$arch&#34; = &#34;x86_64&#34; ]; then dockle_arch=&#34;64bit&#34;; else dockle_arch=&#34;ARM64&#34;; fi &amp;&amp;     curl -L -o dockle.tar.gz https://github.com/goodwithtech/dockle/releases/download/v${DOCKLE_VERSION}/dockle_${DOCKLE_VERSION}_Linux-${dockle_arch}.tar.gz &amp;&amp;     tar zxvf dockle.tar.gz dockle &amp;&amp;     mv dockle /usr/local/bin/dockle &amp;&amp;     rm dockle.tar.gz &amp;&amp;     chmod +x /usr/local/bin/dockle # buildkit
 RUN WORKDIR /app
 RUN RUN /bin/sh -c chown regis:regis /app &amp;&amp; chmod 777 /app # buildkit
 RUN COPY --chown=regis:regis . . # buildkit
@@ -668,6 +692,90 @@ RUN ENTRYPOINT [&#34;regis-cli&#34;]
 RUN CMD [&#34;--help&#34;]</code></pre>
     </details>
     
+
+
+                                
+                                </details>
+                                
+                            </div>
+                        
+                    
+                    
+                </div>
+                <!-- prettier-ignore-end -->
+                <hr>
+                
+
+                
+                
+
+                
+                
+
+                
+                
+
+                
+                
+
+            
+        </div>
+        <hr>
+
+        
+            <div class="playbook-section">
+                <h4>Security &amp; Best Practices (Dockle)</h4>
+                
+
+            
+
+                
+                <!-- prettier-ignore-start -->
+                
+                <div style="margin-bottom: calc(2 * var(--pico-spacing));">
+                    
+                    
+                        
+                        
+                        
+                        
+                        
+
+                        
+                            
+                            <div class="widget-template " style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: left; margin-bottom: calc(3 * var(--pico-spacing));">
+                                
+
+                                
+
+    <p>⚠️ Dockle Error: {&#39;type&#39;: &#39;validation&#39;, &#39;message&#39;: &#39;Dockle execution failed. Ensure dockle is installed and in PATH.&#39;}</p>
+
+
+                                
+                            </div>
+                        
+                    
+                        
+                        
+                        
+                        
+                        
+
+                        
+                            
+                            <div class="widget-template " style="padding: var(--pico-spacing); background: var(--pico-card-background-color); border-radius: var(--pico-border-radius); box-shadow: var(--pico-card-box-shadow); text-align: left; margin-bottom: calc(3 * var(--pico-spacing));">
+                                
+                                <details>
+                                    <summary style="font-weight: bold; color: var(--pico-secondary); margin-bottom: 0.5rem; font-size: 1.125rem;">Security Issues &amp; Recommendations</summary>
+                                
+
+                                
+
+
+
+
+
+    <p>⚠️ Dockle Error: {&#39;type&#39;: &#39;validation&#39;, &#39;message&#39;: &#39;Dockle execution failed. Ensure dockle is installed and in PATH.&#39;}</p>
 
 
                                 
@@ -710,10 +818,23 @@ RUN CMD [&#34;--help&#34;]</code></pre>
             
                 
             
+                
+            
         
     
 
     
+    
+        
+            
+<article style="border-left: 5px solid #ef4444;">
+    <header>
+        <h3 style="color: #ef4444; margin: 0;">⚠️ dockle Analyzer Error</h3>
+    </header>
+    <p><strong>validation:</strong> Dockle execution failed. Ensure dockle is installed and in PATH.</p>
+</article>
+
+        
     
         
     

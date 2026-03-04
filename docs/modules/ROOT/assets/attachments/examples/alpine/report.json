@@ -1,5 +1,5 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
   "request": {
     "url": "alpine:latest",
     "registry": "registry-1.docker.io",
@@ -19,7 +19,7 @@
       "trivy",
       "versioning"
     ],
-    "timestamp": "2026-03-04T19:07:58.573003+00:00"
+    "timestamp": "2026-03-04T19:17:27.303476+00:00"
   },
   "results": {
     "dockle": {
@@ -76,7 +76,7 @@
       "analyzer": "popularity",
       "repository": "library/alpine",
       "available": true,
-      "pull_count": 11696404986,
+      "pull_count": 11696423002,
       "star_count": 11471,
       "description": "A minimal Docker image based on Alpine Linux with a complete package index and only 5 MB in size!",
       "last_updated": "2026-01-28T04:26:42.651499Z",
@@ -955,7 +955,7 @@
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
                   "resolved_value": "2026-03-04",
-                  "resolved_subvalue": "19:07:58"
+                  "resolved_subvalue": "19:17:27"
                 },
                 {
                   "label": "Triggered by",
@@ -1644,7 +1644,7 @@
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
                 "resolved_value": "2026-03-04",
-                "resolved_subvalue": "19:07:58"
+                "resolved_subvalue": "19:17:27"
               },
               {
                 "label": "Triggered by",
