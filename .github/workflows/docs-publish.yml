@@ -39,6 +39,24 @@ jobs:
       - name: Install Python dependencies
         run: pipenv sync --dev
 
+      - name: Install Hadolint
+        run: |
+          arch=$(uname -m)
+          if [ "$arch" = "x86_64" ]; then hadolint_arch="x86_64"; else hadolint_arch="arm64"; fi
+          sudo curl -sSfL "https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-${hadolint_arch}" -o /usr/local/bin/hadolint
+          sudo chmod +x /usr/local/bin/hadolint
+
+      - name: Install Dockle
+        run: |
+          DOCKLE_VERSION="0.4.15"
+          arch=$(uname -m)
+          if [ "$arch" = "x86_64" ]; then dockle_arch="64bit"; else dockle_arch="ARM64"; fi
+          curl -L -o dockle.tar.gz https://github.com/goodwithtech/dockle/releases/download/v${DOCKLE_VERSION}/dockle_${DOCKLE_VERSION}_Linux-${dockle_arch}.tar.gz
+          tar zxvf dockle.tar.gz dockle
+          sudo mv dockle /usr/local/bin/dockle
+          rm dockle.tar.gz
+          sudo chmod +x /usr/local/bin/dockle
+
       - name: Generate Schema Docs
         run: pipenv run python scripts/generate_schema_docs.py
 
