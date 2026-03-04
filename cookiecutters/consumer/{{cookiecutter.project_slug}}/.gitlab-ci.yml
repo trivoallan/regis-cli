@@ -67,7 +67,7 @@ request_analysis:
 analyze_image:
   stage: analyze
   image:
-    name: "$REGIS_CLI_IMAGE"
+    name: $REGIS_CLI_IMAGE
     entrypoint: [""]
   before_script:
     - mkdir -p reports
@@ -105,7 +105,7 @@ analyze_image:
           if [ -n "$REPORT_INDEX" ]; then
             REPORT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/external_file/${REPORT_INDEX}"
 
-            # Apply labels if found in report.json
+            # Apply labels and checklist from report.json
             REPORT_JSON=$(find reports -name report.json | head -n 1)
             if [ -n "$REPORT_JSON" ]; then
               LABELS=$(python3 -c "import json; print(','.join(json.load(open('$REPORT_JSON')).get('labels', [])))")
@@ -113,6 +113,22 @@ analyze_image:
                 echo "Applying labels to MR: $LABELS"
                 curl --fail --request PUT --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
                   --data "add_labels=${LABELS}" \
+                  "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
+              fi
+
+              # Append mr_description_checklist to MR description
+              CHECKLIST=$(echo "aW1wb3J0IGpzb24sIHN5cwpkYXRhID0ganNvbi5sb2FkKG9wZW4oc3lzLmFyZ3ZbMV0pKQppdGVtcyA9IGRhdGEuZ2V0KCdtcl9kZXNjcmlwdGlvbl9jaGVja2xpc3QnLCBbXSkKaWYgaXRlbXM6CiAgICBwcmludCgnCgotLS0KCiMjIPCfk4sgUmV2aWV3IENoZWNrbGlzdAoKJyArICcKJy5qb2luKCctIFsgXSAnICsgaSBmb3IgaSBpbiBpdGVtcykpCg==" | base64 -d | python3 - "$REPORT_JSON")
+              if [ -n "$CHECKLIST" ]; then
+                echo "Appending checklist to MR description..."
+                CURRENT_DESC=$(curl --silent --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+                  "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}" \
+                  | python3 -c "import json,sys; print(json.load(sys.stdin).get('description','') or '')")
+                printf '%s%s' "$CURRENT_DESC" "$CHECKLIST" \
+                  | python3 -c "import json,sys; d=sys.stdin.read(); print(json.dumps({'description':d}))" > /tmp/mr_payload.json
+                curl --fail --request PUT \
+                  --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
+                  --header "Content-Type: application/json" \
+                  --data "@/tmp/mr_payload.json" \
                   "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
               fi
             fi
