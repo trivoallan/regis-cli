@@ -1,5 +1,3 @@
-import sys
-
 from json_logic import jsonLogic
 
 
@@ -29,21 +27,21 @@ class NamedList(list):
                 return self._keys[key]
         return super().__getitem__(key)
 
+
 data = {
     "playbooks": [
         {
-            "pages": NamedList([
-                {
-                    "slug": "compliance",
-                    "title": "Compliance",
-                    "sections": NamedList([
-                        {
-                            "name": "Mandatory Requirements",
-                            "score": 95
-                        }
-                    ])
-                }
-            ])
+            "pages": NamedList(
+                [
+                    {
+                        "slug": "compliance",
+                        "title": "Compliance",
+                        "sections": NamedList(
+                            [{"name": "Mandatory Requirements", "score": 95}]
+                        ),
+                    }
+                ]
+            )
         }
     ]
 }

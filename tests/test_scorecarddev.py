@@ -1,6 +1,5 @@
 """Tests for the scorecard analyzer."""
 
-
 from regis_cli.analyzers.scorecarddev import (
     ScorecardDevAnalyzer,
     _parse_git_url,

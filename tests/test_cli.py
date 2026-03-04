@@ -175,3 +175,50 @@ class TestCliBasics:
             assert "123" in html_content
             assert "env" in html_content
             assert "prod" in html_content
+
+
+class TestCliCheck:
+    """Test the check command."""
+
+    @patch("regis_cli.cli.RegistryClient")
+    def test_check_success(self, mock_client_class):
+        mock_client = mock_client_class.return_value
+        mock_client.get_manifest.return_value = {"schemaVersion": 2}
+
+        runner = CliRunner()
+        result = runner.invoke(main, ["check", "nginx:latest"])
+
+        assert result.exit_code == 0
+        assert "Checking manifest availability" in result.output
+        assert "Success! Manifest is accessible." in result.output
+        mock_client.get_manifest.assert_called_once_with("latest")
+
+    @patch("regis_cli.cli.RegistryClient")
+    def test_check_registry_error(self, mock_client_class):
+        from regis_cli.registry.client import RegistryError
+
+        mock_client = mock_client_class.return_value
+        mock_client.get_manifest.side_effect = RegistryError("Not found")
+
+        runner = CliRunner()
+        result = runner.invoke(main, ["check", "nginx:latest"])
+
+        assert result.exit_code != 0
+        assert "Registry error: Not found" in result.output
+
+    @patch("regis_cli.cli.RegistryClient")
+    def test_check_empty_manifest(self, mock_client_class):
+        mock_client = mock_client_class.return_value
+        mock_client.get_manifest.return_value = {}
+
+        runner = CliRunner()
+        result = runner.invoke(main, ["check", "nginx:latest"])
+
+        assert result.exit_code != 0
+        assert "Received empty manifest" in result.output
+
+    def test_check_invalid_url(self):
+        runner = CliRunner()
+        result = runner.invoke(main, ["check", "https://not-a-registry"])
+
+        assert result.exit_code != 0

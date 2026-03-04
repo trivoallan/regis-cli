@@ -1,6 +1,3 @@
-import json
-import os
-import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -15,10 +12,10 @@ class TestTrivyAnalyzer:
     def test_run_trivy_env_and_platform(self, mock_run, mock_which):
         mock_which.return_value = "/usr/bin/trivy"
         mock_run.return_value = MagicMock(stdout="{}", check_returncode=lambda: None)
-        
+
         # Test creds mapping to env (line 37-38) and platform handling (line 49)
         _run_trivy("image", username="user", password="pwd", platform="linux/arm64")
-        
+
         args = mock_run.call_args[0][0]
         env = mock_run.call_args[1]["env"]
         assert "--platform" in args
@@ -53,15 +50,20 @@ class TestTrivyAnalyzer:
                 {
                     "Target": "app.jar",
                     "Vulnerabilities": [
-                        {"VulnerabilityID": "CVE-1", "Severity": "CRITICAL", "PkgName": "lib"},
-                        {"VulnerabilityID": "CVE-2", "Severity": "HIGH", "PkgName": "lib2"}
-                    ]
+                        {
+                            "VulnerabilityID": "CVE-1",
+                            "Severity": "CRITICAL",
+                            "PkgName": "lib",
+                        },
+                        {
+                            "VulnerabilityID": "CVE-2",
+                            "Severity": "HIGH",
+                            "PkgName": "lib2",
+                        },
+                    ],
                 },
-                {
-                    "Target": "no-vulns",
-                    "Vulnerabilities": []
-                }
-            ]
+                {"Target": "no-vulns", "Vulnerabilities": []},
+            ],
         }
         analyzer = TrivyAnalyzer()
         client = MagicMock()

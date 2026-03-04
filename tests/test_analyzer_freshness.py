@@ -18,7 +18,10 @@ class TestFreshnessAnalyzer:
 
     @patch("regis_cli.analyzers.freshness.subprocess.run")
     def test_get_created_date_creds(self, mock_run, client):
-        mock_run.return_value = MagicMock(stdout=json.dumps({"created": "2024-01-01T00:00:00Z"}), check_returncode=lambda: None)
+        mock_run.return_value = MagicMock(
+            stdout=json.dumps({"created": "2024-01-01T00:00:00Z"}),
+            check_returncode=lambda: None,
+        )
         date = _get_created_date(client, "repo", "tag")
         assert date == "2024-01-01T00:00:00Z"
         # Verify creds were used (hit line 34)

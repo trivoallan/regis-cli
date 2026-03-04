@@ -8,7 +8,7 @@ def test_namedlist_access():
     data = [
         {"slug": "overview", "name": "System Overview", "score": 90},
         {"name": "Security-Checks", "score": 100},
-        {"value": "no-name-or-slug"}
+        {"value": "no-name-or-slug"},
     ]
     named_list = NamedList(data)
 
@@ -33,18 +33,22 @@ def test_namedlist_access():
 
 def test_resolve_path_with_namedlist():
     context = {
-        "playbooks": NamedList([
-            {
-                "pages": NamedList([
-                    {
-                        "slug": "compliance",
-                        "sections": NamedList([
-                            {"name": "Mandatory Requirements", "score": 85}
-                        ])
-                    }
-                ])
-            }
-        ])
+        "playbooks": NamedList(
+            [
+                {
+                    "pages": NamedList(
+                        [
+                            {
+                                "slug": "compliance",
+                                "sections": NamedList(
+                                    [{"name": "Mandatory Requirements", "score": 85}]
+                                ),
+                            }
+                        ]
+                    )
+                }
+            ]
+        )
     }
 
     # Test int based resolution
@@ -58,25 +62,29 @@ def test_resolve_path_with_namedlist():
 
 def test_jsonlogic_with_namedlist():
     context = {
-        "playbooks": NamedList([
-            {
-                "pages": NamedList([
-                    {
-                        "slug": "security",
-                        "sections": NamedList([
-                            {"name": "Vulnerabilities", "critical": 0}
-                        ])
-                    }
-                ])
-            }
-        ])
+        "playbooks": NamedList(
+            [
+                {
+                    "pages": NamedList(
+                        [
+                            {
+                                "slug": "security",
+                                "sections": NamedList(
+                                    [{"name": "Vulnerabilities", "critical": 0}]
+                                ),
+                            }
+                        ]
+                    )
+                }
+            ]
+        )
     }
 
     # jsonLogic uses direct dict/list indexing under the hood
     condition = {
         "==": [
             {"var": "playbooks.0.pages.security.sections.vulnerabilities.critical"},
-            0
+            0,
         ]
     }
     assert jsonLogic(condition, context) is True

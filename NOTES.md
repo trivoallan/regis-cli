@@ -23,3 +23,4 @@
 - [x] Versionner les artifacts dans le repo gitlab
 - [ ] ajouter sous-commande pour la ci gitlab
 - [ ] groupes pour les checklists
+- [ ] Gate dans request_analysis pour valider que le manifest est bien exploitable

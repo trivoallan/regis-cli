@@ -16,7 +16,7 @@ class TestPopularityAnalyzer:
             responses.GET,
             "https://hub.docker.com/v2/repositories/library/nginx",
             json={"pull_count": 1000, "star_count": 50, "description": "some desc"},
-            status=200
+            status=200,
         )
         report = analyzer.analyze(None, "library/nginx", "latest")
         assert report["pull_count"] == 1000
@@ -29,7 +29,7 @@ class TestPopularityAnalyzer:
         responses.add(
             responses.GET,
             "https://hub.docker.com/v2/repositories/private/repo",
-            status=404
+            status=404,
         )
         report = analyzer.analyze(None, "private/repo", "latest")
         assert report["available"] is False
@@ -42,7 +42,7 @@ class TestPopularityAnalyzer:
         responses.add(
             responses.GET,
             "https://hub.docker.com/v2/repositories/timeout/repo",
-            body=requests.exceptions.Timeout("Timeout")
+            body=requests.exceptions.Timeout("Timeout"),
         )
         report = analyzer.analyze(None, "timeout/repo", "latest")
         assert report["available"] is False

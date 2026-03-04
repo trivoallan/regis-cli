@@ -25,12 +25,16 @@ workflow:
 # Phase 1: Manual trigger creates a branch and an MR
 request_analysis:
   stage: request
-  image: alpine:latest
-  before_script:
-    - apk add --no-cache git curl python3
+  image:
+    name: $REGIS_CLI_IMAGE
+    entrypoint: [""]
   script:
     - |
       IMAGE_URL="$[[ inputs.image_url ]]"
+
+      echo "Validating accessibility of $IMAGE_URL before creating request..."
+      regis-cli check "$IMAGE_URL"
+
       # Create a unique branch name
       SAFE_URL=$(echo "$IMAGE_URL" | sed 's/[^a-zA-Z0-9]/_/g')
       BRANCH_NAME="regis/analyze/${SAFE_URL:0:30}-$CI_PIPELINE_IID"

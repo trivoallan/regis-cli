@@ -82,9 +82,9 @@ class DockleAnalyzer(BaseAnalyzer):
         #     { "code": "CIS-DI-0001", "title": "Create a user...", "level": "FATAL", "alerts": ["..."] }
         #   ]
         # }
-        
+
         details = output.get("details", [])
-        
+
         mapped_issues = []
         issues_by_level = {"FATAL": 0, "WARN": 0, "INFO": 0, "SKIP": 0, "PASS": 0}
 
@@ -95,23 +95,29 @@ class DockleAnalyzer(BaseAnalyzer):
             else:
                 issues_by_level[level] = issues_by_level.get(level, 0) + 1
 
-            # Only count relevant issues, PASS/SKIP might not be strictly "violations" 
+            # Only count relevant issues, PASS/SKIP might not be strictly "violations"
             # but we list them if dockle returns them. Let's record them.
-            mapped_issues.append({
-                "code": issue.get("code", "UNKNOWN"),
-                "level": level,
-                "title": issue.get("title", ""),
-                "alerts": issue.get("alerts", []),
-            })
-            
+            mapped_issues.append(
+                {
+                    "code": issue.get("code", "UNKNOWN"),
+                    "level": level,
+                    "title": issue.get("title", ""),
+                    "alerts": issue.get("alerts", []),
+                }
+            )
+
         # Is it a pass? Dockle defines "passed" usually when there are no FATAL errors (or WARN depending on run).
         # To align with Hadolint, we could say passed if there are no FATAL and WARN,
-        # or we just rely on `issues_count` filtering for actual problems. 
-        # Typically dockle exits with 0 if no FATAL. 
-        passed = (issues_by_level.get("FATAL", 0) == 0)
+        # or we just rely on `issues_count` filtering for actual problems.
+        # Typically dockle exits with 0 if no FATAL.
+        passed = issues_by_level.get("FATAL", 0) == 0
 
         # Count total issues ignoring PASS
-        issues_count = issues_by_level.get("FATAL", 0) + issues_by_level.get("WARN", 0) + issues_by_level.get("INFO", 0)
+        issues_count = (
+            issues_by_level.get("FATAL", 0)
+            + issues_by_level.get("WARN", 0)
+            + issues_by_level.get("INFO", 0)
+        )
 
         return {
             "analyzer": self.name,
