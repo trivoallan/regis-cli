@@ -97,10 +97,11 @@ class SizeAnalyzer(BaseAnalyzer):
             "layers": [
                 {
                     "index": i,
+                    "digest": layer.get("digest", ""),
                     "size_bytes": s,
                     "size_human": _human_size(s),
                 }
-                for i, s in enumerate(layer_sizes)
+                for i, (s, layer) in enumerate(zip(layer_sizes, layers, strict=True))
             ],
             "platforms": None,
         }
