@@ -9,5 +9,8 @@
 - [ ] Démo intégration avec PowerBI (idées)
 - [ ] Refactor engine.py
 - [ ] ajouter sous-commande pour la ci gitlab
-- [ ] groupes pour les checklists
+- [x] groupes pour les checklists
 - [ ] docs : search
+- [ ] Revoir l'organisation des rapports (stocker par digest)
+- [ ] image build : signature
+- [ ] image build : provenance
