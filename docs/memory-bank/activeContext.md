@@ -45,7 +45,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Added `README.md` to `release-please-config.json` `extra-files` to ensure consistent versioning and updates.
 - Redesign of `README.md` now properly redirects all technical documentation to the official Antora site.
 - Relocated the `License` section to the absolute end of `README.md` for a cleaner layout.
-- Updated `.github/workflows/lint.yml` to run `trunk fmt --all` prior to `trunk check`.
+- Refactored `.github/workflows/lint.yml` into a two-job structure (`format` and `check`) to ensure `trunk fmt` changes are committed before `trunk check` executes.
 
 ## Next Steps
 

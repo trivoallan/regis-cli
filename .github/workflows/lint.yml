@@ -7,24 +7,38 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: read
+  statuses: write
+  checks: write
+  pull-requests: write
+
 jobs:
-  trunk:
-    name: Trunk Check
+  format:
+    name: Trunk Fmt
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
-      checks: write
-      pull-requests: write
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Trunk Fmt
         run: npx trunk fmt --all
+
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style(ci): apply auto-formatting via trunk fmt"
+
+  check:
+    name: Trunk Check
+    needs: [format]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Trunk Check
         uses: trunk-io/trunk-action@v1
