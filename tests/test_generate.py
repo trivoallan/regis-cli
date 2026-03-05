@@ -43,11 +43,13 @@ def test_generate_gitlab_success():
 
     with runner.isolated_filesystem():
         # Provide input manually to select gitlab
-        # 1. Name, 2. Slug (Accept Default), 3. Platform (Choose 2 for gitlab), 4-8. Defaults
         inputs = [
             "RegiS GitLab",
             "",  # Accept default slug
             "2",  # Select gitlab
+            "",
+            "",
+            "",
             "",
             "",
             "",
