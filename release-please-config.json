@@ -4,7 +4,8 @@
       "release-type": "python",
       "extra-files": [
         "cookiecutters/consumer/cookiecutter.json",
-        "docs/antora.yml"
+        "docs/antora.yml",
+        "antora-playbook.yml"
       ]
     }
   }
