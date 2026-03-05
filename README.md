@@ -29,10 +29,6 @@ Comprehensive documentation, including installation and usage guides, is availab
 | `size`       | Analyzes image size and layer distribution for optimization.                           |
 | `versioning` | Ensures semantic versioning consistency and tag validation.                            |
 
-## License
-
-MIT
-
 ---
 
 ## Report Preview
