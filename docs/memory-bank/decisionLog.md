@@ -16,3 +16,4 @@
 - **Decision**: Update `evaluate` in `engine.py` to add type checking and safety guards for playbook links.
 - **Decision**: Integrate GitHub Actions metadata into the template workflow using `regis-cli --meta`.
 - **Rationale**: Prevent `AttributeError` crashes when link URLs are null or missing in playbook definitions. Improved metadata integration ensures better traceability in CI/CD.
+- 2026-03-05: Migrated CI linting from Super-Linter to Trunk to unify local and CI linting experience and improve performance.
