@@ -46,7 +46,7 @@ def _format_time(v: str) -> str:
         return v
 
 
-def _format_number(v: object) -> str:
+def _format_number(v: Any) -> str:
     try:
         return f"{int(v):,}"
     except (ValueError, TypeError):
@@ -63,7 +63,9 @@ _WIDGET_ENV.filters["format_number"] = _format_number
 
 
 def _resolve_template(
-    template_str: Any, context: dict[str, Any], nested_context: dict[str, Any] | None = None
+    template_str: Any,
+    context: dict[str, Any],
+    nested_context: dict[str, Any] | None = None,
 ) -> Any:
     """Evaluate a string strictly as a Jinja2 template."""
     if not isinstance(template_str, str):
@@ -102,7 +104,7 @@ def _resolve_path(
     clean_path = path.strip("{} ").replace("[", ".").replace("]", "")
 
     parts = clean_path.split(".")
-    val = context
+    val: Any = context
     for part in parts:
         if not part:
             continue

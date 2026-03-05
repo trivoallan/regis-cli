@@ -91,13 +91,14 @@ class MissingDataTracker(dict):
         super().__init__(data)
         self.missing_accessed = False
         self.path = path
+        self.accessed_keys: set[str]  # declared here; assigned in both branches below
         # If this is a nested tracker, use the root tracker's accessed_keys set
         if root_tracker:
             self.root = root_tracker
             self.accessed_keys = root_tracker.accessed_keys
         else:
             self.root = self
-            self.accessed_keys: set[str] = set()
+            self.accessed_keys = set()
 
     def __getitem__(self, key: str) -> Any:
         full_key = f"{self.path}.{key}" if self.path else key
