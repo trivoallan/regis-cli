@@ -11,7 +11,7 @@
 - Automated Antora documentation publishing to GitHub Pages.
 
 ## In Progress
-- Improving documentation for CI/CD integration (moved Cookiecutter, added tips).
+- Improving documentation for CI/CD integration (moved Cookiecutter, added tips, added C4 diagrams).
 
 ## Future Roadmap
 - Additional analyzers (e.g., custom compliance checks).
