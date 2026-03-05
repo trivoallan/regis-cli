@@ -6,7 +6,7 @@
 * Integrations
 ** xref:integrations/github.adoc[GitHub]
 ** xref:integrations/gitlab.adoc[GitLab]
-* xref:cookiecutter.adoc[Quickstart with Cookiecutter]
+** xref:integrations/cookiecutter.adoc[Quickstart with Cookiecutter]
 * Schemas
 ** xref:schemas/skopeo.adoc[Skopeo]
 ** xref:schemas/dockle.adoc[Dockle]
