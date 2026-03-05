@@ -1,11 +1,11 @@
 = Quickstart with Cookiecutter
 
-The `regis-cli` Cookiecutter template allows you to bootstrap a new Git repository dedicated to container image analysis and security scoring.
+The `regis-cli` project generation feature allows you to bootstrap a new Git repository dedicated to container image analysis and security scoring. It uses a Cookiecutter template internally to set up everything you need.
 
 == Prerequisites
 
-* Install Cookiecutter: `pip install cookiecutter` or `brew install cookiecutter`
-* Access to the `regis-cli` repository (local or remote)
+* Access to the `regis-cli` repository (local or remote).
+* The `regis-cli` tool installed in your environment.
 
 == Creating a New Repository
 
@@ -13,11 +13,11 @@ Follow these steps to create your analysis project:
 
 === 1. Generate the Project
 
-Run Cookiecutter pointing to the `cookiecutter/` directory in this repository:
+Use the `regis-cli generate` command pointing to the `cookiecutter/` directory in this repository:
 
 [source,bash]
 ----
-pipenv run cookiecutter cookiecutter/
+regis-cli generate cookiecutter/
 ----
 
 [NOTE]
@@ -66,30 +66,27 @@ git commit -m "feat: initial bootstrap"
 
 == Post-Generation Setup
 
-To enable the fully automated reporting workflow, you must perform the following steps in your GitHub repository:
+To enable the fully automated reporting workflow, you must perform the following steps in your chosen platform:
 
-=== 1. Enable GitHub Pages
+=== For GitLab (Recommended)
 
-The generated workflow is designed to publish reports to GitHub Pages.
+The GitLab integration is highly automated. Simply push your code to a GitLab repository, and the pipelines will be ready. See xref:gitlab.adoc[GitLab CI] for details on report publishing.
+
+=== For GitHub
 
 . Go to your repository **Settings**.
 . Navigate to **Pages** in the sidebar.
 . Under **Build and deployment**, set the **Source** to **GitHub Actions**.
 
-=== 2. Configure Secrets (Optional)
-
-If you are analyzing private images, ensure your GitHub Actions environment has the necessary credentials (e.g., `GH_TOKEN` or registry logins) as described in the xref:github.adoc[GitHub Workflow guide].
-
 == Running Your First Analysis
 
-Once pushed to GitHub, you can trigger a manual analysis:
+Once pushed to your platform, you can trigger a manual analysis:
 
-. Go to the **Actions** tab in your repository.
-. Select the **Image Analysis** workflow.
-. Click **Run workflow**.
+. Locate the **Image Analysis** workflow/pipeline.
+. Run the job manually.
 . Enter the URL of the image you want to analyze (e.g., `ghcr.io/my-org/my-app:latest`).
 
-The workflow will run the analysis, commit the reports to your repository, and deploy the updated site to GitHub Pages.
+The workflow will run the analysis, commit the reports to your repository, and deploy the updated site.
 
 == Manual Usage
 
@@ -97,5 +94,5 @@ You can also run the analysis locally using the `--site` flag to generate the HT
 
 [source,bash]
 ----
-pipenv run regis-cli analyze my-image:latest --site
+regis-cli analyze my-image:latest -f html --site
 ----
