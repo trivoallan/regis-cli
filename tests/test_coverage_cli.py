@@ -36,11 +36,11 @@ def test_version_cmd(mock_version):
     assert "regis-cli version 1.2.3" in result.output
 
 
-def test_generate_no_cookiecutter():
+def test_bootstrap_no_cookiecutter():
     with patch.dict("sys.modules", {"cookiecutter.main": None}):
         runner = CliRunner()
         # We need a path that exists for template_path
-        result = runner.invoke(main, ["generate", ".", "out"])
+        result = runner.invoke(main, ["bootstrap", "repository", ".", "--no-input"])
         assert "cookiecutter not found" in result.output
 
 
