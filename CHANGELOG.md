@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.11.0](https://github.com/trivoallan/regis-cli/compare/v0.10.0...v0.11.0) (2026-03-05)
+
+
+### Features
+
+* **cli:** Add CLI command to check image manifest accessibility. Use it to prevent bogus requests. ([be291ee](https://github.com/trivoallan/regis-cli/commit/be291ee5e475c9617187549df2a88f8b7d229c67))
+* **playbook:** Introduce configurable additional MR content generation from templates ([340f44d](https://github.com/trivoallan/regis-cli/commit/340f44d04891039080603fa2a86ba634f49ad82c))
+
+
+### Documentation
+
+* **playbook:** Document GitLab MR checklists with conditional display and pre-checking based on analysis results. ([9ca7a85](https://github.com/trivoallan/regis-cli/commit/9ca7a85fa885f566591dff68617924337b2cff7b))
+
 ## [0.10.0](https://github.com/trivoallan/regis-cli/compare/v0.9.0...v0.10.0) (2026-03-04)
 
 
