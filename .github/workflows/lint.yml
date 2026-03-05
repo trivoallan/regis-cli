@@ -23,5 +23,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Trunk Fmt
+        run: npx trunk fmt --all
+
       - name: Trunk Check
         uses: trunk-io/trunk-action@v1

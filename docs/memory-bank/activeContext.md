@@ -44,7 +44,10 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Corrected the Alpine example report URL in `README.md` to point to the versioned documentation path.
 - Added `README.md` to `release-please-config.json` `extra-files` to ensure consistent versioning and updates.
 - Redesign of `README.md` now properly redirects all technical documentation to the official Antora site.
+- Relocated the `License` section to the absolute end of `README.md` for a cleaner layout.
+- Updated `.github/workflows/lint.yml` to run `trunk fmt --all` prior to `trunk check`.
 
 ## Next Steps
 
+- Monitor the CI pipeline to ensure `trunk fmt` and `trunk check` work as expected.
 - Push the changes and open a PR.
