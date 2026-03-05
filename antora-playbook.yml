@@ -6,10 +6,6 @@ content:
   sources:
     - url: .
       branches: [main]
-      version: "main"
-      start_path: docs
-    - url: .
-      tags: ["v0.10.0"] # x-release-please-version
       start_path: docs
 ui:
   bundle:
