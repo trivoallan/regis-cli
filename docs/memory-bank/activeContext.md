@@ -23,6 +23,7 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Moved `cookiecutter.adoc` to `docs/modules/ROOT/pages/integrations/cookiecutter.adoc`.
 - Updated navigation to place Quickstart with Cookiecutter under Integrations.
 - Added utility tips for Cookiecutter template in both `github.adoc` and `gitlab.adoc`.
+- Added C4 Context and Container diagrams to `docs/modules/ROOT/pages/overview.adoc`.
 
 
 ## Next Steps

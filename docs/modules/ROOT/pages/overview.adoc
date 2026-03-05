@@ -17,27 +17,49 @@ You use `regis-cli` to:
 
 [mermaid]
 ....
-graph TD
-    User["User / CI Pipeline"] --> CLI["CLI Layer (Click)"]
-    CLI --> Engine["Analysis Engine"]
+C4Context
+    title System Context diagram for regis-cli
     
-    subgraph "Data Extraction"
-        Engine --> A1["Skopeo Analyzer"]
-        Engine --> A2["Trivy Analyzer"]
-        Engine --> A3["Hadolint Analyzer"]
-        Engine --> A4["Dockle Analyzer"]
-        Engine --> AN["... Other Analyzers"]
-    end
+    Person(user, "User / CI Bot", "A developer or a CI/CD pipeline.")
+    System(regis, "regis-cli", "Analyzes container images and generates reports.")
     
-    A1 & A2 & A3 & A4 & AN --> Registry["Container Registry"]
+    System_Ext(registry, "Container Registry", "External registry (GHCR, Docker Hub, etc.).")
+    System_Ext(tools, "Security Tools", "External binaries (Trivy, Skopeo, Hadolint).")
+
+    Rel(user, regis, "Uses", "CLI")
+    Rel(regis, tools, "Orchestrates", "Shell")
+    Rel(tools, registry, "Queries", "HTTPS")
+    Rel(regis, user, "Delivers reports", "HTML/JSON")
+....
+
+=== Container View
+
+[mermaid]
+....
+C4Container
+    title Container diagram for regis-cli
+
+    Person(user, "User / CI Bot", "A developer or a CI/CD pipeline.")
     
-    Engine --> Playbook["Playbook Engine (JSON Logic)"]
-    Playbook --> Results["Consolidated Results"]
-    
-    Results --> HTML["HTML Report (Jinja2)"]
-    Results --> JSON["JSON Report"]
-    
-    HTML & JSON --> Output["Output Directory"]
+    System_Boundary(boundary, "regis-cli") {
+        Container(cli, "CLI Application", "Python, Click", "Handles user input.")
+        Container(engine, "Analysis Engine", "Python", "Manages analyzer lifecycle.")
+        Container(playbook, "Playbook Engine", "Python, JSON Logic", "Evaluates security rules.")
+        Container(reporting, "Reporting Engine", "Python, Jinja2", "Generates reports.")
+        Container(connectors, "Registry Connectors", "Python", "Interacts with external tools.")
+    }
+
+    System_Ext(registry, "Container Registry", "External registry.")
+    System_Ext(tools, "Security Tools", "Trivy, Skopeo, Hadolint, Dockle.")
+
+    Rel(user, cli, "Invokes", "CLI")
+    Rel(cli, engine, "Triggers", "Calls")
+    Rel(engine, connectors, "Uses", "Calls")
+    Rel(connectors, tools, "Executes", "Subprocess")
+    Rel(tools, registry, "Queries", "HTTPS")
+    Rel(engine, playbook, "Metadata", "Data")
+    Rel(playbook, reporting, "Results", "Data")
+    Rel(reporting, user, "Outputs", "Files")
 ....
 
 == Core Components
