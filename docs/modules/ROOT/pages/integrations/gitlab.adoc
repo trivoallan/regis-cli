@@ -9,19 +9,12 @@ This guide explains how to integrate `regis-cli` into your GitLab CI/CD pipeline
 * GitLab Runner with Docker executor.
 * (Optional) `glab` CLI installed locally.
 
-== Bootstrapping a New Project
 
-You can use `cookiecutter` to quickly create a new GitLab repository pre-configured for `regis-cli`.
+[TIP]
+====
+To quickly bootstrap a new GitLab repository pre-configured with `regis-cli` and GitLab CI, you can use our xref:cookiecutter.adoc[Cookiecutter template].
+====
 
-[source,bash]
-----
-# Generate the project from the unified template (choose 'gitlab')
-pipenv run cookiecutter cookiecutter/
-
-# Create the repository on GitLab and push
-cd <your-project-slug>
-glab repo create --public
-----
 
 == GitLab CI Configuration
 

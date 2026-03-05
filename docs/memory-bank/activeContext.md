@@ -20,6 +20,10 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Updated `playbook.schema.json`, `engine.py`, `default.yaml`, and `test_playbook_engine.py` (27 tests pass).
 - Updated `docs/modules/ROOT/pages/playbooks.adoc` — checklist section documents `show_if`/`check_if`.
 - Updated `docs/modules/ROOT/pages/integrations/gitlab.adoc` — pipeline diagram and job descriptions reflect refactored pipeline.
+- Moved `cookiecutter.adoc` to `docs/modules/ROOT/pages/integrations/cookiecutter.adoc`.
+- Updated navigation to place Quickstart with Cookiecutter under Integrations.
+- Added utility tips for Cookiecutter template in both `github.adoc` and `gitlab.adoc`.
+
 
 ## Next Steps
 
