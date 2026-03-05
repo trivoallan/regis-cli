@@ -48,12 +48,20 @@ def _format_time(v: str) -> str:
         return v
 
 
+def _format_number(v: object) -> str:
+    try:
+        return f"{int(v):,}"
+    except (ValueError, TypeError):
+        return str(v)
+
+
 _WIDGET_ENV = Environment(
     loader=BaseLoader(), undefined=ChainableUndefined, autoescape=True
 )
 _WIDGET_ENV.filters["format_date"] = _format_date
 _WIDGET_ENV.filters["format_datetime"] = _format_datetime
 _WIDGET_ENV.filters["format_time"] = _format_time
+_WIDGET_ENV.filters["format_number"] = _format_number
 
 
 def _resolve_template(
