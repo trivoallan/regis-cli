@@ -40,8 +40,9 @@
 ***** [[properties_integrations_properties_gitlab_properties_checklist_items_properties_check_if]]**`check_if`** *(object)*: Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ]).
 *** [[properties_integrations_properties_gitlab_properties_templates]]**`templates`** *(array)*: URLs to Cookiecutter templates that will be rendered and added to the Merge Request branch.
 **** [[properties_integrations_properties_gitlab_properties_templates_items]]**Items** *(object)*: Cannot contain additional properties.
-***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_url]]**`url`** *(string, required)*: URL or path to the Cookiecutter template.
-***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_condition]]**`condition`** *(object)*: Optional JsonLogic expression. If provided, the template is only rendered when the expression evaluates to truthy.
+***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_url]]**`url`** *(string, required)*: Cookiecutter template URL or path.
+***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_directory]]**`directory`** *(string)*: Optional subdirectory within the repository containing the template.
+***** [[properties_integrations_properties_gitlab_properties_templates_items_properties_condition]]**`condition`**: JSON Logic expression to conditionally render the template. Refer to *[jsonlogic.schema.json](:///jsonlogic.schema.json#)*.
 == Definitions
 * [[%24defs_page]]**`page`** *(object)*: A playbook page containing sections. Cannot contain additional properties.
 ** [[%24defs_page_properties_title]]**`title`** *(string, required)*: Display name of the page.

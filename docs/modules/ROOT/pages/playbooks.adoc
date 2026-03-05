@@ -156,7 +156,10 @@ Each item must have a `url` and an optional `condition`:
 | Field | Description
 
 | `url`
-| The HTTP URL or local path to a Cookiecutter template folder.
+| The HTTP URL or local path to a Cookiecutter template folder or repository.
+
+| `directory`
+| If `url` points to an overarching Git repository containing multiple environments, this specifies the subdirectory containing the Cookiecutter template.
 
 | `condition`
 | A JSON Logic expression. If provided, the template is only evaluated and generated when the condition evaluates to truthy.
@@ -168,6 +171,7 @@ integrations:
   gitlab:
     templates:
       - url: "https://github.com/my-org/security-evidence-template"
+        directory: "templates/my-evidence" # optional
         condition: { ">": [{ var: results.trivy.critical_count }, 0] }
 ----
 

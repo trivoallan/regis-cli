@@ -133,8 +133,18 @@
                 "required": ["url"],
                 "additionalProperties": false,
                 "properties": {
-                  "url": { "type": "string", "description": "URL or path to the Cookiecutter template." },
-                  "condition": { "type": "object", "description": "Optional JsonLogic expression. If provided, the template is only rendered when the expression evaluates to truthy." }
+                  "url": {
+                    "type": "string",
+                    "description": "Cookiecutter template URL or path."
+                  },
+                  "directory": {
+                    "type": "string",
+                    "description": "Optional subdirectory within the repository containing the template."
+                  },
+                  "condition": {
+                    "description": "JSON Logic expression to conditionally render the template.",
+                    "$ref": "jsonlogic.schema.json"
+                  }
                 }
               }
             }

@@ -497,7 +497,7 @@ class TestGitLabTemplates:
         """Templates with no condition are always added."""
         pb = self._make_playbook([{"url": "https://example.com/template"}])
         result = evaluate(pb, {})
-        assert result["mr_templates"] == ["https://example.com/template"]
+        assert result["mr_templates"] == [{"url": "https://example.com/template"}]
 
     def test_truthy_condition_includes_template(self):
         """Templates whose condition evaluates to True are included."""
@@ -511,7 +511,7 @@ class TestGitLabTemplates:
         )
         report = {"results": {"ok": True}}
         result = evaluate(pb, report)
-        assert result["mr_templates"] == ["local/path/to/template"]
+        assert result["mr_templates"] == [{"url": "local/path/to/template"}]
 
     def test_falsy_condition_excludes_template(self):
         """Templates whose condition evaluates to False are excluded."""

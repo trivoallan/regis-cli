@@ -572,16 +572,24 @@ def analyze(
                 err=True,
             )
         else:
-            for tmpl_url in valid_mr_templates:
+            for tmpl_def in valid_mr_templates:
+                tmpl_url = tmpl_def.get("url")
+                tmpl_dir = tmpl_def.get("directory")
                 click.echo(f"  Rendering MR template: {tmpl_url}...", err=True)
                 try:
-                    cookiecutter(
-                        tmpl_url,
-                        no_input=True,
-                        extra_context={"regis": final_report},
-                        output_dir=".",
-                        overwrite_if_exists=True,
-                    )
+                    out_dir = _format_output_path(dir_tmpl, final_report, "json")
+                    out_dir.mkdir(parents=True, exist_ok=True)
+
+                    kwargs = {
+                        "no_input": True,
+                        "extra_context": {"regis": final_report},
+                        "output_dir": str(out_dir),
+                        "overwrite_if_exists": True,
+                    }
+                    if tmpl_dir:
+                        kwargs["directory"] = tmpl_dir
+
+                    cookiecutter(tmpl_url, **kwargs)
                 except Exception as exc:
                     click.echo(
                         f"  Warning: Failed to render template '{tmpl_url}': {exc}",

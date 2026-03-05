@@ -770,7 +770,7 @@ def evaluate(
     # Evaluate GitLab MR templates
     template_defs = gitlab_integration.get("templates", [])
     if template_defs:
-        resolved_templates: list[str] = []
+        resolved_templates: list[dict[str, str]] = []
         for tmpl_def in template_defs:
             url = tmpl_def.get("url")
             if not url:
@@ -792,7 +792,11 @@ def evaluate(
                     )
                     continue
 
-            resolved_templates.append(url)
+            resolved_tmpl = {"url": url}
+            if tmpl_def.get("directory"):
+                resolved_tmpl["directory"] = tmpl_def["directory"]
+            resolved_templates.append(resolved_tmpl)
+
         if resolved_templates:
             result["mr_templates"] = resolved_templates
 

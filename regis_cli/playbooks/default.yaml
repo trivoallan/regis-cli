@@ -300,7 +300,8 @@ integrations:
               ],
           }
     templates:
-      - url: cookiecutters/mr-evidence
+      - url: https://github.com/trivoallan/regis-cli
+        directory: cookiecutters/mr-evidence
 
 links:
   - label: Return to Merge Request

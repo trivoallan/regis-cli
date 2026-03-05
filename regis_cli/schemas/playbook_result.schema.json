@@ -258,9 +258,14 @@
     "mr_templates": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": { "type": "string" },
+          "directory": { "type": "string" }
+        }
       },
-      "description": "URLs of Cookiecutter templates to be run for MR descriptions."
+      "description": "Cookiecutter templates to be run for MR descriptions."
     }
   }
 }
