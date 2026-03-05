@@ -69,7 +69,7 @@ Reports are written to the `reports/` directory by default (e.g., `reports/docke
 
 [IMPORTANT]
 ====
-Our **GitLab integration** is currently the most feature-rich, offering automated Merge Request comments, status updates, and deep CI/CD pipeline integration.
+Our **xref:integrations/gitlab.adoc[GitLab integration]** is currently the most feature-rich, offering automated Merge Request comments, status updates, and deep CI/CD pipeline integration.
 ====
 
 == Next steps
