@@ -1,65 +1,79 @@
 = Get Started
 
-This guide helps you install `regis-cli` and run your first container image analysis.
+`regis-cli` is a powerful Docker registry analysis tool designed to inspect container images, evaluate security policies via playbooks, and generate comprehensive reports.
 
 == Prerequisites
 
-Before you install `regis-cli`, ensure that your environment meets the following requirements:
+The requirements depend on whether you use the Docker image or install the tool locally.
 
-* **Python**: Version 3.10 or later.
-* **Pipenv**: For managing dependencies and virtual environments.
-* **External Tools**:
-** **Skopeo**: Used for multi-architecture registry inspection.
-** **Trivy** (Optional): Required for SBOM and vulnerability analysis.
-** **Hadolint** (Optional): Required for Dockerfile linting.
-** **Dockle** (Optional): Required for container image security linting.
+* **Core Requirement**:
+** **Skopeo**: Essential for multi-architecture registry inspection and metadata extraction.
+* **Optional Analyzers**:
+** **Trivy**: Required for vulnerability scanning and SBOM generation.
+** **Hadolint**: Required for Dockerfile linting.
+** **Dockle**: Required for container image security linting.
 
 == Installation
 
-To install `regis-cli` in your project, follow these steps:
+=== Docker (Recommended)
 
-1. Clone the repository or navigate to your project directory.
-2. Install the dependencies using Pipenv:
+The easiest way to use `regis-cli` without managing local dependencies is to use the official Docker image. It comes pre-packaged with Skopeo, Trivy, Hadolint, and Dockle.
 
 [source,bash]
 ----
-pipenv install
+docker run --rm trivoallan/regis-cli --help
 ----
 
-This command creates a virtual environment and installs all required packages as defined in the `Pipfile`.
+=== Local Installation
+
+If you prefer a local installation, ensure you have **Python 3.14 or later** and **Skopeo** installed in your system.
+
+[source,bash]
+----
+pip install regis-cli
+----
+
+[TIP]
+====
+For developers wanting to contribute to the project, use **Pipenv**:
+`pipenv install --dev`
+====
 
 == Run your first analysis
 
-You can analyze any public container image without additional configuration. To analyze the latest `nginx` image and view the results in your terminal as JSON, run the following command:
+You can analyze any public container image. By default, `regis-cli` produces a JSON report on `stdout`.
 
 [source,bash]
 ----
-pipenv run regis-cli analyze nginx:latest
+regis-cli analyze nginx:latest
 ----
 
-== Generate a report site
+=== Generating a Web Report
 
-To generate a rich HTML report instead of JSON output, use the `--site` (or `-s`) flag:
+To generate a rich HTML report alongside the JSON report, use the `--site` (or `-s`) flag:
 
 [source,bash]
 ----
-pipenv run regis-cli analyze nginx:latest --site
+regis-cli analyze nginx:latest --site
 ----
 
-By default, the tool writes reports to the `reports/` directory. You can find the HTML report at `reports/docker.io/library/nginx/latest/index.html`.
+Reports are written to the `reports/` directory by default (e.g., `reports/docker.io/library/nginx/sha256-.../index.html`).
 
-== Use the security playbook
+== Advanced Tools
 
-To get the most out of `regis-cli`, you should evaluate your images against a security playbook. We recommend starting with our default playbook, which includes rules for vulnerability counts and image freshness:
+`regis-cli` includes specialized subcommands for advanced workflows:
 
-[source,bash]
-----
-pipenv run regis-cli analyze nginx:latest --site \
-  -p https://raw.githubusercontent.com/trivoallan/regis-cli/refs/heads/main/regis_cli/playbooks/default.yaml
-----
+* `generate`: Infrastructure as Code (IaC) for your analysis. Bootstrap a new Git repository with pre-configured CI/CD.
+* `evaluate`: Test playbooks against existing analysis reports without re-fetching image data.
+* `gitlab`: Seamless integration with GitLab CI/CD for automated reporting and MR updates.
+
+[IMPORTANT]
+====
+Our **xref:integrations/gitlab.adoc[GitLab integration]** is currently the most feature-rich, offering automated Merge Request comments, status updates, and deep CI/CD pipeline integration.
+====
 
 == Next steps
 
-* **Registry Authentication**: Learn how to analyze private images by providing credentials.
-* **Custom Playbooks**: Define your own security and compliance rules in the xref:playbooks.adoc[Understand Playbooks] guide.
+* **Custom Playbooks**: Define your own security rules in the xref:playbooks.adoc[Understand Playbooks] guide.
+* **Project Bootstrapping**: Learn how to use `regis-cli generate` in the xref:integrations/cookiecutter.adoc[Quickstart with Cookiecutter] guide.
 * **CI/CD Integration**: See our guides for xref:integrations/github.adoc[GitHub Workflows] and xref:integrations/gitlab.adoc[GitLab CI].
