@@ -797,10 +797,6 @@ def bootstrap_repository(output_dir: str, no_input: bool) -> None:
         ) from None
 
     template_path = resources.files("regis_cli") / ".." / "cookiecutters" / "repository"
-    if not template_path.exists():
-        # Fallback for installed package if cookiecutters are in a different location
-        # For now, we assume they are available relative to the source.
-        pass
 
     click.echo(f"Bootstrapping repository into {output_dir}...", err=True)
     try:
