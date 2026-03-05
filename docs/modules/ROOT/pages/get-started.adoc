@@ -57,7 +57,7 @@ To generate a rich HTML report alongside the JSON report, use the `--site` (or `
 regis-cli analyze nginx:latest --site
 ----
 
-Reports are written to the `reports/` directory by default (e.g., `reports/docker.io/library/nginx/latest/index.html`).
+Reports are written to the `reports/` directory by default (e.g., `reports/docker.io/library/nginx/sha256-.../index.html`).
 
 == Advanced Tools
 
