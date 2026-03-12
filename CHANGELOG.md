@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.15.0](https://github.com/trivoallan/regis-cli/compare/v0.14.2...v0.15.0) (2026-03-11)
+
+
+### Features
+
+* **ci:** add OCI image labels to Dockerfile ([#39](https://github.com/trivoallan/regis-cli/issues/39)) ([8deeb50](https://github.com/trivoallan/regis-cli/commit/8deeb50114a3a54c841e3fa7bce8ae0cba5a746b))
+* **ci:** add standard OCI annotations to Dockerfile ([#43](https://github.com/trivoallan/regis-cli/issues/43)) ([#40](https://github.com/trivoallan/regis-cli/issues/40)) ([6c16c42](https://github.com/trivoallan/regis-cli/commit/6c16c4256143f1139b4d46fcfa25ead7d6cc212a))
+* **ci:** allow Docker authentication to prevent rate limits ([#45](https://github.com/trivoallan/regis-cli/issues/45)) ([15f985b](https://github.com/trivoallan/regis-cli/commit/15f985bc13bcdd300746f2653a514cf7745b229f))
+
 ## [0.14.2](https://github.com/trivoallan/regis-cli/compare/v0.14.1...v0.14.2) (2026-03-05)
 
 ### Documentation
