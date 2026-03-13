@@ -31,10 +31,13 @@ jobs:
         with:
           ref: ${{ github.head_ref || github.ref_name }}
 
-      - name: Trunk Format
+      - name: Setup Trunk
         uses: trunk-io/trunk-action@v1
         with:
-          check-mode: fmt
+          check-mode: none
+
+      - name: Trunk Format
+        run: trunk fmt --all
 
       - name: Commit and Push Changes
         uses: stefanzweifel/git-auto-commit-action@v5
