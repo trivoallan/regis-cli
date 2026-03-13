@@ -30,7 +30,14 @@
     "request": {
       "type": "object",
       "description": "Metadata describing the analysis request.",
-      "required": ["url", "registry", "repository", "tag", "analyzers", "timestamp"],
+      "required": [
+        "url",
+        "registry",
+        "repository",
+        "tag",
+        "analyzers",
+        "timestamp"
+      ],
       "properties": {
         "url": {
           "type": "string",

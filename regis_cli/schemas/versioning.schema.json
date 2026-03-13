@@ -4,7 +4,15 @@
   "title": "Versioning Analyzer Report",
   "description": "Report analyzing tag naming conventions and semver adoption.",
   "type": "object",
-  "required": ["analyzer", "repository", "total_tags", "dominant_pattern", "semver_compliant_percentage", "patterns", "variants"],
+  "required": [
+    "analyzer",
+    "repository",
+    "total_tags",
+    "dominant_pattern",
+    "semver_compliant_percentage",
+    "patterns",
+    "variants"
+  ],
   "properties": {
     "analyzer": {
       "type": "string",
@@ -19,7 +27,16 @@
     },
     "dominant_pattern": {
       "type": "string",
-      "enum": ["semver", "semver-prerelease", "semver-variant", "calver", "numeric", "hash", "named", "unknown"]
+      "enum": [
+        "semver",
+        "semver-prerelease",
+        "semver-variant",
+        "calver",
+        "numeric",
+        "hash",
+        "named",
+        "unknown"
+      ]
     },
     "release_lines": {
       "type": "array",
@@ -38,7 +55,15 @@
         "properties": {
           "pattern": {
             "type": "string",
-            "enum": ["semver", "semver-prerelease", "semver-variant", "calver", "numeric", "hash", "named"]
+            "enum": [
+              "semver",
+              "semver-prerelease",
+              "semver-variant",
+              "calver",
+              "numeric",
+              "hash",
+              "named"
+            ]
           },
           "count": {
             "type": "integer",

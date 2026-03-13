@@ -4,7 +4,17 @@
   "title": "End-of-Life Analyzer Report",
   "description": "Report containing lifecycle information from endoflife.date.",
   "type": "object",
-  "required": ["analyzer", "repository", "product", "product_found", "tag", "matched_cycle", "is_eol", "active_cycles_count", "eol_cycles_count"],
+  "required": [
+    "analyzer",
+    "repository",
+    "product",
+    "product_found",
+    "tag",
+    "matched_cycle",
+    "is_eol",
+    "active_cycles_count",
+    "eol_cycles_count"
+  ],
   "properties": {
     "analyzer": {
       "type": "string",

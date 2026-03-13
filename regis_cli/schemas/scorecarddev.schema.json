@@ -4,7 +4,14 @@
   "title": "Scorecard Analyzer Report",
   "description": "Report containing OpenSSF Scorecard security assessment for the image source repository.",
   "type": "object",
-  "required": ["analyzer", "repository", "source_repo", "scorecard_available", "score", "checks"],
+  "required": [
+    "analyzer",
+    "repository",
+    "source_repo",
+    "scorecard_available",
+    "score",
+    "checks"
+  ],
   "properties": {
     "analyzer": { "type": "string", "const": "scorecarddev" },
     "repository": {

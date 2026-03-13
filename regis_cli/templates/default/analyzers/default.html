@@ -1,5 +1,15 @@
 {% import theme ~ "/macros.html" as m with context %}
 
 <article>
-    <pre style="font-size: 0.8rem; background: var(--pico-code-background-color); padding: 1rem; border-radius: 4px; overflow-x: auto;">{{ data|tojson(indent=2)|e }}</pre>
+  <pre
+    style="
+      font-size: 0.8rem;
+      background: var(--pico-code-background-color);
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+    "
+  >
+{{ data|tojson(indent=2)|e }}</pre
+  >
 </article>

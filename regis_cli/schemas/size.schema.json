@@ -4,7 +4,18 @@
   "title": "Size Analyzer Report",
   "description": "Image size breakdown.",
   "type": "object",
-  "required": ["analyzer", "repository", "tag", "multi_arch", "total_compressed_bytes", "total_compressed_human", "layer_count", "config_size_bytes", "layers", "platforms"],
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "multi_arch",
+    "total_compressed_bytes",
+    "total_compressed_human",
+    "layer_count",
+    "config_size_bytes",
+    "layers",
+    "platforms"
+  ],
   "properties": {
     "analyzer": { "type": "string", "const": "size" },
     "repository": { "type": "string" },
@@ -32,7 +43,12 @@
       "type": ["array", "null"],
       "items": {
         "type": "object",
-        "required": ["platform", "compressed_bytes", "compressed_human", "layer_count"],
+        "required": [
+          "platform",
+          "compressed_bytes",
+          "compressed_human",
+          "layer_count"
+        ],
         "properties": {
           "platform": { "type": "string" },
           "compressed_bytes": { "type": "integer", "minimum": 0 },

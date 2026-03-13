@@ -4,7 +4,16 @@
   "title": "Provenance Analyzer Report",
   "description": "Build provenance and supply-chain attestation information.",
   "type": "object",
-  "required": ["analyzer", "repository", "tag", "has_provenance", "has_cosign_signature", "source_tracked", "indicators_count", "indicators"],
+  "required": [
+    "analyzer",
+    "repository",
+    "tag",
+    "has_provenance",
+    "has_cosign_signature",
+    "source_tracked",
+    "indicators_count",
+    "indicators"
+  ],
   "properties": {
     "analyzer": { "type": "string", "const": "provenance" },
     "repository": { "type": "string" },
