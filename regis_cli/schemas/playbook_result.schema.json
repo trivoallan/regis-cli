@@ -33,10 +33,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "label",
-          "url"
-        ],
+        "required": ["label", "url"],
         "properties": {
           "label": {
             "type": "string"
@@ -64,10 +61,7 @@
             "type": "string"
           },
           "slug": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": ["string", "null"]
           },
           "score": {
             "type": "integer",
@@ -118,11 +112,7 @@
                   "type": "object",
                   "additionalProperties": {
                     "type": "object",
-                    "required": [
-                      "total",
-                      "passed",
-                      "percentage"
-                    ],
+                    "required": ["total", "passed", "percentage"],
                     "properties": {
                       "total": {
                         "type": "integer",
@@ -144,11 +134,7 @@
                   "type": "object",
                   "additionalProperties": {
                     "type": "object",
-                    "required": [
-                      "total",
-                      "passed",
-                      "percentage"
-                    ],
+                    "required": ["total", "passed", "percentage"],
                     "properties": {
                       "total": {
                         "type": "integer",
@@ -170,11 +156,7 @@
                   "type": "array",
                   "items": {
                     "type": "object",
-                    "required": [
-                      "name",
-                      "title",
-                      "passed"
-                    ],
+                    "required": ["name", "title", "passed"],
                     "properties": {
                       "name": {
                         "type": "string"
@@ -183,10 +165,7 @@
                         "type": "string"
                       },
                       "level": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": ["string", "null"]
                       },
                       "tags": {
                         "type": "array",
@@ -205,11 +184,7 @@
                       },
                       "status": {
                         "type": "string",
-                        "enum": [
-                          "passed",
-                          "failed",
-                          "incomplete"
-                        ]
+                        "enum": ["passed", "failed", "incomplete"]
                       },
                       "condition": {
                         "type": "string"

@@ -584,9 +584,7 @@
           "version": "0.12.0",
           "type": "library",
           "purl": "pkg:pypi/regis-cli@0.12.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "github.com/russross/blackfriday/v2",
@@ -740,9 +738,7 @@
           "version": "0.12.0",
           "type": "library",
           "purl": "pkg:pypi/regis-cli@0.12.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "github.com/go-logr/stdr",
@@ -805,10 +801,7 @@
           "version": "3.152",
           "type": "library",
           "purl": "pkg:deb/debian/adduser@3.152?arch=all&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "apt",
@@ -828,20 +821,14 @@
           "version": "13.8+deb13u3",
           "type": "library",
           "purl": "pkg:deb/debian/base-files@13.8%2Bdeb13u3?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "verbatim"
-          ]
+          "licenses": ["GPL-2.0-or-later", "verbatim"]
         },
         {
           "name": "base-passwd",
           "version": "3.6.7",
           "type": "library",
           "purl": "pkg:deb/debian/base-passwd@3.6.7?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only",
-            "public-domain"
-          ]
+          "licenses": ["GPL-2.0-only", "public-domain"]
         },
         {
           "name": "bash",
@@ -892,20 +879,14 @@
           "version": "20250419",
           "type": "library",
           "purl": "pkg:deb/debian/ca-certificates@20250419?arch=all&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only",
-            "MPL-2.0"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only", "MPL-2.0"]
         },
         {
           "name": "containernetworking-plugins",
           "version": "1.1.1+ds1-3+b17",
           "type": "library",
           "purl": "pkg:deb/debian/containernetworking-plugins@1.1.1%2Bds1-3%2Bb17?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "coreutils",
@@ -958,18 +939,14 @@
           "version": "1.5.91",
           "type": "library",
           "purl": "pkg:deb/debian/debconf@1.5.91?arch=all&distro=debian-13.3",
-          "licenses": [
-            "BSD-2-Clause"
-          ]
+          "licenses": ["BSD-2-Clause"]
         },
         {
           "name": "debian-archive-keyring",
           "version": "2025.1",
           "type": "library",
           "purl": "pkg:deb/debian/debian-archive-keyring@2025.1?arch=all&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later"
-          ]
+          "licenses": ["GPL-2.0-or-later"]
         },
         {
           "name": "debianutils",
@@ -1184,19 +1161,14 @@
           "version": "0.62.2+ds1-2",
           "type": "library",
           "purl": "pkg:deb/debian/golang-github-containers-common@0.62.2%2Bds1-2?arch=all&distro=debian-13.3",
-          "licenses": [
-            "Apache-2.0",
-            "MIT"
-          ]
+          "licenses": ["Apache-2.0", "MIT"]
         },
         {
           "name": "golang-github-containers-image",
           "version": "5.34.2-1",
           "type": "library",
           "purl": "pkg:deb/debian/golang-github-containers-image@5.34.2-1?arch=all&distro=debian-13.3",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "gpg-agent",
@@ -1291,10 +1263,7 @@
           "version": "3.11-4",
           "type": "library",
           "purl": "pkg:deb/debian/grep@3.11-4?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-3.0-or-later",
-            "GPL-3.0-only"
-          ]
+          "licenses": ["GPL-3.0-or-later", "GPL-3.0-only"]
         },
         {
           "name": "gzip",
@@ -1314,20 +1283,14 @@
           "version": "3.25",
           "type": "library",
           "purl": "pkg:deb/debian/hostname@3.25?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "init-system-helpers",
           "version": "1.69~deb13u1",
           "type": "library",
           "purl": "pkg:deb/debian/init-system-helpers@1.69~deb13u1?arch=all&distro=debian-13.3",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "iptables",
@@ -1420,22 +1383,14 @@
           "version": "1:4.0.2-2",
           "type": "library",
           "purl": "pkg:deb/debian/libaudit-common@4.0.2-2?arch=all&distro=debian-13.3&epoch=1",
-          "licenses": [
-            "GPL-2.0-only",
-            "LGPL-2.1-only",
-            "GPL-1.0-only"
-          ]
+          "licenses": ["GPL-2.0-only", "LGPL-2.1-only", "GPL-1.0-only"]
         },
         {
           "name": "libaudit1",
           "version": "1:4.0.2-2+b2",
           "type": "library",
           "purl": "pkg:deb/debian/libaudit1@4.0.2-2%2Bb2?arch=amd64&distro=debian-13.3&epoch=1",
-          "licenses": [
-            "GPL-2.0-only",
-            "LGPL-2.1-only",
-            "GPL-1.0-only"
-          ]
+          "licenses": ["GPL-2.0-only", "LGPL-2.1-only", "GPL-1.0-only"]
         },
         {
           "name": "libblkid1",
@@ -1467,9 +1422,7 @@
           "version": "1.1.0-2+b7",
           "type": "library",
           "purl": "pkg:deb/debian/libbrotli1@1.1.0-2%2Bb7?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "libbsd0",
@@ -1498,10 +1451,7 @@
           "version": "1.0.8-6",
           "type": "library",
           "purl": "pkg:deb/debian/libbz2-1.0@1.0.8-6?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-only"]
         },
         {
           "name": "libc-bin",
@@ -1601,20 +1551,14 @@
           "version": "1:2.75-10+b3",
           "type": "library",
           "purl": "pkg:deb/debian/libcap2@2.75-10%2Bb3?arch=amd64&distro=debian-13.3&epoch=1",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-only",
-            "GPL-2.0-or-later"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-only", "GPL-2.0-or-later"]
         },
         {
           "name": "libcbor0.10",
           "version": "0.10.2-2",
           "type": "library",
           "purl": "pkg:deb/debian/libcbor0.10@0.10.2-2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "libcom-err2",
@@ -1707,20 +1651,14 @@
           "version": "0.280",
           "type": "library",
           "purl": "pkg:deb/debian/libdebconfclient0@0.280?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "BSD-2-Clause",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-2-Clause", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libedit2",
           "version": "3.1-20250104-1",
           "type": "library",
           "purl": "pkg:deb/debian/libedit2@3.1-20250104-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "liberror-perl",
@@ -1739,9 +1677,7 @@
           "version": "2.7.1-2",
           "type": "library",
           "purl": "pkg:deb/debian/libexpat1@2.7.1-2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "libffi8",
@@ -1763,11 +1699,7 @@
           "version": "1.15.0-1+b1",
           "type": "library",
           "purl": "pkg:deb/debian/libfido2-1@1.15.0-1%2Bb1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "BSD-2-Clause",
-            "ISC",
-            "public-domain"
-          ]
+          "licenses": ["BSD-2-Clause", "ISC", "public-domain"]
         },
         {
           "name": "libgcc-s1",
@@ -1781,10 +1713,7 @@
           "version": "1.11.0-7",
           "type": "library",
           "purl": "pkg:deb/debian/libgcrypt20@1.11.0-7?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "LGPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libgdbm-compat4t64",
@@ -1886,9 +1815,7 @@
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libgssapi-krb5-2@1.21.3-5?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libhogweed6t64",
@@ -1952,9 +1879,7 @@
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libk5crypto3@1.21.3-5?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libkeyutils1",
@@ -1973,29 +1898,21 @@
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libkrb5-3@1.21.3-5?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libkrb5support0",
           "version": "1.21.3-5",
           "type": "library",
           "purl": "pkg:deb/debian/libkrb5support0@1.21.3-5?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libksba8",
           "version": "1.6.7-2+b1",
           "type": "library",
           "purl": "pkg:deb/debian/libksba8@1.6.7-2%2Bb1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-3.0-only",
-            "FSFUL",
-            "LGPL-2.1-or-later"
-          ]
+          "licenses": ["GPL-3.0-only", "FSFUL", "LGPL-2.1-or-later"]
         },
         {
           "name": "liblastlog2-2",
@@ -2059,11 +1976,7 @@
           "version": "1.10.0-4",
           "type": "library",
           "purl": "pkg:deb/debian/liblz4-1@1.10.0-4?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "BSD-2-Clause",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "BSD-2-Clause", "GPL-2.0-only"]
         },
         {
           "name": "liblzma5",
@@ -2109,11 +2022,7 @@
           "version": "1.0.5-3",
           "type": "library",
           "purl": "pkg:deb/debian/libmnl0@1.0.5-3?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "LGPL-2.1-only",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.1-only", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libmount1",
@@ -2152,10 +2061,7 @@
           "version": "1.1.0-1",
           "type": "library",
           "purl": "pkg:deb/debian/libnetfilter-conntrack3@1.1.0-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libnettle8t64",
@@ -2179,20 +2085,14 @@
           "version": "1.0.2-3",
           "type": "library",
           "purl": "pkg:deb/debian/libnfnetlink0@1.0.2-3?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libnftnl11",
           "version": "1.2.9-1",
           "type": "library",
           "purl": "pkg:deb/debian/libnftnl11@1.2.9-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libnghttp2-14",
@@ -2266,10 +2166,7 @@
           "version": "1.8-3",
           "type": "library",
           "purl": "pkg:deb/debian/libnpth0t64@1.8-3?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "LGPL-2.1-or-later",
-            "LGPL-2.1-only"
-          ]
+          "licenses": ["LGPL-2.1-or-later", "LGPL-2.1-only"]
         },
         {
           "name": "libp11-kit0",
@@ -2416,11 +2313,7 @@
           "version": "0.21.2-1.1+b1",
           "type": "library",
           "purl": "pkg:deb/debian/libpsl5t64@0.21.2-1.1%2Bb1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "MIT",
-            "gnulib",
-            "Chromium"
-          ]
+          "licenses": ["MIT", "gnulib", "Chromium"]
         },
         {
           "name": "libreadline8t64",
@@ -2442,10 +2335,7 @@
           "version": "2.4+20151223.gitfa8646d.1-2+b5",
           "type": "library",
           "purl": "pkg:deb/debian/librtmp1@2.4%2B20151223.gitfa8646d.1-2%2Bb5?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only",
-            "LGPL-2.1-only"
-          ]
+          "licenses": ["GPL-2.0-only", "LGPL-2.1-only"]
         },
         {
           "name": "libsasl2-2",
@@ -2502,41 +2392,28 @@
           "version": "2.6.0-2",
           "type": "library",
           "purl": "pkg:deb/debian/libseccomp2@2.6.0-2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "LGPL-2.1-only"
-          ]
+          "licenses": ["LGPL-2.1-only"]
         },
         {
           "name": "libselinux1",
           "version": "3.8.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libselinux1@3.8.1-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "public-domain",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["public-domain", "GPL-2.0-only"]
         },
         {
           "name": "libsemanage-common",
           "version": "3.8.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libsemanage-common@3.8.1-1?arch=all&distro=debian-13.3",
-          "licenses": [
-            "LGPL-2.1-or-later",
-            "LGPL-2.1-only",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.1-or-later", "LGPL-2.1-only", "GPL-2.0-only"]
         },
         {
           "name": "libsemanage2",
           "version": "3.8.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libsemanage2@3.8.1-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "LGPL-2.1-or-later",
-            "LGPL-2.1-only",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.1-or-later", "LGPL-2.1-only", "GPL-2.0-only"]
         },
         {
           "name": "libsepol2",
@@ -2581,21 +2458,14 @@
           "version": "3.46.1-7",
           "type": "library",
           "purl": "pkg:deb/debian/libsqlite3-0@3.46.1-7?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "public-domain",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["public-domain", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libssh2-1t64",
           "version": "1.11.1-1",
           "type": "library",
           "purl": "pkg:deb/debian/libssh2-1t64@1.11.1-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "BSD-3-Clause",
-            "ISC"
-          ]
+          "licenses": ["BSD-3-Clause", "ISC"]
         },
         {
           "name": "libssl3t64",
@@ -2649,11 +2519,7 @@
           "version": "6.5+20250216-2",
           "type": "library",
           "purl": "pkg:deb/debian/libtinfo6@6.5%2B20250216-2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "MIT-X11",
-            "X11",
-            "BSD-3-Clause"
-          ]
+          "licenses": ["MIT-X11", "X11", "BSD-3-Clause"]
         },
         {
           "name": "libudev1",
@@ -2790,23 +2656,14 @@
           "version": "0.8.3-2",
           "type": "library",
           "purl": "pkg:deb/debian/libxxhash0@0.8.3-2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "BSD-2-Clause",
-            "GPL-2.0-or-later",
-            "GPL-2.0-only"
-          ]
+          "licenses": ["BSD-2-Clause", "GPL-2.0-or-later", "GPL-2.0-only"]
         },
         {
           "name": "libzstd1",
           "version": "1.5.7+dfsg-1",
           "type": "library",
           "purl": "pkg:deb/debian/libzstd1@1.5.7%2Bdfsg-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "BSD-3-Clause",
-            "GPL-2.0-only",
-            "Zlib",
-            "MIT"
-          ]
+          "licenses": ["BSD-3-Clause", "GPL-2.0-only", "Zlib", "MIT"]
         },
         {
           "name": "login.defs",
@@ -2850,11 +2707,7 @@
           "version": "1.3.4.20250131-1",
           "type": "library",
           "purl": "pkg:deb/debian/mawk@1.3.4.20250131-1?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only",
-            "X11",
-            "CC-BY-3.0"
-          ]
+          "licenses": ["GPL-2.0-only", "X11", "CC-BY-3.0"]
         },
         {
           "name": "mount",
@@ -2886,31 +2739,21 @@
           "version": "6.5+20250216-2",
           "type": "library",
           "purl": "pkg:deb/debian/ncurses-base@6.5%2B20250216-2?arch=all&distro=debian-13.3",
-          "licenses": [
-            "MIT-X11",
-            "X11",
-            "BSD-3-Clause"
-          ]
+          "licenses": ["MIT-X11", "X11", "BSD-3-Clause"]
         },
         {
           "name": "ncurses-bin",
           "version": "6.5+20250216-2",
           "type": "library",
           "purl": "pkg:deb/debian/ncurses-bin@6.5%2B20250216-2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "MIT-X11",
-            "X11",
-            "BSD-3-Clause"
-          ]
+          "licenses": ["MIT-X11", "X11", "BSD-3-Clause"]
         },
         {
           "name": "netbase",
           "version": "6.5",
           "type": "library",
           "purl": "pkg:deb/debian/netbase@6.5?arch=all&distro=debian-13.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "openssh-client",
@@ -2968,10 +2811,7 @@
           "version": "2.8-2",
           "type": "library",
           "purl": "pkg:deb/debian/patch@2.8-2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "GPL-3.0-or-later",
-            "GPL-3.0-only"
-          ]
+          "licenses": ["GPL-3.0-or-later", "GPL-3.0-only"]
         },
         {
           "name": "perl-base",
@@ -3116,21 +2956,14 @@
           "version": "1.18.0+ds1-1+b5",
           "type": "library",
           "purl": "pkg:deb/debian/skopeo@1.18.0%2Bds1-1%2Bb5?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "Apache-2.0-and-or-Expat",
-            "Apache-2.0",
-            "MIT"
-          ]
+          "licenses": ["Apache-2.0-and-or-Expat", "Apache-2.0", "MIT"]
         },
         {
           "name": "sqv",
           "version": "1.3.0-3+b2",
           "type": "library",
           "purl": "pkg:deb/debian/sqv@1.3.0-3%2Bb2?arch=amd64&distro=debian-13.3",
-          "licenses": [
-            "LGPL-2.0-or-later",
-            "LGPL-2.0-only"
-          ]
+          "licenses": ["LGPL-2.0-or-later", "LGPL-2.0-only"]
         },
         {
           "name": "sysvinit-utils",
@@ -3167,9 +3000,7 @@
           "version": "2025b-4+deb13u1",
           "type": "library",
           "purl": "pkg:deb/debian/tzdata@2025b-4%2Bdeb13u1?arch=all&distro=debian-13.3",
-          "licenses": [
-            "public-domain"
-          ]
+          "licenses": ["public-domain"]
         },
         {
           "name": "util-linux",
@@ -3208,9 +3039,7 @@
           "version": "1:1.3.dfsg+really1.3.1-1+b1",
           "type": "library",
           "purl": "pkg:deb/debian/zlib1g@1.3.dfsg%2Breally1.3.1-1%2Bb1?arch=amd64&distro=debian-13.3&epoch=1",
-          "licenses": [
-            "Zlib"
-          ]
+          "licenses": ["Zlib"]
         },
         {
           "name": "cel.dev/expr",
@@ -6339,63 +6168,49 @@
           "version": "1.4.0",
           "type": "library",
           "purl": "pkg:pypi/arrow@1.4.0",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "attrs",
           "version": "25.4.0",
           "type": "library",
           "purl": "pkg:pypi/attrs@25.4.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "binaryornot",
           "version": "0.4.4",
           "type": "library",
           "purl": "pkg:pypi/binaryornot@0.4.4",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "certifi",
           "version": "2026.2.25",
           "type": "library",
           "purl": "pkg:pypi/certifi@2026.2.25",
-          "licenses": [
-            "MPL-2.0"
-          ]
+          "licenses": ["MPL-2.0"]
         },
         {
           "name": "chardet",
           "version": "7.0.1",
           "type": "library",
           "purl": "pkg:pypi/chardet@7.0.1",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "charset-normalizer",
           "version": "3.4.4",
           "type": "library",
           "purl": "pkg:pypi/charset-normalizer@3.4.4",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "click",
           "version": "8.3.1",
           "type": "library",
           "purl": "pkg:pypi/click@8.3.1",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "cookiecutter",
@@ -6409,210 +6224,161 @@
           "version": "3.11",
           "type": "library",
           "purl": "pkg:pypi/idna@3.11",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "Jinja2",
           "version": "3.1.6",
           "type": "library",
           "purl": "pkg:pypi/jinja2@3.1.6",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "json-logic-qubit",
           "version": "0.9.1",
           "type": "library",
           "purl": "pkg:pypi/json-logic-qubit@0.9.1",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "jsonschema-specifications",
           "version": "2025.9.1",
           "type": "library",
           "purl": "pkg:pypi/jsonschema-specifications@2025.9.1",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "jsonschema",
           "version": "4.26.0",
           "type": "library",
           "purl": "pkg:pypi/jsonschema@4.26.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "markdown-it-py",
           "version": "4.0.0",
           "type": "library",
           "purl": "pkg:pypi/markdown-it-py@4.0.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "MarkupSafe",
           "version": "3.0.3",
           "type": "library",
           "purl": "pkg:pypi/markupsafe@3.0.3",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "mdurl",
           "version": "0.1.2",
           "type": "library",
           "purl": "pkg:pypi/mdurl@0.1.2",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "pip",
           "version": "25.0.1",
           "type": "library",
           "purl": "pkg:pypi/pip@25.0.1",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "Pygments",
           "version": "2.19.2",
           "type": "library",
           "purl": "pkg:pypi/pygments@2.19.2",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "python-dateutil",
           "version": "2.9.0.post0",
           "type": "library",
           "purl": "pkg:pypi/python-dateutil@2.9.0.post0",
-          "licenses": [
-            "BSD-3-Clause",
-            "Apache-2.0"
-          ]
+          "licenses": ["BSD-3-Clause", "Apache-2.0"]
         },
         {
           "name": "python-slugify",
           "version": "8.0.4",
           "type": "library",
           "purl": "pkg:pypi/python-slugify@8.0.4",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "PyYAML",
           "version": "6.0.3",
           "type": "library",
           "purl": "pkg:pypi/pyyaml@6.0.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "referencing",
           "version": "0.36.2",
           "type": "library",
           "purl": "pkg:pypi/referencing@0.36.2",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "requests",
           "version": "2.32.5",
           "type": "library",
           "purl": "pkg:pypi/requests@2.32.5",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "rich",
           "version": "14.3.3",
           "type": "library",
           "purl": "pkg:pypi/rich@14.3.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "rpds-py",
           "version": "0.30.0",
           "type": "library",
           "purl": "pkg:pypi/rpds-py@0.30.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "semver",
           "version": "3.0.4",
           "type": "library",
           "purl": "pkg:pypi/semver@3.0.4",
-          "licenses": [
-            "BSD-3-Clause"
-          ]
+          "licenses": ["BSD-3-Clause"]
         },
         {
           "name": "six",
           "version": "1.17.0",
           "type": "library",
           "purl": "pkg:pypi/six@1.17.0",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "text-unidecode",
           "version": "1.3",
           "type": "library",
           "purl": "pkg:pypi/text-unidecode@1.3",
-          "licenses": [
-            "Artistic-2.0",
-            "GPL-3.0-or-later",
-            "GPL-2.0-or-later"
-          ]
+          "licenses": ["Artistic-2.0", "GPL-3.0-or-later", "GPL-2.0-or-later"]
         },
         {
           "name": "typing_extensions",
           "version": "4.15.0",
           "type": "library",
           "purl": "pkg:pypi/typing-extensions@4.15.0",
-          "licenses": [
-            "PSF-2.0"
-          ]
+          "licenses": ["PSF-2.0"]
         },
         {
           "name": "tzdata",
           "version": "2025.3",
           "type": "library",
           "purl": "pkg:pypi/tzdata@2025.3",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "urllib3",
           "version": "2.6.3",
           "type": "library",
           "purl": "pkg:pypi/urllib3@2.6.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         }
       ]
     },
@@ -8703,10 +8469,7 @@
         }
       ],
       "variants": [],
-      "release_lines": [
-        "0.12",
-        "0.12.0"
-      ]
+      "release_lines": ["0.12", "0.12.0"]
     }
   },
   "playbooks": [
@@ -8750,9 +8513,7 @@
                   "resolved_value": "NOGO"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "",
@@ -8794,9 +8555,7 @@
                   "resolved_url": "compliance.html"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Request",
@@ -8830,9 +8589,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Requested Image",
@@ -8859,9 +8616,7 @@
                   "resolved_value": "latest"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -8906,9 +8661,7 @@
                   "resolved_value": "50%"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Mandatory Requirements",
@@ -8928,12 +8681,8 @@
                   "name": "no-root",
                   "title": "Image must not run as root.",
                   "level": "critical",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "skopeo"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["skopeo"],
                   "passed": true,
                   "status": "passed",
                   "condition": "{\"!=\": [{\"var\": \"results.skopeo.platforms.0.user\"}, \"root\"]}",
@@ -8943,12 +8692,8 @@
                   "name": "no-critical",
                   "title": "No CRITICAL vulnerabilities found by Trivy.",
                   "level": "critical",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "trivy"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["trivy"],
                   "passed": false,
                   "status": "failed",
                   "condition": "{\"==\": [{\"var\": \"results.trivy.critical_count\"}, 0]}",
@@ -8958,12 +8703,8 @@
                   "name": "no-fatal",
                   "title": "No FATAL issues found by Dockle.",
                   "level": "critical",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "dockle"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["dockle"],
                   "passed": false,
                   "status": "incomplete",
                   "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
@@ -8973,9 +8714,7 @@
                   "name": "trusted-domain",
                   "title": "Image must originate from a trusted domain.",
                   "level": null,
-                  "tags": [
-                    "security"
-                  ],
+                  "tags": ["security"],
                   "analyzers": [],
                   "passed": true,
                   "status": "passed",
@@ -8983,10 +8722,7 @@
                   "details": "request.registry (ghcr.io) in ['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']"
                 }
               ],
-              "render_order": [
-                "tags",
-                "scorecards"
-              ],
+              "render_order": ["tags", "scorecards"],
               "widgets": []
             },
             {
@@ -9012,12 +8748,8 @@
                   "name": "no-high",
                   "title": "No HIGH vulnerabilities found by Trivy.",
                   "level": "warning",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "trivy"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["trivy"],
                   "passed": false,
                   "status": "failed",
                   "condition": "{\"==\": [{\"var\": \"results.trivy.high_count\"}, 0]}",
@@ -9027,22 +8759,15 @@
                   "name": "age",
                   "title": "Image should be less than 30 days old.",
                   "level": "warning",
-                  "tags": [
-                    "freshness"
-                  ],
-                  "analyzers": [
-                    "freshness"
-                  ],
+                  "tags": ["freshness"],
+                  "analyzers": ["freshness"],
                   "passed": true,
                   "status": "passed",
                   "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
                   "details": "results.freshness.age_days (0) < 30"
                 }
               ],
-              "render_order": [
-                "tags",
-                "scorecards"
-              ],
+              "render_order": ["tags", "scorecards"],
               "widgets": []
             }
           ]
@@ -9075,9 +8800,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Provenance",
@@ -9099,9 +8822,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -9133,9 +8854,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "OpenSSF Scorecard",
@@ -9157,9 +8876,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -9190,9 +8907,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Security & Best Practices (Dockle)",
@@ -9214,9 +8929,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -9247,9 +8960,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Popularity & Community",
@@ -9278,9 +8989,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Lifecycle (EndOfLife)",
@@ -9302,9 +9011,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -9335,9 +9042,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Skopeo Inspection",
@@ -9359,9 +9064,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Versioning Analysis",
@@ -9383,18 +9086,13 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         }
       ],
       "slug": null,
-      "labels": [
-        "security::critical",
-        "regis::fail"
-      ],
+      "labels": ["security::critical", "regis::fail"],
       "mr_description_checklists": [
         {
           "title": "📝 Review Checklist",
@@ -9461,9 +9159,7 @@
                 "resolved_value": "NOGO"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "",
@@ -9505,9 +9201,7 @@
                 "resolved_url": "compliance.html"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Request",
@@ -9541,9 +9235,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Requested Image",
@@ -9570,9 +9262,7 @@
                 "resolved_value": "latest"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -9617,9 +9307,7 @@
                 "resolved_value": "50%"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Mandatory Requirements",
@@ -9639,12 +9327,8 @@
                 "name": "no-root",
                 "title": "Image must not run as root.",
                 "level": "critical",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "skopeo"
-                ],
+                "tags": ["security"],
+                "analyzers": ["skopeo"],
                 "passed": true,
                 "status": "passed",
                 "condition": "{\"!=\": [{\"var\": \"results.skopeo.platforms.0.user\"}, \"root\"]}",
@@ -9654,12 +9338,8 @@
                 "name": "no-critical",
                 "title": "No CRITICAL vulnerabilities found by Trivy.",
                 "level": "critical",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "trivy"
-                ],
+                "tags": ["security"],
+                "analyzers": ["trivy"],
                 "passed": false,
                 "status": "failed",
                 "condition": "{\"==\": [{\"var\": \"results.trivy.critical_count\"}, 0]}",
@@ -9669,12 +9349,8 @@
                 "name": "no-fatal",
                 "title": "No FATAL issues found by Dockle.",
                 "level": "critical",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "dockle"
-                ],
+                "tags": ["security"],
+                "analyzers": ["dockle"],
                 "passed": false,
                 "status": "incomplete",
                 "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
@@ -9684,9 +9360,7 @@
                 "name": "trusted-domain",
                 "title": "Image must originate from a trusted domain.",
                 "level": null,
-                "tags": [
-                  "security"
-                ],
+                "tags": ["security"],
                 "analyzers": [],
                 "passed": true,
                 "status": "passed",
@@ -9694,10 +9368,7 @@
                 "details": "request.registry (ghcr.io) in ['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']"
               }
             ],
-            "render_order": [
-              "tags",
-              "scorecards"
-            ],
+            "render_order": ["tags", "scorecards"],
             "widgets": []
           },
           {
@@ -9723,12 +9394,8 @@
                 "name": "no-high",
                 "title": "No HIGH vulnerabilities found by Trivy.",
                 "level": "warning",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "trivy"
-                ],
+                "tags": ["security"],
+                "analyzers": ["trivy"],
                 "passed": false,
                 "status": "failed",
                 "condition": "{\"==\": [{\"var\": \"results.trivy.high_count\"}, 0]}",
@@ -9738,22 +9405,15 @@
                 "name": "age",
                 "title": "Image should be less than 30 days old.",
                 "level": "warning",
-                "tags": [
-                  "freshness"
-                ],
-                "analyzers": [
-                  "freshness"
-                ],
+                "tags": ["freshness"],
+                "analyzers": ["freshness"],
                 "passed": true,
                 "status": "passed",
                 "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
                 "details": "results.freshness.age_days (0) < 30"
               }
             ],
-            "render_order": [
-              "tags",
-              "scorecards"
-            ],
+            "render_order": ["tags", "scorecards"],
             "widgets": []
           }
         ]
@@ -9786,9 +9446,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Provenance",
@@ -9810,9 +9468,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -9844,9 +9500,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "OpenSSF Scorecard",
@@ -9868,9 +9522,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -9901,9 +9553,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Security & Best Practices (Dockle)",
@@ -9925,9 +9575,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -9958,9 +9606,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Popularity & Community",
@@ -9989,9 +9635,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Lifecycle (EndOfLife)",
@@ -10013,9 +9657,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -10046,9 +9688,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Skopeo Inspection",
@@ -10070,9 +9710,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Versioning Analysis",
@@ -10094,18 +9732,13 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       }
     ],
     "slug": null,
-    "labels": [
-      "security::critical",
-      "regis::fail"
-    ],
+    "labels": ["security::critical", "regis::fail"],
     "mr_description_checklists": [
       {
         "title": "📝 Review Checklist",

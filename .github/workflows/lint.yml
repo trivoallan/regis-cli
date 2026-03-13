@@ -38,6 +38,7 @@ jobs:
         run: ${{ env.TRUNK_PATH }} fmt --all
 
       - name: Commit and Push Changes
+        if: github.ref_name != 'main'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "style(cli): apply automated trunk fmt"

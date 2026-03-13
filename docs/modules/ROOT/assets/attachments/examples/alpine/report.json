@@ -41,33 +41,25 @@
           "code": "CIS-DI-0001",
           "level": "WARN",
           "title": "Create a user for the container",
-          "alerts": [
-            "Last user should not be root"
-          ]
+          "alerts": ["Last user should not be root"]
         },
         {
           "code": "DKL-DI-0006",
           "level": "WARN",
           "title": "Avoid latest tag",
-          "alerts": [
-            "Avoid 'latest' tag"
-          ]
+          "alerts": ["Avoid 'latest' tag"]
         },
         {
           "code": "CIS-DI-0005",
           "level": "INFO",
           "title": "Enable Content trust for Docker",
-          "alerts": [
-            "export DOCKER_CONTENT_TRUST=1 before docker pull/build"
-          ]
+          "alerts": ["export DOCKER_CONTENT_TRUST=1 before docker pull/build"]
         },
         {
           "code": "CIS-DI-0006",
           "level": "INFO",
           "title": "Add HEALTHCHECK instruction to the container image",
-          "alerts": [
-            "not found HEALTHCHECK statement"
-          ]
+          "alerts": ["not found HEALTHCHECK statement"]
         }
       ]
     },
@@ -170,147 +162,112 @@
           "version": "3.7.1-r8",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-baselayout-data@3.7.1-r8?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "alpine-baselayout",
           "version": "3.7.1-r8",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-baselayout@3.7.1-r8?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "alpine-keys",
           "version": "2.6-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-keys@2.6-r0?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "alpine-release",
           "version": "3.23.3-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/alpine-release@3.23.3-r0?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "apk-tools",
           "version": "3.0.3-r1",
           "type": "library",
           "purl": "pkg:apk/alpine/apk-tools@3.0.3-r1?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "busybox-binsh",
           "version": "1.37.0-r30",
           "type": "library",
           "purl": "pkg:apk/alpine/busybox-binsh@1.37.0-r30?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "busybox",
           "version": "1.37.0-r30",
           "type": "library",
           "purl": "pkg:apk/alpine/busybox@1.37.0-r30?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "ca-certificates-bundle",
           "version": "20251003-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/ca-certificates-bundle@20251003-r0?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "MPL-2.0",
-            "MIT"
-          ]
+          "licenses": ["MPL-2.0", "MIT"]
         },
         {
           "name": "libapk",
           "version": "3.0.3-r1",
           "type": "library",
           "purl": "pkg:apk/alpine/libapk@3.0.3-r1?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "libcrypto3",
           "version": "3.5.5-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/libcrypto3@3.5.5-r0?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "libssl3",
           "version": "3.5.5-r0",
           "type": "library",
           "purl": "pkg:apk/alpine/libssl3@3.5.5-r0?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "Apache-2.0"
-          ]
+          "licenses": ["Apache-2.0"]
         },
         {
           "name": "musl-utils",
           "version": "1.2.5-r21",
           "type": "library",
           "purl": "pkg:apk/alpine/musl-utils@1.2.5-r21?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "MIT",
-            "BSD-2-Clause",
-            "GPL-2.0-or-later"
-          ]
+          "licenses": ["MIT", "BSD-2-Clause", "GPL-2.0-or-later"]
         },
         {
           "name": "musl",
           "version": "1.2.5-r21",
           "type": "library",
           "purl": "pkg:apk/alpine/musl@1.2.5-r21?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "MIT"
-          ]
+          "licenses": ["MIT"]
         },
         {
           "name": "scanelf",
           "version": "1.3.8-r2",
           "type": "library",
           "purl": "pkg:apk/alpine/scanelf@1.3.8-r2?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "ssl_client",
           "version": "1.37.0-r30",
           "type": "library",
           "purl": "pkg:apk/alpine/ssl_client@1.37.0-r30?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "GPL-2.0-only"
-          ]
+          "licenses": ["GPL-2.0-only"]
         },
         {
           "name": "zlib",
           "version": "1.3.1-r2",
           "type": "library",
           "purl": "pkg:apk/alpine/zlib@1.3.1-r2?arch=x86_64&distro=3.23.3",
-          "licenses": [
-            "Zlib"
-          ]
+          "licenses": ["Zlib"]
         }
       ]
     },
@@ -840,11 +797,7 @@
           "pattern": "named",
           "count": 3,
           "percentage": 1.4,
-          "examples": [
-            "3.17.0_rc1",
-            "edge",
-            "latest"
-          ]
+          "examples": ["3.17.0_rc1", "edge", "latest"]
         },
         {
           "pattern": "numeric",
@@ -884,15 +837,11 @@
           "pattern": "semver-prerelease",
           "count": 1,
           "percentage": 0.5,
-          "examples": [
-            "3.15.0-rc.4"
-          ]
+          "examples": ["3.15.0-rc.4"]
         }
       ],
       "variants": [],
-      "release_lines": [
-        "20260127"
-      ]
+      "release_lines": ["20260127"]
     }
   },
   "playbooks": [
@@ -936,9 +885,7 @@
                   "resolved_value": "GO"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "",
@@ -980,9 +927,7 @@
                   "resolved_url": "compliance.html"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Request",
@@ -1016,9 +961,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Requested Image",
@@ -1045,9 +988,7 @@
                   "resolved_value": "latest"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -1092,9 +1033,7 @@
                   "resolved_value": "50%"
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Mandatory Requirements",
@@ -1114,12 +1053,8 @@
                   "name": "no-root",
                   "title": "Image must not run as root.",
                   "level": "critical",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "skopeo"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["skopeo"],
                   "passed": true,
                   "status": "passed",
                   "condition": "{\"!=\": [{\"var\": \"results.skopeo.platforms.0.user\"}, \"root\"]}",
@@ -1129,12 +1064,8 @@
                   "name": "no-critical",
                   "title": "No CRITICAL vulnerabilities found by Trivy.",
                   "level": "critical",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "trivy"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["trivy"],
                   "passed": true,
                   "status": "passed",
                   "condition": "{\"==\": [{\"var\": \"results.trivy.critical_count\"}, 0]}",
@@ -1144,12 +1075,8 @@
                   "name": "no-fatal",
                   "title": "No FATAL issues found by Dockle.",
                   "level": "critical",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "dockle"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["dockle"],
                   "passed": true,
                   "status": "passed",
                   "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
@@ -1159,9 +1086,7 @@
                   "name": "trusted-domain",
                   "title": "Image must originate from a trusted domain.",
                   "level": null,
-                  "tags": [
-                    "security"
-                  ],
+                  "tags": ["security"],
                   "analyzers": [],
                   "passed": true,
                   "status": "passed",
@@ -1169,10 +1094,7 @@
                   "details": "request.registry (registry-1.docker.io) in ['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']"
                 }
               ],
-              "render_order": [
-                "tags",
-                "scorecards"
-              ],
+              "render_order": ["tags", "scorecards"],
               "widgets": []
             },
             {
@@ -1198,12 +1120,8 @@
                   "name": "no-high",
                   "title": "No HIGH vulnerabilities found by Trivy.",
                   "level": "warning",
-                  "tags": [
-                    "security"
-                  ],
-                  "analyzers": [
-                    "trivy"
-                  ],
+                  "tags": ["security"],
+                  "analyzers": ["trivy"],
                   "passed": true,
                   "status": "passed",
                   "condition": "{\"==\": [{\"var\": \"results.trivy.high_count\"}, 0]}",
@@ -1213,22 +1131,15 @@
                   "name": "age",
                   "title": "Image should be less than 30 days old.",
                   "level": "warning",
-                  "tags": [
-                    "freshness"
-                  ],
-                  "analyzers": [
-                    "freshness"
-                  ],
+                  "tags": ["freshness"],
+                  "analyzers": ["freshness"],
                   "passed": false,
                   "status": "failed",
                   "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
                   "details": "results.freshness.age_days (36) < 30"
                 }
               ],
-              "render_order": [
-                "tags",
-                "scorecards"
-              ],
+              "render_order": ["tags", "scorecards"],
               "widgets": []
             }
           ]
@@ -1261,9 +1172,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Provenance",
@@ -1285,9 +1194,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -1319,9 +1226,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "OpenSSF Scorecard",
@@ -1343,9 +1248,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -1376,9 +1279,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Security & Best Practices (Dockle)",
@@ -1400,9 +1301,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -1433,9 +1332,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Popularity & Community",
@@ -1464,9 +1361,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Lifecycle (EndOfLife)",
@@ -1488,9 +1383,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         },
@@ -1521,9 +1414,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Skopeo Inspection",
@@ -1545,9 +1436,7 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             },
             {
               "name": "Versioning Analysis",
@@ -1569,17 +1458,13 @@
                   }
                 }
               ],
-              "render_order": [
-                "widgets"
-              ]
+              "render_order": ["widgets"]
             }
           ]
         }
       ],
       "slug": null,
-      "labels": [
-        "regis::warn"
-      ],
+      "labels": ["regis::warn"],
       "mr_description_checklists": [
         {
           "title": "📝 Review Checklist",
@@ -1650,9 +1535,7 @@
                 "resolved_value": "GO"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "",
@@ -1694,9 +1577,7 @@
                 "resolved_url": "compliance.html"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Request",
@@ -1730,9 +1611,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Requested Image",
@@ -1759,9 +1638,7 @@
                 "resolved_value": "latest"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -1806,9 +1683,7 @@
                 "resolved_value": "50%"
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Mandatory Requirements",
@@ -1828,12 +1703,8 @@
                 "name": "no-root",
                 "title": "Image must not run as root.",
                 "level": "critical",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "skopeo"
-                ],
+                "tags": ["security"],
+                "analyzers": ["skopeo"],
                 "passed": true,
                 "status": "passed",
                 "condition": "{\"!=\": [{\"var\": \"results.skopeo.platforms.0.user\"}, \"root\"]}",
@@ -1843,12 +1714,8 @@
                 "name": "no-critical",
                 "title": "No CRITICAL vulnerabilities found by Trivy.",
                 "level": "critical",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "trivy"
-                ],
+                "tags": ["security"],
+                "analyzers": ["trivy"],
                 "passed": true,
                 "status": "passed",
                 "condition": "{\"==\": [{\"var\": \"results.trivy.critical_count\"}, 0]}",
@@ -1858,12 +1725,8 @@
                 "name": "no-fatal",
                 "title": "No FATAL issues found by Dockle.",
                 "level": "critical",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "dockle"
-                ],
+                "tags": ["security"],
+                "analyzers": ["dockle"],
                 "passed": true,
                 "status": "passed",
                 "condition": "{\"==\": [{\"var\": \"results.dockle.issues_by_level.FATAL\"}, 0]}",
@@ -1873,9 +1736,7 @@
                 "name": "trusted-domain",
                 "title": "Image must originate from a trusted domain.",
                 "level": null,
-                "tags": [
-                  "security"
-                ],
+                "tags": ["security"],
                 "analyzers": [],
                 "passed": true,
                 "status": "passed",
@@ -1883,10 +1744,7 @@
                 "details": "request.registry (registry-1.docker.io) in ['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']"
               }
             ],
-            "render_order": [
-              "tags",
-              "scorecards"
-            ],
+            "render_order": ["tags", "scorecards"],
             "widgets": []
           },
           {
@@ -1912,12 +1770,8 @@
                 "name": "no-high",
                 "title": "No HIGH vulnerabilities found by Trivy.",
                 "level": "warning",
-                "tags": [
-                  "security"
-                ],
-                "analyzers": [
-                  "trivy"
-                ],
+                "tags": ["security"],
+                "analyzers": ["trivy"],
                 "passed": true,
                 "status": "passed",
                 "condition": "{\"==\": [{\"var\": \"results.trivy.high_count\"}, 0]}",
@@ -1927,22 +1781,15 @@
                 "name": "age",
                 "title": "Image should be less than 30 days old.",
                 "level": "warning",
-                "tags": [
-                  "freshness"
-                ],
-                "analyzers": [
-                  "freshness"
-                ],
+                "tags": ["freshness"],
+                "analyzers": ["freshness"],
                 "passed": false,
                 "status": "failed",
                 "condition": "{\"<\": [{\"var\": \"results.freshness.age_days\"}, 30]}",
                 "details": "results.freshness.age_days (36) < 30"
               }
             ],
-            "render_order": [
-              "tags",
-              "scorecards"
-            ],
+            "render_order": ["tags", "scorecards"],
             "widgets": []
           }
         ]
@@ -1975,9 +1822,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Provenance",
@@ -1999,9 +1844,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -2033,9 +1876,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "OpenSSF Scorecard",
@@ -2057,9 +1898,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -2090,9 +1929,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Security & Best Practices (Dockle)",
@@ -2114,9 +1951,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -2147,9 +1982,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Popularity & Community",
@@ -2178,9 +2011,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Lifecycle (EndOfLife)",
@@ -2202,9 +2033,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       },
@@ -2235,9 +2064,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Skopeo Inspection",
@@ -2259,9 +2086,7 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           },
           {
             "name": "Versioning Analysis",
@@ -2283,17 +2108,13 @@
                 }
               }
             ],
-            "render_order": [
-              "widgets"
-            ]
+            "render_order": ["widgets"]
           }
         ]
       }
     ],
     "slug": null,
-    "labels": [
-      "regis::warn"
-    ],
+    "labels": ["regis::warn"],
     "mr_description_checklists": [
       {
         "title": "📝 Review Checklist",

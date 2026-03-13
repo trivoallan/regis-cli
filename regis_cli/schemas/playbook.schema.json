@@ -5,10 +5,7 @@
   "description": "Schema for regis-cli playbook definition files (YAML or JSON).",
   "type": "object",
   "required": ["name"],
-  "anyOf": [
-    { "required": ["sections"] },
-    { "required": ["pages"] }
-  ],
+  "anyOf": [{ "required": ["sections"] }, { "required": ["pages"] }],
   "additionalProperties": false,
   "properties": {
     "name": {
@@ -31,8 +28,13 @@
         "required": ["label", "url"],
         "properties": {
           "label": { "type": "string" },
-          "url": { "type": "string", "description": "URL template which can use {metadata[key]} placeholders or Jinja2 syntax." },
-          "condition": { "description": "Optional JsonLogic expression to determine if the link should be displayed." }
+          "url": {
+            "type": "string",
+            "description": "URL template which can use {metadata[key]} placeholders or Jinja2 syntax."
+          },
+          "condition": {
+            "description": "Optional JsonLogic expression to determine if the link should be displayed."
+          }
         }
       }
     },
@@ -106,8 +108,14 @@
                 "type": "object",
                 "required": ["name", "condition"],
                 "properties": {
-                  "name": { "type": "string", "description": "Label name, e.g. 'regis::fail' or 'security::critical'." },
-                  "condition": { "type": "object", "description": "JsonLogic expression evaluated against the analysis report." }
+                  "name": {
+                    "type": "string",
+                    "description": "Label name, e.g. 'regis::fail' or 'security::critical'."
+                  },
+                  "condition": {
+                    "type": "object",
+                    "description": "JsonLogic expression evaluated against the analysis report."
+                  }
                 }
               }
             },
@@ -124,7 +132,10 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "title": { "type": "string", "description": "Display title for the checklist." },
+                  "title": {
+                    "type": "string",
+                    "description": "Display title for the checklist."
+                  },
                   "items": {
                     "type": "array",
                     "description": "Items in this checklist.",
@@ -163,7 +174,6 @@
     }
   },
   "$defs": {
-
     "page": {
       "type": "object",
       "description": "A playbook page containing sections.",
@@ -368,9 +378,18 @@
       "required": ["label"],
       "additionalProperties": false,
       "properties": {
-        "label": { "type": "string", "description": "Text of the checkbox item." },
-        "show_if": { "type": "object", "description": "Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy." },
-        "check_if": { "type": "object", "description": "Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ])." }
+        "label": {
+          "type": "string",
+          "description": "Text of the checkbox item."
+        },
+        "show_if": {
+          "type": "object",
+          "description": "Optional JsonLogic expression. If provided, the item is only included when the expression evaluates to truthy."
+        },
+        "check_if": {
+          "type": "object",
+          "description": "Optional JsonLogic expression. If provided and evaluates to truthy, the checkbox renders pre-checked (- [x]). Otherwise it renders unchecked (- [ ])."
+        }
       }
     }
   }

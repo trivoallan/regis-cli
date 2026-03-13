@@ -59,10 +59,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "Target",
-          "Vulnerabilities"
-        ],
+        "required": ["Target", "Vulnerabilities"],
         "properties": {
           "Target": {
             "type": "string"
