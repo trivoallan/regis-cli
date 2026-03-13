@@ -10,6 +10,7 @@
 - Antora documentation structure initialized.
 - Fixed Skopeo architecture mismatch handling for multi-arch image indexes.
 - Automated Antora documentation publishing to GitHub Pages.
+- Automated `trunk fmt` in CI with auto-commit of style changes.
 
 ## In Progress
 
