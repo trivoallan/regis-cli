@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0](https://github.com/trivoallan/regis-cli/compare/v0.15.0...v0.16.0) (2026-03-13)
+
+### Features
+
+- **ci:** automate trunk fmt and auto-commit in CI ([#48](https://github.com/trivoallan/regis-cli/issues/48)) ([76070ad](https://github.com/trivoallan/regis-cli/commit/76070ad58a2fce9f87113860e1863cebf04191a3))
+
+### Bug Fixes
+
+- **ci:** fix trunk fmt conflict and resolve HTML syntax errors ([6aa52c1](https://github.com/trivoallan/regis-cli/commit/6aa52c16eb749ba6095bb814d6622c8ec39198c4))
+- **ci:** robust auto-formatting and protected branch handling ([#51](https://github.com/trivoallan/regis-cli/issues/51)) ([ae9ae51](https://github.com/trivoallan/regis-cli/commit/ae9ae5144612dfb845371db50cab813888bd089c))
+- **ci:** Update Python version to 3.14 in test workflow. ([e260b53](https://github.com/trivoallan/regis-cli/commit/e260b5351e6484357ffa712d8b5e5b16cde4529b))
+- **cli:** resolve bootstrap command failure in Docker image ([#46](https://github.com/trivoallan/regis-cli/issues/46)) ([5c6ed6b](https://github.com/trivoallan/regis-cli/commit/5c6ed6b384527dd3c31f4a865872802c4d72acf4))
+
 ## [0.15.0](https://github.com/trivoallan/regis-cli/compare/v0.14.2...v0.15.0) (2026-03-11)
 
 ### Features
