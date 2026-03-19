@@ -13,6 +13,7 @@
 - Automated `trunk fmt` in CI with auto-commit of style changes.
 - Refactored `generate` command into a `bootstrap` command group (`bootstrap repository` and `bootstrap playbook`).
 - Display post-install notes after bootstrap.
+- Fixed Trunk Check `HEAD^2` error by optimizing git checkout and auto-commit configuration.
 
 ## In Progress
 

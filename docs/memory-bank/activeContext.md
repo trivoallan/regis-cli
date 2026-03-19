@@ -57,3 +57,12 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 ## Next Steps
 
 - Create a PR for the post-install notes feature.
+  - Fixed `fatal: ambiguous argument 'HEAD^2'` in Trunk Check workflow:
+  - Enabled `fetch-depth: 0` for full history checkout.
+  - Removed explicit `ref` override to allow Trunk's default merge-base detection on PRs.
+  - Updated auto-commit step to explicitly push to the PR branch.
+
+## Next Steps
+
+- Create a PR for the `bootstrap` command fix and the Trunk Check fix.
+- Monitor CI/CD results for the new branch.
