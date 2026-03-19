@@ -1,3 +1,4 @@
+# trunk-ignore-all(bandit/B101)
 """Tests for rules evaluator."""
 
 from regis_cli.rules.evaluator import evaluate_rules, get_default_rules, merge_rules

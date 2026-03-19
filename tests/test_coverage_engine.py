@@ -1,4 +1,5 @@
 # trunk-ignore-all(bandit/B101)
+# trunk-ignore-all(bandit/B101)
 from regis_cli.playbook.engine import (
     MissingDataTracker,
     _format_date,

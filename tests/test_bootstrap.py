@@ -1,4 +1,5 @@
 # trunk-ignore-all(bandit/B101)
+# trunk-ignore-all(bandit/B101)
 """Tests for the regis-cli bootstrap command."""
 
 from pathlib import Path
