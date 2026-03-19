@@ -90,7 +90,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                 "tags": ["lifecycle"],
                 "condition": {"!=": [{"var": "request.tag"}, "latest"]},
                 "messages": {
-                    "pass": "Image tag is not 'latest'.",
+                    "pass": "Image tag is not 'latest'.",  # nosec B105
                     "fail": "Image is using the 'latest' tag. Use immutable version tags instead.",
                 },
             },
@@ -130,7 +130,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "All exposed ports are allowed.",
+                    "pass": "All exposed ports are allowed.",  # nosec B105
                     "fail": "Image exposes unauthorized ports: ${results.skopeo.platforms.0.exposed_ports}.",
                 },
             },
@@ -147,7 +147,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "All required labels are present.",
+                    "pass": "All required labels are present.",  # nosec B105
                     "fail": "Image is missing one or more required labels: ${rule.params.labels}.",
                 },
             },
@@ -166,7 +166,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
                     }
                 },
                 "messages": {
-                    "pass": "No forbidden environment variables found.",
+                    "pass": "No forbidden environment variables found.",  # nosec B105
                     "fail": "Image contains one or more forbidden environment variables.",
                 },
             },

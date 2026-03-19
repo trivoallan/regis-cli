@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 import yaml
 
@@ -334,10 +336,10 @@ class TestGitLabChecklist:
         ],
     }
 
-    def _make_playbook(self, checklist: list) -> dict:
+    def _make_playbook(self, checklist: list[Any]) -> dict[str, Any]:
         import copy
 
-        pb = copy.deepcopy(self.BASE_PLAYBOOK)
+        pb: dict[str, Any] = copy.deepcopy(self.BASE_PLAYBOOK)
         pb["integrations"] = {"gitlab": {"checklist": checklist}}
         return pb
 
@@ -544,10 +546,10 @@ class TestGitLabTemplates:
         ],
     }
 
-    def _make_playbook(self, templates: list) -> dict:
+    def _make_playbook(self, templates: list[Any]) -> dict[str, Any]:
         import copy
 
-        pb = copy.deepcopy(self.BASE_PLAYBOOK)
+        pb: dict[str, Any] = copy.deepcopy(self.BASE_PLAYBOOK)
         pb["integrations"] = {"gitlab": {"templates": templates}}
         return pb
 

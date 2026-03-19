@@ -88,7 +88,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "No critical vulnerabilities detected.",
+                    "pass": "No critical vulnerabilities detected.",  # nosec B105
                     "fail": "Image has ${results.trivy.critical_count} critical CVEs (max allowed: ${rule.params.max_count}).",
                 },
             },
@@ -105,7 +105,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "No high vulnerabilities detected.",
+                    "pass": "No high vulnerabilities detected.",  # nosec B105
                     "fail": "Image has ${results.trivy.high_count} high CVEs (max allowed: ${rule.params.max_count}).",
                 },
             },
@@ -122,7 +122,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "All vulnerabilities with available fixes have been patched.",
+                    "pass": "All vulnerabilities with available fixes have been patched.",  # nosec B105
                     "fail": "Image has ${results.trivy.fixed_count} vulnerabilities with available fixes.",
                 },
             },
@@ -139,7 +139,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                     ]
                 },
                 "messages": {
-                    "pass": "No secrets detected in the image.",
+                    "pass": "No secrets detected in the image.",  # nosec B105
                     "fail": "Trivy detected ${results.trivy.secrets_count} secrets or credentials in the image.",
                 },
             },
