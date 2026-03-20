@@ -11,7 +11,32 @@ One of the core missions of `regis-cli` is to bridge the gap between automated t
 
 `regis-cli` uses a modern **Single Page Application (SPA)** architecture for its reports. Instead of static, server-side rendered pages, every report is a fully-featured, client-side application built with **React** and **Docusaurus**.
 
-This allows for:
+The following diagram illustrates the relationship between the CLI and the generated report:
+
+```mermaid
+C4Component
+    title Component diagram for regis-cli Report Viewer
+
+    Person(user, "User / Security Reviewer", "Interacts with the security dashboard.")
+
+    Container_Boundary(cli_boundary, "regis-cli (CLI)") {
+        Component(engine, "Analysis Engine", "Python", "Orchestrates analyzers and playbooks.")
+        Component(reporter, "Docusaurus Reporter", "Python", "Manages SPA build and data injection.")
+    }
+
+    Container_Boundary(spa_boundary, "Report Viewer (SPA)") {
+        Component(react_app, "React Application", "React / Docusaurus", "Modern UI for viewing security data.")
+        Component(json_data, "report.json", "JSON", "Consolidated analysis results.")
+    }
+
+    Rel(engine, reporter, "Provides analysis results", "Data")
+    Rel(reporter, json_data, "Writes to reports/", "File")
+    Rel(reporter, react_app, "Triggers build & copy", "Subprocess / Filesystem")
+    Rel(react_app, json_data, "Fetches", "HTTP/Static")
+    Rel(user, react_app, "Views results", "Interactive UI")
+```
+
+This architecture allows for:
 
 - **Rich Interactivity**: Instant filtering, sorting, and searching across thousands of vulnerability findings.
 - **Unified Viewing Experience**: A consistent UI across different report types, with a polished, professional aesthetic.
