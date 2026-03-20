@@ -8,6 +8,33 @@ tags:
 
 The `regis-cli` Report Viewer is a modern, interactive Single Page Application (SPA) designed to transform complex security data into clear, actionable insights.
 
+## Architecture
+
+The following diagram illustrates how `regis-cli` generates and serves the interactive report:
+
+```mermaid
+C4Component
+    title Component diagram for regis-cli Report Viewer
+
+    Person(user, "User / Security Reviewer", "Interacts with the security dashboard.")
+
+    Container_Boundary(cli_boundary, "regis-cli (CLI)") {
+        Component(engine, "Analysis Engine", "Python", "Orchestrates analyzers and playbooks.")
+        Component(reporter, "Docusaurus Reporter", "Python", "Manages SPA build and data injection.")
+    }
+
+    Container_Boundary(spa_boundary, "Report Viewer (SPA)") {
+        Component(react_app, "React Application", "React / Docusaurus", "Modern UI for viewing security data.")
+        Component(json_data, "report.json", "JSON", "Consolidated analysis results.")
+    }
+
+    Rel(engine, reporter, "Provides analysis results", "Data")
+    Rel(reporter, json_data, "Writes to reports/", "File")
+    Rel(reporter, react_app, "Triggers build & copy", "Subprocess / Filesystem")
+    Rel(react_app, json_data, "Fetches", "HTTP/Static")
+    Rel(user, react_app, "Views results", "Interactive UI")
+```
+
 ## Features
 
 - **Dashboard Overview**: Get a high-level summary of your image's security posture and compliance status at a glance.
