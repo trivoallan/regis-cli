@@ -7,7 +7,7 @@ Integrating `regis-cli` into your GitHub Actions workflows allows you to automat
 To follow this guide, you should have a GitHub repository with a `Dockerfile` and a basic understanding of GitHub Actions.
 
 :::tip
-To quickly bootstrap a new GitHub repository pre-configured with `regis-cli` and GitHub Actions, you can use our [Project Bootstrapping](../../reference/commands.md#bootstrap) command.
+To quickly bootstrap a new GitHub repository pre-configured with `regis-cli` and GitHub Actions, you can use our [Project Bootstrapping](../../reference/cli.md#bootstrap) command.
 :::
 
 ## Workflow Setup

@@ -222,7 +222,7 @@ While you can write a playbook from scratch, the easiest way to start is by usin
 regis-cli bootstrap playbook my-custom-playbook
 ```
 
-This command will prompt you for basic information (name, slug, etc.) and generate a skeleton playbook that you can then customize with your own rules and scorecards. For more information, see the [Bootstrapping Reference](../reference/commands.md#bootstrap).
+This command will prompt you for basic information (name, slug, etc.) and generate a skeleton playbook that you can then customize with your own rules and scorecards. For more information, see the [Bootstrapping Reference](../reference/cli.md#bootstrap).
 
 ## Example Playbook
 

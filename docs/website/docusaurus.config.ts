@@ -39,7 +39,17 @@ const config: Config = {
     locales: ["en"],
   },
 
-  themes: ["@docusaurus/theme-mermaid"],
+  themes: [
+    "@docusaurus/theme-mermaid",
+    [
+      "@easyops-cn/docusaurus-search-local",
+      {
+        hashed: true,
+        docsRouteBasePath: "/",
+        indexBlog: false,
+      },
+    ],
+  ],
 
   presets: [
     [
