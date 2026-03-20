@@ -110,9 +110,9 @@ jobs:
 
       - name: Build Docusaurus Site
         run: |
-          # If we are on a tag, we should update the 'stable' version before building
+          # If we are on a tag, we should update the version before building
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            pnpm docusaurus docs:version stable --force
+            pnpm docusaurus docs:version ${{ github.ref_name }} --force
           fi
           pnpm run build
         working-directory: docs/website
