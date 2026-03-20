@@ -1042,6 +1042,54 @@ def rules_group():
     pass
 
 
+def _render_rule_markdown(rule: dict[str, Any]) -> str:
+    """Render a single rule as a detailed Markdown document."""
+    slug = rule.get("slug", "unknown")
+    description = rule.get("description", "n/a")
+    provider = rule.get("provider", "custom")
+    level = rule.get("level", "info")
+    tags = ", ".join(rule.get("tags", []))
+    params = rule.get("params", {})
+    condition = rule.get("condition", {})
+    messages = rule.get("messages", {})
+
+    lines = [
+        f"# {slug}",
+        "",
+        f"- **Description**: {description}",
+        f"- **Provider**: {provider}",
+        f"- **Level**: {level}",
+        f"- **Tags**: {tags}",
+        "",
+    ]
+
+    if params:
+        lines.append("## Parameters")
+        lines.append("")
+        for k, v in params.items():
+            lines.append(f"- **{k}**: `{v}`")
+        lines.append("")
+
+    if messages:
+        lines.append("## Messages")
+        lines.append("")
+        if "pass" in messages:
+            lines.append(f"- **Pass**: {messages['pass']}")
+        if "fail" in messages:
+            lines.append(f"- **Fail**: {messages['fail']}")
+        lines.append("")
+
+    if condition:
+        lines.append("## Condition")
+        lines.append("")
+        lines.append("```json")
+        lines.append(json.dumps(condition, indent=2))
+        lines.append("```")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
 @rules_group.command(name="list")
 @click.option(
     "-r",
@@ -1063,8 +1111,25 @@ def rules_group():
     "output_file",
     help="Output filename for the rules list.",
 )
+@click.option(
+    "-D",
+    "--output-dir",
+    "output_dir",
+    type=click.Path(file_okay=False, dir_okay=True, writable=True),
+    help="Directory to write individual rule markdown files (markdown format only).",
+)
+@click.option(
+    "--index/--no-index",
+    "generate_index",
+    default=False,
+    help="Generate an index.md file in the output directory (default: off).",
+)
 def list_rules(
-    rules_path: str | None, output_format: str, output_file: str | None
+    rules_path: str | None,
+    output_format: str,
+    output_file: str | None,
+    output_dir: str | None = None,
+    generate_index: bool = False,
 ) -> None:
     """List all available default rules and any overrides."""
     import yaml
@@ -1090,14 +1155,49 @@ def list_rules(
         return
 
     if output_format.lower() == "markdown":
+        if output_dir:
+            out_path = Path(output_dir)
+            out_path.mkdir(parents=True, exist_ok=True)
+
+            for rule in final_rules:
+                slug = rule.get("slug", "unknown")
+                rule_content = _render_rule_markdown(rule)
+                (out_path / f"{slug}.md").write_text(rule_content, encoding="utf-8")
+
+            click.echo(
+                f"  ✓ {len(final_rules)} rule files written to {output_dir}", err=True
+            )
+
+            if generate_index:
+                index_lines = []
+                index_lines.append(
+                    "| Provider | Slug | Description | Level | Tags | Parameters |"
+                )
+                index_lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
+                for rule in final_rules:
+                    provider = rule.get("provider", "custom")
+                    slug = rule.get("slug", "n/a")
+                    description = rule.get("description", "n/a")
+                    level = rule.get("level", "info")
+                    tags = ", ".join(rule.get("tags", []))
+                    params = rule.get("params", {})
+                    params_str = ", ".join(f"`{k}={v}`" for k, v in params.items())
+                    index_lines.append(
+                        f"| {provider} | [`{slug}`](./{slug}.md) | {description} | {level} | {tags} | {params_str} |"
+                    )
+                index_content = "\n".join(index_lines) + "\n"
+                (out_path / "index.md").write_text(index_content, encoding="utf-8")
+                click.echo(f"  ✓ Index file written to {output_dir}/index.md", err=True)
+            return
+
         lines = []
-        lines.append("| Provider | Slug | Title | Level | Tags | Parameters |")
+        lines.append("| Provider | Slug | Description | Level | Tags | Parameters |")
         lines.append("| :--- | :--- | :--- | :--- | :--- | :--- |")
 
         for rule in final_rules:
             provider = rule.get("provider", "custom")
             slug = rule.get("slug", "n/a")
-            title = rule.get("title", "n/a")
+            description = rule.get("description", "n/a")
             level = rule.get("level", "info")
             tags = ", ".join(rule.get("tags", []))
             params = rule.get("params", {})
@@ -1105,7 +1205,7 @@ def list_rules(
             if params:
                 params_str = ", ".join(f"`{k}={v}`" for k, v in params.items())
             lines.append(
-                f"| {provider} | `{slug}` | {title} | {level} | {tags} | {params_str} |"
+                f"| {provider} | `{slug}` | {description} | {level} | {tags} | {params_str} |"
             )
         content = "\n".join(lines) + "\n"
     else:
@@ -1119,7 +1219,7 @@ def list_rules(
             if params:
                 params_str = f" ({', '.join(f'{k}={v}' for k, v in params.items())})"
             lines.append(
-                f"  {enabled_mark} {rule.get('slug', 'unnamed'):25s} {rule.get('level', 'info'):8s} {rule.get('title', '')}{params_str}"
+                f"  {enabled_mark} {rule.get('slug', 'unnamed'):25s} {rule.get('level', 'info'):8s} {rule.get('description', '')}{params_str}"
             )
         content = "\n".join(lines) + "\n"
 

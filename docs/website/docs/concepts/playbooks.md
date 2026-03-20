@@ -1,3 +1,8 @@
+---
+tags:
+  - playbooks
+---
+
 # Playbooks
 
 Playbooks are the core of the `regis-cli` evaluation engine. They define the security and compliance rules that the tool evaluates against container image metadata.

@@ -1,3 +1,9 @@
+---
+tags:
+  - playbooks
+  - analyzers
+---
+
 # Advanced Configuration
 
 For more complex projects, `regis-cli` can be configured using a dedicated YAML file or environment variables.

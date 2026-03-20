@@ -1,3 +1,8 @@
+---
+tags:
+  - rules
+---
+
 # Rules
 
 RegiS evaluates the security and compliance of Docker images through a robust rules engine. Rules define specific conditions that the analysis results must meet.
@@ -11,10 +16,10 @@ Below are some common rules:
 - `trivy-no-critical`: Fails if Trivy finds any critical vulnerabilities.
 - `dockle-no-fatal`: Fails if Dockle finds fatal issues.
 - `skopeo-no-root`: Fails if the image is configured to run as root.
-- `trusted-domain`: Fails if the image does not originate from a trusted registry registry.
+- `core-trusted-domain`: Fails if the image does not originate from a trusted registry registry.
 
 :::tip
-For the full, up-to-date list of all rules and their parameters, see the [Standard Rules](../reference/rules.md).
+For the full, up-to-date list of all rules and their parameters, see the [Standard Rules](../reference/rules/).
 :::
 
 You can view all available default rules by running:
@@ -91,7 +96,7 @@ rules:
       forbidden_user: "admin"
 
   # Restrict to specific trusted domains
-  - slug: trusted-domain
+  - slug: core-trusted-domain
     params:
       domains: ["my-private-registry.com"]
 ```
@@ -129,7 +134,7 @@ RegiS includes a set of standard rules out-of-the-box. Below are the most common
 ### Lifecycle Rules
 
 - `freshness-age`: Fails if the image is older than `max_days` (default: 30).
-- `trusted-domain`: Restricts image origin to a list of `domains`.
+- `core-trusted-domain`: Restricts image origin to a list of `domains`.
 
 ## Rule Evaluation Mechanism
 

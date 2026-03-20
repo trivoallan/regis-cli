@@ -1,3 +1,9 @@
+---
+tags:
+  - dockle
+  - analyzers
+---
+
 # dockle
 
 The `dockle` analyzer is a container image linter that checks for security issues and best practices using [Dockle](https://github.com/goodwithtech/dockle).

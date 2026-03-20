@@ -1,3 +1,9 @@
+---
+tags:
+  - freshness
+  - analyzers
+---
+
 # freshness
 
 The `freshness` analyzer tracks the age of a container image and compares it to the `latest` version.

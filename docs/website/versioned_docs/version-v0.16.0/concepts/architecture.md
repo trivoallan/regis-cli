@@ -99,7 +99,7 @@ It uses `Jinja2` templates to produce rich, themeable HTML reports for human rev
 
 The project uses the following technologies:
 
-- **Language**: Python 3.14+
+- **Language**: Python 3.13+
 - **Dependency Management**: Pipenv
 - **CLI Framework**: Click
 - **Templating**: Jinja2

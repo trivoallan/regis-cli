@@ -34,7 +34,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
         return [
             {
                 "slug": "skopeo-no-root",
-                "title": "Image must not run as root.",
+                "description": "Image must not run as root.",
                 "level": "critical",
                 "tags": ["security"],
                 "params": {"forbidden_user": "root"},
@@ -51,7 +51,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "skopeo-max-size",
-                "title": "Image size is within limits.",
+                "description": "Image size is within limits.",
                 "level": "warning",
                 "tags": ["hygiene"],
                 "params": {"max_mb": 1000},
@@ -68,7 +68,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "skopeo-max-layers",
-                "title": "Image has an acceptable number of layers.",
+                "description": "Image has an acceptable number of layers.",
                 "level": "warning",
                 "tags": ["performance"],
                 "params": {"max_layers": 30},
@@ -85,7 +85,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "skopeo-tag-not-latest",
-                "title": "Image tag should not be 'latest'.",
+                "description": "Image tag should not be 'latest'.",
                 "level": "warning",
                 "tags": ["lifecycle"],
                 "condition": {"!=": [{"var": "request.tag"}, "latest"]},
@@ -96,7 +96,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "skopeo-multi-arch",
-                "title": "Image should support multiple platforms.",
+                "description": "Image should support multiple platforms.",
                 "level": "info",
                 "tags": ["compatibility"],
                 "params": {"min_platforms": 2},
@@ -119,7 +119,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "skopeo-exposed-ports",
-                "title": "Image exposes permitted ports.",
+                "description": "Image exposes permitted ports.",
                 "level": "warning",
                 "tags": ["security"],
                 "params": {"allowed_ports": ["80", "443"]},
@@ -136,7 +136,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "skopeo-required-labels",
-                "title": "Image must have required OCI labels.",
+                "description": "Image must have required OCI labels.",
                 "level": "warning",
                 "tags": ["metadata"],
                 "params": {"labels": ["org.opencontainers.image.source"]},
@@ -153,7 +153,7 @@ class SkopeoAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "skopeo-forbidden-env",
-                "title": "Image must not contain forbidden environment variables.",
+                "description": "Image must not contain forbidden environment variables.",
                 "level": "critical",
                 "tags": ["security"],
                 "params": {"keys": ["DEBUG", "SECRET_KEY"]},

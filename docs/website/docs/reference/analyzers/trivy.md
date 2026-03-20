@@ -1,3 +1,9 @@
+---
+tags:
+  - trivy
+  - analyzers
+---
+
 # trivy
 
 The `trivy` analyzer scans container images for vulnerabilities and secrets using the [Trivy](https://github.com/aquasecurity/trivy) CLI.

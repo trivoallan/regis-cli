@@ -58,9 +58,9 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     # Add core rules manually
     default_rules.append(
         {
-            "slug": "trusted-domain",
+            "slug": "core-trusted-domain",
             "provider": "core",
-            "title": "Image must originate from a trusted domain.",
+            "description": "Image must originate from a trusted domain.",
             "level": "critical",
             "tags": ["security"],
             "params": {
@@ -246,7 +246,7 @@ def evaluate_rules(
         results.append(
             {
                 "slug": rule.get("slug", ""),
-                "title": rule.get("title", ""),
+                "description": rule.get("description", ""),
                 "level": rule.get("level", "info"),
                 "tags": rule.get("tags", []),
                 "passed": passed,

@@ -1,3 +1,9 @@
+---
+tags:
+  - size
+  - analyzers
+---
+
 # size
 
 The `size` analyzer provides a detailed breakdown of an image's compressed size.

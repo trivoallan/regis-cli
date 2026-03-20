@@ -1,3 +1,9 @@
+---
+tags:
+  - versioning
+  - analyzers
+---
+
 # versioning
 
 The `versioning` analyzer detects and classifies the tag naming patterns used by a repository.

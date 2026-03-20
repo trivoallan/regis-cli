@@ -376,9 +376,9 @@
           "type": "string",
           "description": "Unique identifier for the scorecard."
         },
-        "title": {
+        "description": {
           "type": "string",
-          "description": "Human-readable title. Defaults to name if omitted."
+          "description": "Human-readable description. Defaults to name if omitted."
         },
         "level": {
           "type": "string",

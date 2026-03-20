@@ -25,7 +25,7 @@ class DockleAnalyzer(BaseAnalyzer):
         return [
             {
                 "slug": "dockle-no-fatal",
-                "title": "No FATAL issues found by Dockle.",
+                "description": "No FATAL issues found by Dockle.",
                 "level": "critical",
                 "tags": ["security"],
                 "params": {"max_count": 0},
@@ -42,7 +42,7 @@ class DockleAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "dockle-max-warnings",
-                "title": "Too many Dockle warnings found.",
+                "description": "Too many Dockle warnings found.",
                 "level": "warning",
                 "tags": ["security"],
                 "params": {"max_count": 5},

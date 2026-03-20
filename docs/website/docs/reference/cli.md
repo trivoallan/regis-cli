@@ -1,4 +1,4 @@
-# CLI
+# Commands
 
 This page provides a reference for all commands available in the `regis-cli` tool.
 

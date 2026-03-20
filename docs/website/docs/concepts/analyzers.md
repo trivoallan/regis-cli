@@ -1,3 +1,8 @@
+---
+tags:
+  - analyzers
+---
+
 # Analyzers
 
 `regis-cli` uses a pluggable architecture where separate **Analyzers** are responsible for extracting specific types of data from container images or their build artifacts.

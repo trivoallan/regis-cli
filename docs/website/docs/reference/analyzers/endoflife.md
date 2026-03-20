@@ -1,3 +1,9 @@
+---
+tags:
+  - endoflife
+  - analyzers
+---
+
 # endoflife
 
 The `endoflife` analyzer checks the support status of the software in the image using the [endoflife.date](https://endoflife.date) API.

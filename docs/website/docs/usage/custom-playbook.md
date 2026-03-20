@@ -1,5 +1,7 @@
 ---
-sidebar_position: 3
+tags:
+  - playbooks
+  - rules
 ---
 
 # Playbook Customisation

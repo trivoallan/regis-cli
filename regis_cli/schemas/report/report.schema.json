@@ -142,13 +142,13 @@
       "description": "List of unified rule results (promoted from playbooks[0]).",
       "items": {
         "type": "object",
-        "required": ["slug", "title", "passed", "status", "message"],
+        "required": ["slug", "description", "passed", "status", "message"],
         "properties": {
           "slug": {
             "type": "string",
             "description": "Unique identifier for the rule."
           },
-          "title": {
+          "description": {
             "type": "string",
             "description": "Human-readable name of the rule."
           },

@@ -21,4 +21,4 @@ For more information on how rules work and how to customize them, see the [Rules
 | trivy     | `trivy-no-critical`      | No CRITICAL vulnerabilities found by Trivy.                | critical | security      | `max_count=0`                                                         |
 | trivy     | `trivy-no-high`          | No HIGH vulnerabilities found by Trivy.                    | warning  | security      | `max_count=0`                                                         |
 | trivy     | `trivy-secret-scan`      | No secrets or credentials should be embedded in the image. | critical | security      | `max_count=0`                                                         |
-| core      | `trusted-domain`         | Image must originate from a trusted domain.                | critical | security      | `domains=['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` |
+| core      | `core-trusted-domain`    | Image must originate from a trusted domain.                | critical | security      | `domains=['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` |

@@ -1,3 +1,9 @@
+---
+tags:
+  - hadolint
+  - analyzers
+---
+
 # hadolint
 
 The `hadolint` analyzer lints a "pseudo-Dockerfile" reverse-engineered from the image history using [Hadolint](https://github.com/hadolint/hadolint).
