@@ -59,20 +59,6 @@ const config: Config = {
           routeBasePath: "/",
           editUrl:
             "https://github.com/trivoallan/regis-cli/edit/main/docs/website/",
-          includeCurrentVersion: true,
-          lastVersion: "current",
-
-          versions: {
-            current: {
-              label: "main-dev",
-              path: "",
-              banner: "unreleased",
-            },
-            "v0.17.2": {
-              label: "v0.17.2",
-              path: "v0.17.2",
-            },
-          },
         },
         blog: false,
         pages: false,
