@@ -1,22 +1,22 @@
 ---
 tags:
-  - skopeo
+  - security
   - rules
 ---
 
-# skopeo.exposed-ports
+# exposed-ports-whitelist
 
-Checks if exposed ports are allowed.
+Image exposes permitted ports.
 
-| Provider                              | Level   | Tags     |
-| :------------------------------------ | :------ | :------- |
-| [skopeo](/reference/analyzers/skopeo) | Warning | Security |
+| Provider | Level   | Tags     |
+| :------- | :------ | :------- |
+| skopeo   | Warning | security |
 
 ## Parameters
 
-| Name            | Default Value   |
-| :-------------- | :-------------- |
-| `allowed_ports` | `["80", "443"]` |
+| Name            | Default Value   | Description |
+| :-------------- | :-------------- | :---------- |
+| `allowed_ports` | `['80', '443']` | n/a         |
 
 ## Messages
 
@@ -29,9 +29,12 @@ Checks if exposed ports are allowed.
 
 ```yaml
 rules:
-  skopeo.exposed-ports:
-    params:
-      allowed_ports: ["80", "443", "8080"]
+  - provider: skopeo
+    rule: exposed-ports-whitelist
+    options:
+      allowed_ports:
+        - "80"
+        - "443"
 ```
 
 ## Condition

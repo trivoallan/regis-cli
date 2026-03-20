@@ -1,20 +1,16 @@
 ---
 tags:
-  - sbom
+  - compliance
   - rules
 ---
 
-# sbom.has-sbom
+# has-sbom
 
-Ensures the image provides a Software Bill of Materials (SBOM).
+Image must provide a Software Bill of Materials.
 
-| Provider                          | Level   | Tags       |
-| :-------------------------------- | :------ | :--------- |
-| [sbom](/reference/analyzers/sbom) | Warning | Compliance |
-
-## Parameters
-
-This rule has no parameters.
+| Provider | Level   | Tags       |
+| :------- | :------ | :--------- |
+| sbom     | Warning | compliance |
 
 ## Messages
 
@@ -27,8 +23,8 @@ This rule has no parameters.
 
 ```yaml
 rules:
-  sbom.has-sbom:
-    enable: true
+  - provider: sbom
+    rule: has-sbom
 ```
 
 ## Condition

@@ -1043,42 +1043,88 @@ def rules_group():
 
 
 def _render_rule_markdown(rule: dict[str, Any]) -> str:
-    """Render a single rule as a detailed Markdown document."""
+    """Render a single rule as a detailed Markdown document matching the documentation template."""
     slug = rule.get("slug", "unknown")
     description = rule.get("description", "n/a")
     provider = rule.get("provider", "custom")
     level = rule.get("level", "info")
-    tags = ", ".join(rule.get("tags", []))
+    tags = rule.get("tags", [])
     params = rule.get("params", {})
     condition = rule.get("condition", {})
     messages = rule.get("messages", {})
 
+    # 1. YAML Frontmatter
+    frontmatter = ["---"]
+    if tags:
+        frontmatter.append("tags:")
+        for tag in tags:
+            frontmatter.append(f"  - {tag}")
+    frontmatter.append("  - rules")
+    frontmatter.append("---\n")
+
+    # 2. Header and Description
     lines = [
         f"# {slug}",
         "",
-        f"- **Description**: {description}",
-        f"- **Provider**: {provider}",
-        f"- **Level**: {level}",
-        f"- **Tags**: {tags}",
+        description,
+        "",
+        # 3. Metadata Table
+        "| Provider | Level | Tags |",
+        "| :--- | :--- | :--- |",
+        f"| {provider} | {level.capitalize()} | {', '.join(tags)} |",
         "",
     ]
 
+    # 4. Parameters Table
     if params:
         lines.append("## Parameters")
         lines.append("")
+        lines.append("| Name | Default Value | Description |")
+        lines.append("| :--- | :--- | :--- |")
         for k, v in params.items():
-            lines.append(f"- **{k}**: `{v}`")
+            # For dynamic templates, we use a simple representation
+            lines.append(f"| `{k}` | `{v}` | n/a |")
         lines.append("")
 
+    # 5. Messages Table
     if messages:
         lines.append("## Messages")
         lines.append("")
+        lines.append("| Type | Message |")
+        lines.append("| :--- | :--- |")
         if "pass" in messages:
-            lines.append(f"- **Pass**: {messages['pass']}")
+            lines.append(f"| **Pass** | {messages['pass']} |")
         if "fail" in messages:
-            lines.append(f"- **Fail**: {messages['fail']}")
+            lines.append(f"| **Fail** | {messages['fail']} |")
         lines.append("")
 
+    # 6. Playbook Example
+    lines.append("## Playbook Example")
+    lines.append("")
+    lines.append("```yaml")
+    lines.append("rules:")
+    lines.append(f"  - provider: {provider}")
+
+    # Extract rule name from slug if it contains the provider
+    rule_name = slug
+    if "." in slug:
+        rule_name = slug.split(".", 1)[1]
+
+    lines.append(f"    rule: {rule_name}")
+
+    if params:
+        lines.append("    options:")
+        import yaml
+
+        # Render params as YAML indented
+        params_yaml = yaml.dump(params, default_flow_style=False).strip()
+        for p_line in params_yaml.splitlines():
+            lines.append(f"      {p_line}")
+
+    lines.append("```")
+    lines.append("")
+
+    # 7. Condition
     if condition:
         lines.append("## Condition")
         lines.append("")
@@ -1087,7 +1133,7 @@ def _render_rule_markdown(rule: dict[str, Any]) -> str:
         lines.append("```")
         lines.append("")
 
-    return "\n".join(lines)
+    return "\n".join(frontmatter + lines)
 
 
 @rules_group.command(name="list")
@@ -1156,13 +1202,18 @@ def list_rules(
 
     if output_format.lower() == "markdown":
         if output_dir:
-            out_path = Path(output_dir)
-            out_path.mkdir(parents=True, exist_ok=True)
+            out_root = Path(output_dir)
+            out_root.mkdir(parents=True, exist_ok=True)
 
             for rule in final_rules:
+                provider = rule.get("provider", "custom")
                 slug = rule.get("slug", "unknown")
+
+                rule_dir = out_root / provider
+                rule_dir.mkdir(parents=True, exist_ok=True)
+
                 rule_content = _render_rule_markdown(rule)
-                (out_path / f"{slug}.md").write_text(rule_content, encoding="utf-8")
+                (rule_dir / f"{slug}.md").write_text(rule_content, encoding="utf-8")
 
             click.echo(
                 f"  ✓ {len(final_rules)} rule files written to {output_dir}", err=True
@@ -1182,11 +1233,14 @@ def list_rules(
                     tags = ", ".join(rule.get("tags", []))
                     params = rule.get("params", {})
                     params_str = ", ".join(f"`{k}={v}`" for k, v in params.items())
+
+                    # Relative link to the rule file: ./provider/slug.md
+                    link = f"./{provider}/{slug}.md"
                     index_lines.append(
-                        f"| {provider} | [`{slug}`](./{slug}.md) | {description} | {level} | {tags} | {params_str} |"
+                        f"| {provider} | [`{slug}`]({link}) | {description} | {level} | {tags} | {params_str} |"
                     )
                 index_content = "\n".join(index_lines) + "\n"
-                (out_path / "index.md").write_text(index_content, encoding="utf-8")
+                (out_root / "index.md").write_text(index_content, encoding="utf-8")
                 click.echo(f"  ✓ Index file written to {output_dir}/index.md", err=True)
             return
 

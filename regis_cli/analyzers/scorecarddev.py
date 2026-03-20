@@ -137,7 +137,7 @@ class ScorecardDevAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "scorecard.min-score",
+                "slug": "min-score",
                 "description": "OpenSSF Scorecard score is above the threshold.",
                 "level": "warning",
                 "tags": ["security"],

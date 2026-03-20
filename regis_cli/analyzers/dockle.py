@@ -24,37 +24,25 @@ class DockleAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "dockle.no-fatal",
-                "description": "No FATAL issues found by Dockle.",
-                "level": "critical",
-                "tags": ["security"],
-                "params": {"max_count": 0},
-                "condition": {
-                    "<=": [
-                        {"var": "results.dockle.issues_by_level.FATAL"},
-                        {"var": "rule.params.max_count"},
-                    ]
-                },
-                "messages": {
-                    "pass": "Image has no critical CVEs.",  # nosec B105
-                    "fail": "Dockle found ${results.dockle.issues_by_level.FATAL} fatal issues (max allowed: ${rule.params.max_count}).",
-                },
-            },
-            {
-                "slug": "dockle.max-warnings",
-                "description": "Too many Dockle warnings found.",
+                "slug": "severity-count",
+                "description": "Max allowed issues for a given severity level.",
                 "level": "warning",
                 "tags": ["security"],
-                "params": {"max_count": 5},
+                "params": {"level": "FATAL", "max_count": 0},
                 "condition": {
                     "<=": [
-                        {"var": "results.dockle.issues_by_level.WARN"},
+                        {
+                            "get": [
+                                {"var": "results.dockle.issues_by_level"},
+                                {"var": "rule.params.level"},
+                            ]
+                        },
                         {"var": "rule.params.max_count"},
                     ]
                 },
                 "messages": {
-                    "pass": "Dockle warnings are within acceptable limits (${results.dockle.issues_by_level.WARN}).",  # nosec B105
-                    "fail": "Dockle found ${results.dockle.issues_by_level.WARN} warnings (max allowed: ${rule.params.max_count}).",
+                    "pass": "Dockle ${rule.params.level} issues are within limits.",  # nosec B105
+                    "fail": "Dockle found ${results.dockle.issues_by_level.${rule.params.level}} ${rule.params.level} issues (max allowed: ${rule.params.max_count}).",
                 },
             },
         ]

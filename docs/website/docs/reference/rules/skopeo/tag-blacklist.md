@@ -1,20 +1,16 @@
 ---
 tags:
-  - skopeo
+  - lifecycle
   - rules
 ---
 
-# skopeo.tag-not-latest
+# tag-blacklist
 
-Ensures the image tag is not `latest`.
+Image tag should not be 'latest'.
 
-| Provider                              | Level   | Tags      |
-| :------------------------------------ | :------ | :-------- |
-| [skopeo](/reference/analyzers/skopeo) | Warning | Lifecycle |
-
-## Parameters
-
-This rule has no parameters.
+| Provider | Level   | Tags      |
+| :------- | :------ | :-------- |
+| skopeo   | Warning | lifecycle |
 
 ## Messages
 
@@ -27,8 +23,8 @@ This rule has no parameters.
 
 ```yaml
 rules:
-  skopeo.tag-not-latest:
-    enable: true
+  - provider: skopeo
+    rule: tag-blacklist
 ```
 
 ## Condition

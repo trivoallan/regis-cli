@@ -58,7 +58,7 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
     # Add core rules manually
     default_rules.append(
         {
-            "slug": "core.registry-domain-whitelist",
+            "slug": "registry-domain-whitelist",
             "provider": "core",
             "description": "Checks if requested image registry domain is in the domains list.",
             "level": "critical",
@@ -93,22 +93,110 @@ def get_default_rules(analyzers_present: list[str]) -> list[dict[str, Any]]:
 def merge_rules(
     default_rules: list[dict[str, Any]], custom_rules: list[dict[str, Any]]
 ) -> list[dict[str, Any]]:
-    """Merge custom rules over default rules based on 'slug'. Deeply merges nested dicts."""
-    merged = {}
+    """Merge custom rules over default rules. Supports slug-based overrides and template instantiation."""
+    # Internal map keyed by (provider, slug)
+    merged: dict[tuple[str, str], dict[str, Any]] = {}
+
+    # 1. Map defaults by (provider, slug)
     for rule in default_rules:
-        slug = rule.get("slug")
-        if slug:
-            merged[slug] = rule
+        provider = rule.get("provider", "custom")
+        slug = rule.get("slug", "unknown")
+        merged[(provider, slug)] = rule.copy()
+
+    # 2. Process custom rules
+    processed_custom: list[dict[str, Any]] = []
+    for rule_def in custom_rules:
+        provider = rule_def.get("provider")
+        template_name = rule_def.get("rule")
+        options = rule_def.get("options", {})
+        slug = rule_def.get("slug")
+
+        # Case A: Instantiation (provider + rule)
+        if provider and template_name:
+            # Find the template in default_rules
+            template = merged.get((provider, template_name))
+
+            # Fallback for legacy full slugs or different provider naming
+            if not template:
+                for p_name in [provider, f"regis_cli.analyzers.{provider}"]:
+                    if (p_name, template_name) in merged:
+                        template = merged[(p_name, template_name)]
+                        break
+
+            if template:
+                # Create a new instance
+                instance = dict(template)
+                if options:
+                    instance["params"] = {**instance.get("params", {}), **options}
+
+                # If no slug provided, generate one
+                if not slug:
+                    # Provide a scoped slug for the instance
+                    if "level" in options:
+                        slug = f"{template_name}.{options['level']}"
+                    else:
+                        slug = f"{template_name}.{len(processed_custom)}"
+
+                instance["slug"] = slug
+                # Merge overrides from the custom rule definition itself
+                overrides = {
+                    k: v
+                    for k, v in rule_def.items()
+                    if k not in ("provider", "rule", "options", "slug")
+                }
+                instance.update(overrides)
+                processed_custom.append(instance)
+            else:
+                logger.warning(
+                    "Rule template '%s' not found for provider '%s'",
+                    template_name,
+                    provider,
+                )
+                if slug:
+                    # Normalize slug and provider so later loops don't get confused
+                    rule_def["provider"] = provider
+                    rule_def["slug"] = slug
+                    processed_custom.append(rule_def)
+
+        # Case B: Standard override or new rule
         else:
-            merged[str(id(rule))] = rule
+            rule_id = rule_def.get("rule") or rule_def.get("slug")
+            if not rule_id:
+                continue
 
-    for rule in custom_rules:
+            explicit_provider = rule_def.get("provider")
+            if explicit_provider:
+                custom_provider = explicit_provider
+                rule_slug = rule_id
+            elif "." in rule_id:
+                custom_provider, rule_slug = rule_id.split(".", 1)
+            else:
+                custom_provider = "custom"
+                rule_slug = rule_id
+
+            rule_def["provider"] = custom_provider
+            rule_def["slug"] = rule_slug
+            processed_custom.append(rule_def)
+
+    # 3. Merge processed custom rules into the final set
+    # Final result is still a list of rules with their (provider, slug) identity
+    final_dict: dict[tuple[str, str], dict[str, Any]] = {}
+    # Re-initialize with defaults
+    for k, v in merged.items():
+        final_dict[k] = v
+
+    for rule in processed_custom:
+        # Provider and slug are now properly formatted thanks to previous loop
+        provider = rule.get("provider", "custom")
         slug = rule.get("slug")
-        key = slug if slug else str(id(rule))
+        if not slug:
+            # Should not happen for processed rules but as fallback
+            slug = str(id(rule))
 
-        if key in merged:
-            # Specifically merge 'messages' which is a nested dict
-            base_rule = merged[key]
+        key = (provider, slug)
+
+        if key in final_dict:
+            base_rule = final_dict[key]
             override_rule = dict(rule)
 
             if "messages" in override_rule and "messages" in base_rule:
@@ -121,11 +209,11 @@ def merge_rules(
                 merged_params.update(override_rule["params"])
                 override_rule["params"] = merged_params
 
-            merged[key] = {**base_rule, **override_rule}
+            final_dict[key] = {**base_rule, **override_rule}
         else:
-            merged[key] = rule
+            final_dict[key] = rule
 
-    return list(merged.values())
+    return list(final_dict.values())
 
 
 def _add_custom_operations():
@@ -167,6 +255,13 @@ def _add_custom_operations():
     # Usage: {"keys": [{"var": "labels"}]} -> ["key1", "key2"]
     json_logic.add_operation(
         "keys", lambda a: list(a.keys()) if isinstance(a, dict) else []
+    )
+
+    # get: get a value from a dictionary by key
+    # Usage: {"get": [{"var": "results.trivy"}, "critical_count"]}
+    json_logic.add_operation(
+        "get",
+        lambda data, key: (data.get(key) if isinstance(data, dict) else None),
     )
 
     # env_contains: any string in b is a substring of any string in a

@@ -1,22 +1,22 @@
 ---
 tags:
-  - trivy
+  - security
   - rules
 ---
 
-# trivy.fix-available
+# fix-available
 
-Fails if vulnerabilities with available fixes are found.
+All vulnerabilities should be fixed if a patch exists.
 
-| Provider                            | Level   | Tags     |
-| :---------------------------------- | :------ | :------- |
-| [trivy](/reference/analyzers/trivy) | Warning | Security |
+| Provider | Level   | Tags     |
+| :------- | :------ | :------- |
+| trivy    | Warning | security |
 
 ## Parameters
 
-| Name        | Default Value |
-| :---------- | :------------ |
-| `max_count` | `0`           |
+| Name        | Default Value | Description |
+| :---------- | :------------ | :---------- |
+| `max_count` | `0`           | n/a         |
 
 ## Messages
 
@@ -29,9 +29,10 @@ Fails if vulnerabilities with available fixes are found.
 
 ```yaml
 rules:
-  trivy.fix-available:
-    params:
-      max_count: 5
+  - provider: trivy
+    rule: fix-available
+    options:
+      max_count: 0
 ```
 
 ## Condition

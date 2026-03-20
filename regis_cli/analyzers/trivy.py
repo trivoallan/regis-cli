@@ -76,41 +76,7 @@ class TrivyAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "trivy.no-critical",
-                "description": "No CRITICAL vulnerabilities found by Trivy.",
-                "level": "critical",
-                "tags": ["security"],
-                "params": {"max_count": 0},
-                "condition": {
-                    "<=": [
-                        {"var": "results.trivy.critical_count"},
-                        {"var": "rule.params.max_count"},
-                    ]
-                },
-                "messages": {
-                    "pass": "No critical vulnerabilities detected.",  # nosec B105
-                    "fail": "Image has ${results.trivy.critical_count} critical CVEs (max allowed: ${rule.params.max_count}).",
-                },
-            },
-            {
-                "slug": "trivy.no-high",
-                "description": "No HIGH vulnerabilities found by Trivy.",
-                "level": "warning",
-                "tags": ["security"],
-                "params": {"max_count": 0},
-                "condition": {
-                    "<=": [
-                        {"var": "results.trivy.high_count"},
-                        {"var": "rule.params.max_count"},
-                    ]
-                },
-                "messages": {
-                    "pass": "No high vulnerabilities detected.",  # nosec B105
-                    "fail": "Image has ${results.trivy.high_count} high CVEs (max allowed: ${rule.params.max_count}).",
-                },
-            },
-            {
-                "slug": "trivy.fix-available",
+                "slug": "fix-available",
                 "description": "All vulnerabilities should be fixed if a patch exists.",
                 "level": "warning",
                 "tags": ["security"],
@@ -127,7 +93,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "trivy.secret-scan",
+                "slug": "secret-scan",
                 "description": "No secrets or credentials should be embedded in the image.",
                 "level": "critical",
                 "tags": ["security"],
@@ -141,6 +107,28 @@ class TrivyAnalyzer(BaseAnalyzer):
                 "messages": {
                     "pass": "No secrets detected in the image.",  # nosec B105
                     "fail": "Trivy detected ${results.trivy.secrets_count} secrets or credentials in the image.",
+                },
+            },
+            {
+                "slug": "cve-count",
+                "description": "Max allowed violations for a given severity level.",
+                "level": "warning",
+                "tags": ["security"],
+                "params": {"level": "critical", "max_count": 0},
+                "condition": {
+                    "<=": [
+                        {
+                            "get": [
+                                {"var": "results.trivy"},
+                                {"cat": [{"var": "rule.params.level"}, "_count"]},
+                            ]
+                        },
+                        {"var": "rule.params.max_count"},
+                    ]
+                },
+                "messages": {
+                    "pass": "Number of ${rule.params.level} vulnerabilities is within limits.",  # nosec B105
+                    "fail": "Image has ${results.trivy.${rule.params.level}_count} ${rule.params.level} CVEs (max allowed: ${rule.params.max_count}).",
                 },
             },
         ]
