@@ -43,7 +43,19 @@ C4Component
 - **Deep Technical Insights**: Drills down into layer distribution, SBOM details, and registry metadata.
 - **Self-Contained**: The report is fully portable and can be served from any static web server (GitHub Pages, GitLab Pages) or viewed as a CI/CD artifact.
 
-## Report Sections
+## Playbook-Driven UI
+
+A key feature of the Report Viewer is that its **entire structure is dynamic**. The pages, sections, and even the individual widgets you see are defined by your active **Playbook**.
+
+This means that `regis-cli` doesn't just display a hard-coded list of results; it renders a custom dashboard tailored to your specific compliance requirements.
+
+:::tip
+To learn more about how to customize this structure, see the [Playbook Concepts](../concepts/playbooks.md) page.
+:::
+
+## Default Organization
+
+When you use `regis-cli` without specifying a custom playbook, it uses the **Default Regis Playbook**, which provides the following professional organization:
 
 ### 📈 Dashboard Overview
 
@@ -51,7 +63,7 @@ The flagship view providing a holistic summary of the image, including its compl
 
 ### ✅ Compliance Analysis
 
-A detailed breakdown of every rule evaluated by your playbooks. Each rule displays its status (Passed/Failed), its importance (Level), and a clear functional description.
+A detailed breakdown of every rule evaluated by the playbook. Each rule displays its status (Passed/Failed), its importance (Level), and a clear functional description.
 
 ### 🛡️ Vulnerability & Security
 
