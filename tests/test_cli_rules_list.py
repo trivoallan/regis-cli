@@ -15,7 +15,7 @@ class TestCliRulesList:
         runner = CliRunner()
         result = runner.invoke(main, ["rules", "list"])
         assert result.exit_code == 0
-        assert "core.registry-domain-whitelist" in result.output
+        assert "registry-domain-whitelist" in result.output
         assert "critical" in result.output
         assert (
             "Checks if requested image registry domain is in the domains list."
@@ -32,7 +32,7 @@ class TestCliRulesList:
             in result.output
         )
         assert (
-            "| core | `core.registry-domain-whitelist` | Checks if requested image registry domain is in the domains list. | critical | security | `domains=['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` |"
+            "| core | `registry-domain-whitelist` | Checks if requested image registry domain is in the domains list. | critical | security | `domains=['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` |"
             in result.output
         )
 
@@ -49,7 +49,7 @@ class TestCliRulesList:
 
             content = Path(output_file).read_text(encoding="utf-8")
             assert "| Provider |" in content
-            assert "| `core.registry-domain-whitelist` |" in content
+            assert "| `registry-domain-whitelist` |" in content
 
     def test_rules_list_markdown_output_dir(self):
         """Test multi-file markdown output."""
@@ -74,22 +74,22 @@ class TestCliRulesList:
 
             out_path = Path(output_dir)
             assert (out_path / "index.md").exists()
-            assert (out_path / "core.registry-domain-whitelist.md").exists()
+            assert (out_path / "core" / "registry-domain-whitelist.md").exists()
 
             index_content = (out_path / "index.md").read_text(encoding="utf-8")
             assert "| Provider |" in index_content
             assert (
-                "[`core.registry-domain-whitelist`](./core.registry-domain-whitelist.md)"
+                "[`registry-domain-whitelist`](./core/registry-domain-whitelist.md)"
                 in index_content
             )
 
-            rule_content = (out_path / "core.registry-domain-whitelist.md").read_text(
-                encoding="utf-8"
-            )
-            assert "# core.registry-domain-whitelist" in rule_content
+            rule_content = (
+                out_path / "core" / "registry-domain-whitelist.md"
+            ).read_text(encoding="utf-8")
+            assert "# registry-domain-whitelist" in rule_content
             assert (
-                "**Description**: Checks if requested image registry domain is in the domains list."
+                "Checks if requested image registry domain is in the domains list."
                 in rule_content
             )
-            assert "**Provider**: core" in rule_content
+            assert "| core | Critical | security |" in rule_content
             assert "## Condition" in rule_content

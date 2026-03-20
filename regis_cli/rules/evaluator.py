@@ -153,10 +153,29 @@ def merge_rules(
                     provider,
                 )
                 if slug:
+                    # Normalize slug and provider so later loops don't get confused
+                    rule_def["provider"] = provider
+                    rule_def["slug"] = slug
                     processed_custom.append(rule_def)
 
         # Case B: Standard override or new rule
         else:
+            rule_id = rule_def.get("rule") or rule_def.get("slug")
+            if not rule_id:
+                continue
+
+            explicit_provider = rule_def.get("provider")
+            if explicit_provider:
+                custom_provider = explicit_provider
+                rule_slug = rule_id
+            elif "." in rule_id:
+                custom_provider, rule_slug = rule_id.split(".", 1)
+            else:
+                custom_provider = "custom"
+                rule_slug = rule_id
+
+            rule_def["provider"] = custom_provider
+            rule_def["slug"] = rule_slug
             processed_custom.append(rule_def)
 
     # 3. Merge processed custom rules into the final set
@@ -167,6 +186,7 @@ def merge_rules(
         final_dict[k] = v
 
     for rule in processed_custom:
+        # Provider and slug are now properly formatted thanks to previous loop
         provider = rule.get("provider", "custom")
         slug = rule.get("slug")
         if not slug:
