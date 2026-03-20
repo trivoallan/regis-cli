@@ -112,6 +112,15 @@ jobs:
         run: pnpm install
         working-directory: docs/website
 
+      - name: Validate versions.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: docs/website
+        run: |
+          if ! node -e "JSON.parse(require('fs').readFileSync('versions.json','utf8'))" 2>/dev/null; then
+            echo "⚠️ versions.json is corrupted, resetting to empty array"
+            echo '[]' > versions.json
+          fi
+
       - name: Docusaurus docs:version
         if: startsWith(github.ref, 'refs/tags/v')
         run: pnpm docusaurus docs:version ${{ github.ref_name }}
