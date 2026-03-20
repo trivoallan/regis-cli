@@ -5,21 +5,26 @@
     "registry": "registry-1.docker.io",
     "repository": "library/nginx",
     "tag": "latest",
-    "digest": "sha256-dec7a90bd0973b076832dc56933fe876bc014929e14b4ec49923951405370112",
-    "analyzers": ["freshness"],
-    "timestamp": "2026-03-20T15:15:15.845563+00:00"
+    "digest": "latest",
+    "analyzers": ["dummy"],
+    "timestamp": "2026-03-20T15:30:56.769565+00:00",
+    "metadata": {
+      "build": "123",
+      "env": "prod"
+    }
   },
   "results": {
-    "freshness": {
-      "analyzer": "freshness",
-      "repository": "library/nginx",
-      "tag": "latest",
-      "tag_created": "2026-03-16T22:23:03.636558236Z",
-      "latest_created": null,
-      "age_days": 3,
-      "behind_latest_days": null,
-      "is_latest": true
+    "dummy": {
+      "analyzer": "dummy",
+      "error": {
+        "type": "unexpected",
+        "message": "TestCliBasics.test_analyze_html_with_metadata.<locals>.DummyAnalyzer.analyze() got an unexpected keyword argument 'platform'"
+      }
     }
+  },
+  "metadata": {
+    "build": "123",
+    "env": "prod"
   },
   "rules": [
     {
@@ -31,31 +36,16 @@
       "status": "passed",
       "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
       "analyzers": []
-    },
-    {
-      "slug": "age",
-      "description": "Image should be less than expected days old.",
-      "level": "warning",
-      "tags": ["freshness"],
-      "passed": true,
-      "status": "passed",
-      "message": "Image is less than 30 days old (3 days).",
-      "analyzers": ["freshness"]
     }
   ],
   "rules_summary": {
     "score": 100,
-    "total": ["registry-domain-whitelist", "age"],
-    "passed": ["registry-domain-whitelist", "age"],
+    "total": ["registry-domain-whitelist"],
+    "passed": ["registry-domain-whitelist"],
     "by_tag": {
       "security": {
         "rules": ["registry-domain-whitelist"],
         "passed_rules": ["registry-domain-whitelist"],
-        "score": 100
-      },
-      "freshness": {
-        "rules": ["age"],
-        "passed_rules": ["age"],
         "score": 100
       }
     }
@@ -161,7 +151,7 @@
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
                   "resolved_value": "2026-03-20",
-                  "resolved_subvalue": "15:15:15"
+                  "resolved_subvalue": "15:30:56"
                 },
                 {
                   "label": "Triggered by",
@@ -174,6 +164,19 @@
                   "template": "request/table.html",
                   "options": {
                     "title": "Request Parameters"
+                  }
+                },
+                {
+                  "template": "metadata/table.html",
+                  "options": {
+                    "title": "Additional Metadata"
+                  },
+                  "condition": {
+                    "!!": [
+                      {
+                        "var": "request.metadata"
+                      }
+                    ]
                   }
                 }
               ],
@@ -604,31 +607,16 @@
           "status": "passed",
           "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
           "analyzers": []
-        },
-        {
-          "slug": "age",
-          "description": "Image should be less than expected days old.",
-          "level": "warning",
-          "tags": ["freshness"],
-          "passed": true,
-          "status": "passed",
-          "message": "Image is less than 30 days old (3 days).",
-          "analyzers": ["freshness"]
         }
       ],
       "rules_summary": {
         "score": 100,
-        "total": ["registry-domain-whitelist", "age"],
-        "passed": ["registry-domain-whitelist", "age"],
+        "total": ["registry-domain-whitelist"],
+        "passed": ["registry-domain-whitelist"],
         "by_tag": {
           "security": {
             "rules": ["registry-domain-whitelist"],
             "passed_rules": ["registry-domain-whitelist"],
-            "score": 100
-          },
-          "freshness": {
-            "rules": ["age"],
-            "passed_rules": ["age"],
             "score": 100
           }
         }
@@ -766,7 +754,7 @@
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
                 "resolved_value": "2026-03-20",
-                "resolved_subvalue": "15:15:15"
+                "resolved_subvalue": "15:30:56"
               },
               {
                 "label": "Triggered by",
@@ -779,6 +767,19 @@
                 "template": "request/table.html",
                 "options": {
                   "title": "Request Parameters"
+                }
+              },
+              {
+                "template": "metadata/table.html",
+                "options": {
+                  "title": "Additional Metadata"
+                },
+                "condition": {
+                  "!!": [
+                    {
+                      "var": "request.metadata"
+                    }
+                  ]
                 }
               }
             ],
@@ -1209,31 +1210,16 @@
         "status": "passed",
         "message": "Image registry domain 'registry-1.docker.io' is in the domains list.",
         "analyzers": []
-      },
-      {
-        "slug": "age",
-        "description": "Image should be less than expected days old.",
-        "level": "warning",
-        "tags": ["freshness"],
-        "passed": true,
-        "status": "passed",
-        "message": "Image is less than 30 days old (3 days).",
-        "analyzers": ["freshness"]
       }
     ],
     "rules_summary": {
       "score": 100,
-      "total": ["registry-domain-whitelist", "age"],
-      "passed": ["registry-domain-whitelist", "age"],
+      "total": ["registry-domain-whitelist"],
+      "passed": ["registry-domain-whitelist"],
       "by_tag": {
         "security": {
           "rules": ["registry-domain-whitelist"],
           "passed_rules": ["registry-domain-whitelist"],
-          "score": 100
-        },
-        "freshness": {
-          "rules": ["age"],
-          "passed_rules": ["age"],
           "score": 100
         }
       }

@@ -326,7 +326,6 @@ def _render_and_save_reports(
                 import http.server
                 import socket
                 import socketserver
-                from functools import partial
 
                 index_file = out_dir / "index.html"
                 if not index_file.exists():
@@ -346,8 +345,8 @@ def _render_and_save_reports(
                 click.echo("  Press Ctrl+C to stop serving.", err=True)
 
                 class ReportHandler(http.server.SimpleHTTPRequestHandler):
-                    def __init__(self, *args, **kwargs):
-                        super().__init__(*args, directory=str(out_dir), **kwargs)
+                    def __init__(self, *args, directory=str(out_dir), **kwargs):
+                        super().__init__(*args, directory=directory, **kwargs)
 
                 # Use a small timeout to allow for periodic checks if needed,
                 # though serve_forever is typical for this use case.
