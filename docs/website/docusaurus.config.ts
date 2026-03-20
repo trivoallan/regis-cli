@@ -60,16 +60,17 @@ const config: Config = {
           editUrl:
             "https://github.com/trivoallan/regis-cli/edit/main/docs/website/",
           includeCurrentVersion: true,
-          lastVersion: "v0.16.0",
+          lastVersion: "current",
 
           versions: {
             current: {
               label: "main-dev",
               path: "",
+              banner: "unreleased",
             },
-            "v0.16.0": {
-              label: "v0.16.0",
-              path: "v0.16.0",
+            "v0.17.2": {
+              label: "v0.17.2",
+              path: "v0.17.2",
             },
           },
         },
