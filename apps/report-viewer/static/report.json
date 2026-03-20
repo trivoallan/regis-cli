@@ -7,7 +7,7 @@
     "tag": "latest",
     "digest": "latest",
     "analyzers": ["dummy"],
-    "timestamp": "2026-03-20T15:30:56.769565+00:00",
+    "timestamp": "2026-03-20T15:34:49.028548+00:00",
     "metadata": {
       "build": "123",
       "env": "prod"
@@ -151,7 +151,7 @@
                     "subvalue": "{{ request.timestamp | format_time }}"
                   },
                   "resolved_value": "2026-03-20",
-                  "resolved_subvalue": "15:30:56"
+                  "resolved_subvalue": "15:34:49"
                 },
                 {
                   "label": "Triggered by",
@@ -754,7 +754,7 @@
                   "subvalue": "{{ request.timestamp | format_time }}"
                 },
                 "resolved_value": "2026-03-20",
-                "resolved_subvalue": "15:30:56"
+                "resolved_subvalue": "15:34:49"
               },
               {
                 "label": "Triggered by",
