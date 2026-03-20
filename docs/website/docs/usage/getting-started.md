@@ -45,4 +45,4 @@ This will:
 
 - Learn how to create a [Custom Playbook](./custom-playbook.md).
 - Understand how [Analyzers](../concepts/analyzers.md) work.
-- Integrate `regis-cli` into your [CI/CD Pipeline](./ci-cd.md).
+- Integrate `regis-cli` into your [CI/CD Pipeline](./integrations/github.md).

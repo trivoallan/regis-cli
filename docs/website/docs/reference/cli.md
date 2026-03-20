@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # CLI
 
 This page provides a reference for all commands available in the `regis-cli` tool.
