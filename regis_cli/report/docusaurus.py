@@ -11,7 +11,7 @@ import json
 import logging
 import os
 import shutil
-import subprocess
+import subprocess  # nosec B404
 from pathlib import Path
 from typing import Any
 
@@ -85,7 +85,7 @@ def build_report_site(
 
     try:
         result = subprocess.run(
-            build_cmd,
+            build_cmd,  # nosec B603
             cwd=str(_VIEWER_DIR),
             env=env,
             capture_output=True,
