@@ -17,6 +17,7 @@ env:
 
 jobs:
   test:
+    name: Pytest
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
