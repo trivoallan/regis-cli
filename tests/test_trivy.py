@@ -68,6 +68,7 @@ class TestTrivyAnalyzer:
                             "VulnerabilityID": "CVE-2023-1234",
                             "PkgName": "libssl",
                             "InstalledVersion": "1.1.1",
+                            "FixedVersion": "1.1.2",
                             "Severity": "CRITICAL",
                         },
                         {
@@ -77,11 +78,20 @@ class TestTrivyAnalyzer:
                             "Severity": "HIGH",
                         },
                     ],
+                    "Secrets": [
+                        {
+                            "RuleID": "generic-api-key",
+                            "Title": "Generic API Key",
+                            "Severity": "CRITICAL",
+                            "Match": "AKIA...",
+                        }
+                    ],
                 }
             ],
         }
 
         report = analyzer.analyze(mock_client, "library/alpine", "latest")
+        analyzer.validate(report)
 
         assert report["analyzer"] == "trivy"
         assert report["trivy_version"] == "2"
@@ -89,6 +99,8 @@ class TestTrivyAnalyzer:
         assert report["critical_count"] == 1
         assert report["high_count"] == 1
         assert report["medium_count"] == 0
+        assert report["fixed_count"] == 1
+        assert report["secrets_count"] == 1
 
         targets = report["targets"]
         assert len(targets) == 1

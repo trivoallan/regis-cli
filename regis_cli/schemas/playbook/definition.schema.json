@@ -1,11 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/playbook.schema.json",
+  "$id": "https://trivoallan.github.io/regis-cli/schemas/playbook/definition.schema.json",
   "title": "playbook.definition",
   "description": "Schema for regis-cli playbook definition files (YAML or JSON).",
   "type": "object",
   "required": ["name"],
-  "anyOf": [{ "required": ["sections"] }, { "required": ["pages"] }],
+  "anyOf": [
+    {
+      "required": ["sections"]
+    },
+    {
+      "required": ["pages"]
+    }
+  ],
   "additionalProperties": false,
   "properties": {
     "name": {
@@ -83,7 +90,10 @@
                       "type": "string",
                       "description": "Display label."
                     },
-                    "url": { "type": "string", "description": "Target URL." },
+                    "url": {
+                      "type": "string",
+                      "description": "Target URL."
+                    },
                     "icon": {
                       "type": "string",
                       "description": "Icon name or emoji."
@@ -100,9 +110,18 @@
             "type": "object",
             "required": ["label", "url"],
             "properties": {
-              "label": { "type": "string", "description": "Display label." },
-              "url": { "type": "string", "description": "Target URL." },
-              "icon": { "type": "string", "description": "Icon name or emoji." }
+              "label": {
+                "type": "string",
+                "description": "Display label."
+              },
+              "url": {
+                "type": "string",
+                "description": "Target URL."
+              },
+              "icon": {
+                "type": "string",
+                "description": "Icon name or emoji."
+              }
             }
           }
         }
@@ -118,7 +137,9 @@
             "badges": {
               "type": "array",
               "description": "List of badge slugs to be imported as GitLab Merge Request labels.",
-              "items": { "type": "string" }
+              "items": {
+                "type": "string"
+              }
             },
             "checklist": {
               "type": "array",
@@ -140,7 +161,9 @@
                   "items": {
                     "type": "array",
                     "description": "Items in this checklist.",
-                    "items": { "$ref": "#/$defs/checklist_item" }
+                    "items": {
+                      "$ref": "#/$defs/checklist_item"
+                    }
                   }
                 },
                 "required": ["items"]
