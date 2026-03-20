@@ -1,5 +1,5 @@
 {
-  "$id": "https://regis-cli/schemas/dockle.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/dockle.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Dockle Analyzer Report",
   "type": "object",

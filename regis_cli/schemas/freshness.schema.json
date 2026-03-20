@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/freshness.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/freshness.schema.json",
   "title": "Freshness Analyzer Report",
   "description": "Image age and delta versus latest tag.",
   "type": "object",

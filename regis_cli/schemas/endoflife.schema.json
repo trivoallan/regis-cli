@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/endoflife.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/endoflife.schema.json",
   "title": "End-of-Life Analyzer Report",
   "description": "Report containing lifecycle information from endoflife.date.",
   "type": "object",

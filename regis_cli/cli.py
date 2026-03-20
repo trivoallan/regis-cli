@@ -246,7 +246,7 @@ def _validate_report(report: dict[str, Any]) -> None:
     schemas_dir = resources.files("regis_cli.schemas")
     registry = Registry()
     report_schema = None
-    base_uri = "https://regis-cli/schemas/"
+    base_uri = "https://regis-cli/reference/schemas/"
 
     for schema_file in schemas_dir.iterdir():
         if not schema_file.name.endswith(".json"):

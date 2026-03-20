@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/sbom.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/sbom.schema.json",
   "title": "SBOM Analyzer Report",
   "description": "Software Bill of Materials extracted from a container image using Trivy (CycloneDX).",
   "type": "object",

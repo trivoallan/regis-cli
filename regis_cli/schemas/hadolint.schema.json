@@ -1,5 +1,5 @@
 {
-  "$id": "https://regis-cli/schemas/hadolint.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/hadolint.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Hadolint Analyzer Report",
   "type": "object",

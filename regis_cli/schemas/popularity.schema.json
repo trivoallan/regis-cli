@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/popularity.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/popularity.schema.json",
   "title": "Popularity Analyzer Report",
   "description": "Docker Hub popularity statistics.",
   "type": "object",

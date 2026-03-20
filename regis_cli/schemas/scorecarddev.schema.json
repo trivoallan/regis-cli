@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/scorecard.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/scorecard.schema.json",
   "title": "Scorecard Analyzer Report",
   "description": "Report containing OpenSSF Scorecard security assessment for the image source repository.",
   "type": "object",

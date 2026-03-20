@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/report.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/report.schema.json",
   "title": "regis-cli Analysis Report",
   "description": "Final report envelope produced by regis-cli, containing request metadata and analyzer results.",
   "type": "object",

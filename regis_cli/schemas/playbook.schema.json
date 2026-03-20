@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli.dev/schemas/playbook.schema.json",
+  "$id": "https://regis-cli.dev/(reference/schemas/playbook.schema.json",
   "title": "Playbook Definition",
   "description": "Schema for regis-cli playbook definition files (YAML or JSON).",
   "type": "object",

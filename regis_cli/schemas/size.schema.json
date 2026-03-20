@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/size.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/size.schema.json",
   "title": "Size Analyzer Report",
   "description": "Image size breakdown.",
   "type": "object",

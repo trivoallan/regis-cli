@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/versioning.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/versioning.schema.json",
   "title": "Versioning Analyzer Report",
   "description": "Report analyzing tag naming conventions and semver adoption.",
   "type": "object",

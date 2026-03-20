@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://regis-cli/schemas/provenance.schema.json",
+  "$id": "https://regis-cli/(reference/schemas/provenance.schema.json",
   "title": "Provenance Analyzer Report",
   "description": "Build provenance and supply-chain attestation information.",
   "type": "object",

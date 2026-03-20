@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://regis-cli.dev/schemas/rules.schema.json",
+  "$id": "https://regis-cli.dev/(reference/schemas/rules.schema.json",
   "title": "Rules definition",
   "description": "Schema for regis-cli evaluating rules (rules.yaml).",
   "type": "object",
