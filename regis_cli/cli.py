@@ -298,118 +298,23 @@ def _render_and_save_reports(
     pretty: bool,
 ) -> None:
     """Render and save reports in requested formats."""
-    import shutil
-
     for fmt in formats:
         if fmt == "html":
-            from regis_cli.report.html import render_html
+            from regis_cli.report.docusaurus import build_report_site
 
-            # For HTML, generate one file per playbook if playbooks exist.
-            playbook_results = report.get("playbooks", [])
-
-            # Copy theme assets (if any)
-            from importlib import resources as importlib_resources
+            out_dir = _format_output_path(output_dir_template or ".", report, "json")
 
             try:
-                theme_assets = (
-                    importlib_resources.files("regis_cli.templates") / theme / "assets"
-                )
-                if theme_assets.is_dir():
-                    out_dir = _format_output_path(
-                        output_dir_template or ".", report, "json"
-                    )
-                    out_dir.mkdir(parents=True, exist_ok=True)
-                    for item in theme_assets.iterdir():
-                        dest = out_dir / item.name
-                        if item.is_dir():
-                            shutil.copytree(str(item), str(dest), dirs_exist_ok=True)
-                        else:
-                            shutil.copy2(str(item), str(dest))
-            except (FileNotFoundError, ModuleNotFoundError):
-                pass
-
-            if playbook_results:
-                for pb in playbook_results:
-                    # Pre-calculate filenames for all pages in this playbook to build navigation
-                    page_navigation = []
-                    for page in pb.get("pages", []):
-                        pb_slug = pb.get("slug")
-                        pg_slug = page.get("slug")
-                        source_name = pb.get("_meta", {}).get("source_name")
-
-                        if output_template:
-                            filename = output_template
-                        elif pg_slug:
-                            filename = f"{pg_slug}.{fmt}"
-                        elif pb_slug:
-                            filename = (
-                                f"{pb_slug}-{page.get('title', 'page').lower()}.{fmt}"
-                            )
-                        elif source_name:
-                            filename = f"{source_name}-{page.get('title', 'page').lower()}.{fmt}"
-                        else:
-                            filename = (
-                                f"report_{pb.get('playbook_name', 'unnamed')}_"
-                                f"{page.get('title', 'page').lower()}.{fmt}"
-                            )
-
-                        page_navigation.append(
-                            {
-                                "title": page.get("title"),
-                                "url": filename,
-                                "active": False,
-                            }
-                        )
-
-                    for i, page in enumerate(pb.get("pages", [])):
-                        # Mark current page as active in navigation
-                        current_nav = [dict(n) for n in page_navigation]
-                        current_nav[i]["active"] = True
-
-                        # Render HTML focusing on this single page of the playbook.
-                        single_page_report = {
-                            **report,
-                            "playbooks": [{**pb, "pages": [page]}],
-                            "playbook": pb,
-                            "page": page,
-                            "navigation": current_nav,
-                        }
-                        rendered = render_html(single_page_report, theme=theme)
-
-                        _write_report(
-                            dir_tmpl=output_dir_template or ".",
-                            file_tmpl=page_navigation[i]["url"],
-                            report=single_page_report,
-                            fmt=fmt,
-                            rendered=rendered,
-                        )
-
-                # Generate a main report.json in the output directory
-                out_dir = _format_output_path(
-                    output_dir_template or ".", report, "json"
-                )
-                out_dir.mkdir(parents=True, exist_ok=True)
-                report_json_path = out_dir / "report.json"
-                indent = 2 if pretty else None
-                report_json_path.write_text(
-                    json.dumps(report, indent=indent, ensure_ascii=False),
-                    encoding="utf-8",
-                )
-            else:
-                # No playbooks, just render the base report
-                rendered = render_html(report, theme=theme)
-                file_tmpl = output_template or f"report.{fmt}"
-                _write_report(
-                    dir_tmpl=output_dir_template or ".",
-                    file_tmpl=file_tmpl,
+                build_report_site(
                     report=report,
-                    fmt=fmt,
-                    rendered=rendered,
+                    output_dir=out_dir,
+                    pretty=pretty,
                 )
+            except RuntimeError as exc:
+                raise click.ClickException(str(exc)) from exc
 
             click.echo(
-                f"  Report site generated at "
-                f"{_format_output_path(output_dir_template or '.', report, fmt)}",
+                f"  Report site generated at {out_dir}",
                 err=True,
             )
         else:

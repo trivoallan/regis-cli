@@ -1,0 +1,25 @@
+{
+  "id": "rules",
+  "title": "Rules",
+  "description": "",
+  "source": "@site/docs/rules.mdx",
+  "sourceDirName": ".",
+  "slug": "/rules",
+  "permalink": "/rules",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Rules"
+  },
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "Overview",
+    "permalink": "/"
+  },
+  "next": {
+    "title": "Playbook",
+    "permalink": "/playbook"
+  }
+}

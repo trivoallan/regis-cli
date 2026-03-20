@@ -1,0 +1,88 @@
+{
+  "allContent": {
+    "docusaurus-plugin-content-docs": {
+      "default": {
+        "loadedVersions": [
+          {
+            "versionName": "current",
+            "label": "Next",
+            "banner": null,
+            "badge": false,
+            "noIndex": false,
+            "className": "docs-version-current",
+            "path": "/",
+            "tagsPath": "/tags",
+            "isLast": true,
+            "routePriority": -1,
+            "contentPath": "/Users/tristan/Documents/Workspaces/ttc/regis-cli/apps/report-viewer/docs",
+            "docs": [
+              {
+                "id": "index",
+                "title": "index",
+                "description": "",
+                "source": "@site/docs/index.mdx",
+                "sourceDirName": ".",
+                "slug": "/",
+                "permalink": "/",
+                "draft": false,
+                "unlisted": false,
+                "tags": [],
+                "version": "current",
+                "frontMatter": { "slug": "/", "hide_title": true },
+                "sidebar": "defaultSidebar",
+                "next": { "title": "Rules", "permalink": "/rules" }
+              },
+              {
+                "id": "playbook",
+                "title": "Playbook",
+                "description": "",
+                "source": "@site/docs/playbook.mdx",
+                "sourceDirName": ".",
+                "slug": "/playbook",
+                "permalink": "/playbook",
+                "draft": false,
+                "unlisted": false,
+                "tags": [],
+                "version": "current",
+                "frontMatter": { "title": "Playbook" },
+                "sidebar": "defaultSidebar",
+                "previous": { "title": "Rules", "permalink": "/rules" }
+              },
+              {
+                "id": "rules",
+                "title": "Rules",
+                "description": "",
+                "source": "@site/docs/rules.mdx",
+                "sourceDirName": ".",
+                "slug": "/rules",
+                "permalink": "/rules",
+                "draft": false,
+                "unlisted": false,
+                "tags": [],
+                "version": "current",
+                "frontMatter": { "title": "Rules" },
+                "sidebar": "defaultSidebar",
+                "previous": { "title": "Overview", "permalink": "/" },
+                "next": { "title": "Playbook", "permalink": "/playbook" }
+              }
+            ],
+            "drafts": [],
+            "sidebars": {
+              "defaultSidebar": [
+                { "type": "doc", "id": "index", "label": "Overview" },
+                { "type": "doc", "id": "rules", "label": "Rules" },
+                { "type": "doc", "id": "playbook", "label": "Playbook" }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "docusaurus-plugin-debug": {},
+    "docusaurus-plugin-svgr": {},
+    "docusaurus-theme-classic": {},
+    "docusaurus-theme-mermaid": {},
+    "docusaurus-bootstrap-plugin": {},
+    "docusaurus-mdx-fallback-plugin": {}
+  }
+}
