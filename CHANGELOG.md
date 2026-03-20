@@ -2,33 +2,30 @@
 
 ## [0.17.0](https://github.com/trivoallan/regis-cli/compare/v0.16.0...v0.17.0) (2026-03-20)
 
-
 ### Features
 
-* **analyzers:** Reusable rules and simplified rule slugs ([#63](https://github.com/trivoallan/regis-cli/issues/63)) ([40d9f63](https://github.com/trivoallan/regis-cli/commit/40d9f63ea63ce8858e31c53c1991c409150ece63))
-* **cli:** add rules list command and improve evaluator ([11a9118](https://github.com/trivoallan/regis-cli/commit/11a91189480b84cc0cb71aa35e72c4d9b32ea478))
-
+- **analyzers:** Reusable rules and simplified rule slugs ([#63](https://github.com/trivoallan/regis-cli/issues/63)) ([40d9f63](https://github.com/trivoallan/regis-cli/commit/40d9f63ea63ce8858e31c53c1991c409150ece63))
+- **cli:** add rules list command and improve evaluator ([11a9118](https://github.com/trivoallan/regis-cli/commit/11a91189480b84cc0cb71aa35e72c4d9b32ea478))
 
 ### Bug Fixes
 
-* **analyzer:** standardize rule names and fix analyzer validation ([#62](https://github.com/trivoallan/regis-cli/issues/62)) ([1a64c24](https://github.com/trivoallan/regis-cli/commit/1a64c24252459519e6765256b4364e140eaf0b9f))
-* Correct relative path for the "Understand Playbooks" guide link in the default playbook overview. ([31c4d1b](https://github.com/trivoallan/regis-cli/commit/31c4d1b7b1a9dffeb035b4127a56f27464b9bc70))
-* Remove redundant entries from `versions.json`. ([5407d53](https://github.com/trivoallan/regis-cli/commit/5407d5353c3e9d969239be96d6418ee4b4587f0f))
-* **schema:** add missing fields to trivy schema and fix id resolution ([8894b25](https://github.com/trivoallan/regis-cli/commit/8894b254336cc82f554831d20ab721c0454e5deb))
-
+- **analyzer:** standardize rule names and fix analyzer validation ([#62](https://github.com/trivoallan/regis-cli/issues/62)) ([1a64c24](https://github.com/trivoallan/regis-cli/commit/1a64c24252459519e6765256b4364e140eaf0b9f))
+- Correct relative path for the "Understand Playbooks" guide link in the default playbook overview. ([31c4d1b](https://github.com/trivoallan/regis-cli/commit/31c4d1b7b1a9dffeb035b4127a56f27464b9bc70))
+- Remove redundant entries from `versions.json`. ([5407d53](https://github.com/trivoallan/regis-cli/commit/5407d5353c3e9d969239be96d6418ee4b4587f0f))
+- **schema:** add missing fields to trivy schema and fix id resolution ([8894b25](https://github.com/trivoallan/regis-cli/commit/8894b254336cc82f554831d20ab721c0454e5deb))
 
 ### Documentation
 
-* add workflow step to generate rules reference documentation. ([e325793](https://github.com/trivoallan/regis-cli/commit/e325793df08eb713a47038c639845a47cbbdef32))
-* Change Docusaurus broken link handling from `throw` to `warn`. ([112bbbb](https://github.com/trivoallan/regis-cli/commit/112bbbb6e61e4c71bd0647aa032a87d43b036e77))
-* enable local search and fix broken links ([#60](https://github.com/trivoallan/regis-cli/issues/60)) ([0ebae0f](https://github.com/trivoallan/regis-cli/commit/0ebae0fcaf9bede74eb9d20b1a519eb41292b203))
-* overhaul rules documentation by separating concepts from reference, introducing MDX for detailed rule listings, and updating the rules engine explanation. ([721c13a](https://github.com/trivoallan/regis-cli/commit/721c13aa3f3b1601c2346da2627a1bf47929ed07))
-* refine usage and concepts documentation ([6e09d1d](https://github.com/trivoallan/regis-cli/commit/6e09d1d9f20c90b32fec3e6bd6298740bb14e4f1))
-* Remove old versioned documentation, reorganize current docs, and introduce a new CLI reference. ([b8a0b92](https://github.com/trivoallan/regis-cli/commit/b8a0b9275802e193035166fbcff385f7a74f86ad))
-* restructure documentation and update index ([74b9090](https://github.com/trivoallan/regis-cli/commit/74b90905aa3030a3e6cd16b4ed2976235498f6e1))
-* standardize rule documentation and add concept tags ([#61](https://github.com/trivoallan/regis-cli/issues/61)) ([3fadb26](https://github.com/trivoallan/regis-cli/commit/3fadb2678dcf9b7cc1949de7eaf2d74df0807ac9))
-* **versioning:** setup docusaurus versioning and generate reference docs ([5ec6529](https://github.com/trivoallan/regis-cli/commit/5ec6529dc2d1874399223cd0d844b1939f550e92))
-* **website:** fix configuration reload errors ([438dd86](https://github.com/trivoallan/regis-cli/commit/438dd86e3089916276e0c7096984227063664ed7))
+- add workflow step to generate rules reference documentation. ([e325793](https://github.com/trivoallan/regis-cli/commit/e325793df08eb713a47038c639845a47cbbdef32))
+- Change Docusaurus broken link handling from `throw` to `warn`. ([112bbbb](https://github.com/trivoallan/regis-cli/commit/112bbbb6e61e4c71bd0647aa032a87d43b036e77))
+- enable local search and fix broken links ([#60](https://github.com/trivoallan/regis-cli/issues/60)) ([0ebae0f](https://github.com/trivoallan/regis-cli/commit/0ebae0fcaf9bede74eb9d20b1a519eb41292b203))
+- overhaul rules documentation by separating concepts from reference, introducing MDX for detailed rule listings, and updating the rules engine explanation. ([721c13a](https://github.com/trivoallan/regis-cli/commit/721c13aa3f3b1601c2346da2627a1bf47929ed07))
+- refine usage and concepts documentation ([6e09d1d](https://github.com/trivoallan/regis-cli/commit/6e09d1d9f20c90b32fec3e6bd6298740bb14e4f1))
+- Remove old versioned documentation, reorganize current docs, and introduce a new CLI reference. ([b8a0b92](https://github.com/trivoallan/regis-cli/commit/b8a0b9275802e193035166fbcff385f7a74f86ad))
+- restructure documentation and update index ([74b9090](https://github.com/trivoallan/regis-cli/commit/74b90905aa3030a3e6cd16b4ed2976235498f6e1))
+- standardize rule documentation and add concept tags ([#61](https://github.com/trivoallan/regis-cli/issues/61)) ([3fadb26](https://github.com/trivoallan/regis-cli/commit/3fadb2678dcf9b7cc1949de7eaf2d74df0807ac9))
+- **versioning:** setup docusaurus versioning and generate reference docs ([5ec6529](https://github.com/trivoallan/regis-cli/commit/5ec6529dc2d1874399223cd0d844b1939f550e92))
+- **website:** fix configuration reload errors ([438dd86](https://github.com/trivoallan/regis-cli/commit/438dd86e3089916276e0c7096984227063664ed7))
 
 ## [0.16.0](https://github.com/trivoallan/regis-cli/compare/v0.15.0...v0.16.0) (2026-03-20)
 
