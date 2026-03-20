@@ -24,6 +24,8 @@
 - **Implemented modern Docusaurus-based report viewer** (`apps/report-viewer`).
 - Replaced legacy Jinja2 HTML report generation with the new React/Docusaurus architecture.
 - Integrated the new report viewer into the workspace (`pnpm`).
+- **Added GitLab artifact support** with dynamic `baseUrl` calculation and `--base-url` flag.
+- **Updated documentation** across the site to reflect the new report architecture.
 
 ## Future Roadmap
 

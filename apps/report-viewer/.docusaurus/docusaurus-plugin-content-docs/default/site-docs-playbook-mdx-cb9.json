@@ -5,7 +5,7 @@
   "source": "@site/docs/playbook.mdx",
   "sourceDirName": ".",
   "slug": "/playbook",
-  "permalink": "/testing-base-url/playbook",
+  "permalink": "/playbook",
   "draft": false,
   "unlisted": false,
   "tags": [],
@@ -16,6 +16,6 @@
   "sidebar": "defaultSidebar",
   "previous": {
     "title": "Rules",
-    "permalink": "/testing-base-url/rules"
+    "permalink": "/rules"
   }
 }

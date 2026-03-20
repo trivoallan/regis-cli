@@ -3,35 +3,67 @@ import ComponentCreator from "@docusaurus/ComponentCreator";
 
 export default [
   {
-    path: "/testing-base-url/",
-    component: ComponentCreator("/testing-base-url/", "fb7"),
+    path: "/__docusaurus/debug",
+    component: ComponentCreator("/__docusaurus/debug", "5ff"),
+    exact: true,
+  },
+  {
+    path: "/__docusaurus/debug/config",
+    component: ComponentCreator("/__docusaurus/debug/config", "5ba"),
+    exact: true,
+  },
+  {
+    path: "/__docusaurus/debug/content",
+    component: ComponentCreator("/__docusaurus/debug/content", "a2b"),
+    exact: true,
+  },
+  {
+    path: "/__docusaurus/debug/globalData",
+    component: ComponentCreator("/__docusaurus/debug/globalData", "c3c"),
+    exact: true,
+  },
+  {
+    path: "/__docusaurus/debug/metadata",
+    component: ComponentCreator("/__docusaurus/debug/metadata", "156"),
+    exact: true,
+  },
+  {
+    path: "/__docusaurus/debug/registry",
+    component: ComponentCreator("/__docusaurus/debug/registry", "88c"),
+    exact: true,
+  },
+  {
+    path: "/__docusaurus/debug/routes",
+    component: ComponentCreator("/__docusaurus/debug/routes", "000"),
+    exact: true,
+  },
+  {
+    path: "/",
+    component: ComponentCreator("/", "a3d"),
     routes: [
       {
-        path: "/testing-base-url/",
-        component: ComponentCreator("/testing-base-url/", "2da"),
+        path: "/",
+        component: ComponentCreator("/", "1d3"),
         routes: [
           {
-            path: "/testing-base-url/",
-            component: ComponentCreator("/testing-base-url/", "ea2"),
+            path: "/",
+            component: ComponentCreator("/", "1f0"),
             routes: [
               {
-                path: "/testing-base-url/playbook",
-                component: ComponentCreator(
-                  "/testing-base-url/playbook",
-                  "4f1",
-                ),
+                path: "/playbook",
+                component: ComponentCreator("/playbook", "8ae"),
                 exact: true,
                 sidebar: "defaultSidebar",
               },
               {
-                path: "/testing-base-url/rules",
-                component: ComponentCreator("/testing-base-url/rules", "e3c"),
+                path: "/rules",
+                component: ComponentCreator("/rules", "f47"),
                 exact: true,
                 sidebar: "defaultSidebar",
               },
               {
-                path: "/testing-base-url/",
-                component: ComponentCreator("/testing-base-url/", "954"),
+                path: "/",
+                component: ComponentCreator("/", "87e"),
                 exact: true,
                 sidebar: "defaultSidebar",
               },
