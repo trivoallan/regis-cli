@@ -323,15 +323,41 @@ def _render_and_save_reports(
             )
 
             if open_browser:
+                import http.server
+                import socket
+                import socketserver
+                from functools import partial
+
                 index_file = out_dir / "index.html"
-                if index_file.exists():
-                    click.echo(f"  Opening {index_file} in browser...", err=True)
-                    webbrowser.open(f"file://{index_file.resolve()}")
-                else:
+                if not index_file.exists():
                     click.echo(
                         f"  Warning: Could not find index.html at {out_dir}. Browser not opened.",
                         err=True,
                     )
+                    return
+
+                # Find a free port
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.bind(("", 0))
+                    port = s.getsockname()[1]
+
+                url = f"http://localhost:{port}"
+                click.echo(f"  Starting local server at {url}", err=True)
+                click.echo("  Press Ctrl+C to stop serving.", err=True)
+
+                class ReportHandler(http.server.SimpleHTTPRequestHandler):
+                    def __init__(self, *args, **kwargs):
+                        super().__init__(*args, directory=str(out_dir), **kwargs)
+
+                # Use a small timeout to allow for periodic checks if needed,
+                # though serve_forever is typical for this use case.
+                with socketserver.TCPServer(("", port), ReportHandler) as httpd:
+                    webbrowser.open(url)
+                    try:
+                        httpd.serve_forever()
+                    except KeyboardInterrupt:
+                        click.echo("\n  Stopping server...", err=True)
+                        httpd.shutdown()
         else:
             # JSON (and other formats): Single unified report file
             indent = 2 if pretty else None
