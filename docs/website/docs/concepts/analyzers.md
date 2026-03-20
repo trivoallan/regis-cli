@@ -6,11 +6,10 @@ Each analyzer runs independently and contributes to a unified data model that is
 
 ## Core Analyzers
 
-:::tip
-Check the [Analyzers Reference](../reference/analyzers/) for detailed documentation on each analyzer.
+:::info[Reference]
+RegiS includes several built-in analyzers.
+For a complete list and technical details for each, see the [Analyzers Reference](../reference/analyzers/).
 :::
-
-RegiS includes several built-in analyzers. For a complete list and technical details for each, see the [Analyzers Reference](../reference/analyzers/).
 
 - **Skopeo**: Fetches low-level image metadata (labels, architecture, layers, creation date) directly from the registry.
 - **Trivy**: Performs vulnerability scanning (CVEs) and generates Software Bill of Materials (SBOM).

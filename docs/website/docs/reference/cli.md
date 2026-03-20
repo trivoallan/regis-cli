@@ -75,9 +75,7 @@ Evaluate a regis-cli JSON report against rules.
 regis-cli rules evaluate <report.json> [--rules playbook.yaml] [--fail] [--fail-level critical] [-o output.json]
 ```
 
-[#bootstrap]
-
-## Project Bootstrapping
+## Project Bootstrapping {#bootstrap}
 
 ### `bootstrap repository`
 
