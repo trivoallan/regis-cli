@@ -88,7 +88,7 @@ class SbomAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "sbom.has-sbom",
+                "slug": "has-sbom",
                 "description": "Image must provide a Software Bill of Materials.",
                 "level": "warning",
                 "tags": ["compliance"],

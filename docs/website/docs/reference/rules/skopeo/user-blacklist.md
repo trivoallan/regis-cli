@@ -1,22 +1,22 @@
 ---
 tags:
-  - skopeo
+  - security
   - rules
 ---
 
-# skopeo.no-root
+# user-blacklist
 
-Checks if the image is configured to run as a non-root user.
+Image must not run as root.
 
-| Provider                              | Level    | Tags     |
-| :------------------------------------ | :------- | :------- |
-| [skopeo](/reference/analyzers/skopeo) | Critical | Security |
+| Provider | Level    | Tags     |
+| :------- | :------- | :------- |
+| skopeo   | Critical | security |
 
 ## Parameters
 
-| Name             | Default Value |
-| :--------------- | :------------ |
-| `forbidden_user` | `"root"`      |
+| Name             | Default Value | Description |
+| :--------------- | :------------ | :---------- |
+| `forbidden_user` | `root`        | n/a         |
 
 ## Messages
 
@@ -29,9 +29,10 @@ Checks if the image is configured to run as a non-root user.
 
 ```yaml
 rules:
-  skopeo.no-root:
-    params:
-      forbidden_user: "0"
+  - provider: skopeo
+    rule: user-blacklist
+    options:
+      forbidden_user: root
 ```
 
 ## Condition

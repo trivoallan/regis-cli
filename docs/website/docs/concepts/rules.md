@@ -105,7 +105,7 @@ The rule engine applying them to the rule's built-in evaluation condition and ou
 
 ## Standard Rule Library
 
-RegiS includes a set of standard rules out-of-the-box. Below are the most common rules. For the full, up-to-date list of all rules and their parameters, see the [Rules Reference](../reference/rules.md).
+RegiS includes a set of standard rules out-of-the-box. Below are the most common rules. For the full, up-to-date list of all rules and their parameters, see the [Rules Reference](../reference/rules/).
 
 ### Security Rules (Trivy & Dockle)
 

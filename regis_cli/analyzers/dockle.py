@@ -24,7 +24,7 @@ class DockleAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "dockle.severity-count",
+                "slug": "severity-count",
                 "description": "Max allowed issues for a given severity level.",
                 "level": "warning",
                 "tags": ["security"],

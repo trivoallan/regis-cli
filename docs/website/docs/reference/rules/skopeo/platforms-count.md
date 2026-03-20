@@ -1,22 +1,22 @@
 ---
 tags:
-  - skopeo
+  - compatibility
   - rules
 ---
 
-# skopeo.multi-arch
+# platforms-count
 
-Checks if the image supports multiple architectures.
+Image should support multiple platforms.
 
-| Provider                              | Level | Tags          |
-| :------------------------------------ | :---- | :------------ |
-| [skopeo](/reference/analyzers/skopeo) | Info  | Compatibility |
+| Provider | Level | Tags          |
+| :------- | :---- | :------------ |
+| skopeo   | Info  | compatibility |
 
 ## Parameters
 
-| Name            | Default Value |
-| :-------------- | :------------ |
-| `min_platforms` | `2`           |
+| Name            | Default Value | Description |
+| :-------------- | :------------ | :---------- |
+| `min_platforms` | `2`           | n/a         |
 
 ## Messages
 
@@ -29,9 +29,10 @@ Checks if the image supports multiple architectures.
 
 ```yaml
 rules:
-  skopeo.multi-arch:
-    params:
-      min_platforms: 3
+  - provider: skopeo
+    rule: platforms-count
+    options:
+      min_platforms: 2
 ```
 
 ## Condition

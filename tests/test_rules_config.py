@@ -44,15 +44,15 @@ def test_parameterized_rules():
     rules = {r["slug"]: r for r in results["rules"]}
 
     # Verify instantiation and slugs
-    assert "trivy.cve-count.critical" in rules
-    assert "trivy.cve-count.high" in rules
+    assert "cve-count.critical" in rules
+    assert "cve-count.high" in rules
 
     # Verify results
-    assert rules["trivy.cve-count.critical"]["passed"] is False  # 2 > 0
-    assert "critical CVEs" in rules["trivy.cve-count.critical"]["message"]
+    assert rules["cve-count.critical"]["passed"] is False  # 2 > 0
+    assert "critical CVEs" in rules["cve-count.critical"]["message"]
 
-    assert rules["trivy.cve-count.high"]["passed"] is True  # 5 <= 10
-    assert "within limits" in rules["trivy.cve-count.high"]["message"]
+    assert rules["cve-count.high"]["passed"] is True  # 5 <= 10
+    assert "within limits" in rules["cve-count.high"]["message"]
 
 
 def test_parameterized_rule_custom_slug():
@@ -101,5 +101,5 @@ def test_hadolint_dockle_parameterized():
     results = evaluate_rules(report, playbook)
     rules = {r["slug"]: r for r in results["rules"]}
 
-    assert rules["hadolint.severity-count.error"]["passed"] is False
-    assert rules["dockle.severity-count.WARN"]["passed"] is False
+    assert rules["severity-count.error"]["passed"] is False
+    assert rules["severity-count.WARN"]["passed"] is False

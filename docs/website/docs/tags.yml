@@ -92,3 +92,35 @@ scoring:
   label: scoring
   description: Translating analysis results into actionable scores and metrics.
   permalink: /concepts/scoring
+
+security:
+  label: security
+  description: Security-related rules and analyzers.
+
+compliance:
+  label: compliance
+  description: Compliance and regulatory checks.
+
+best-practices:
+  label: best practices
+  description: Recommended best practices for container images.
+
+hygiene:
+  label: hygiene
+  description: Image hygiene and cleanup.
+
+performance:
+  label: performance
+  description: Performance optimizations.
+
+lifecycle:
+  label: lifecycle
+  description: Image lifecycle management.
+
+compatibility:
+  label: compatibility
+  description: Platform and architecture compatibility.
+
+metadata:
+  label: metadata
+  description: OCI labels and image metadata.

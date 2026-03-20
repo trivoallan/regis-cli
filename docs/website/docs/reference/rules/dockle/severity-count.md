@@ -1,23 +1,23 @@
 ---
 tags:
-  - dockle
+  - security
   - rules
 ---
 
-# dockle.severity-count
+# severity-count
 
-Fails if the number of issues for a given severity level exceeds the maximum allowed count. This is a reusable rule template.
+Max allowed issues for a given severity level.
 
-| Provider                              | Level    | Tags     |
-| :------------------------------------ | :------- | :------- |
-| [dockle](/reference/analyzers/dockle) | Variable | Security |
+| Provider | Level   | Tags     |
+| :------- | :------ | :------- |
+| dockle   | Warning | security |
 
 ## Parameters
 
-| Name        | Default Value | Description                                        |
-| :---------- | :------------ | :------------------------------------------------- |
-| `level`     | `FATAL`       | Severity level to check (`FATAL`, `WARN`, `INFO`). |
-| `max_count` | `0`           | Maximum allowed issues of this level.              |
+| Name        | Default Value | Description |
+| :---------- | :------------ | :---------- |
+| `level`     | `FATAL`       | n/a         |
+| `max_count` | `0`           | n/a         |
 
 ## Messages
 
@@ -35,14 +35,6 @@ rules:
     options:
       level: FATAL
       max_count: 0
-    level: critical
-
-  - provider: dockle
-    rule: severity-count
-    options:
-      level: WARN
-      max_count: 3
-    level: warning
 ```
 
 ## Condition
@@ -52,8 +44,12 @@ rules:
   "<=": [
     {
       "get": [
-        { "var": "results.dockle.issues_by_level" },
-        { "var": "rule.params.level" }
+        {
+          "var": "results.dockle.issues_by_level"
+        },
+        {
+          "var": "rule.params.level"
+        }
       ]
     },
     {

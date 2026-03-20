@@ -76,7 +76,7 @@ class TrivyAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "trivy.fix-available",
+                "slug": "fix-available",
                 "description": "All vulnerabilities should be fixed if a patch exists.",
                 "level": "warning",
                 "tags": ["security"],
@@ -93,7 +93,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "trivy.secret-scan",
+                "slug": "secret-scan",
                 "description": "No secrets or credentials should be embedded in the image.",
                 "level": "critical",
                 "tags": ["security"],
@@ -110,7 +110,7 @@ class TrivyAnalyzer(BaseAnalyzer):
                 },
             },
             {
-                "slug": "trivy.cve-count",
+                "slug": "cve-count",
                 "description": "Max allowed violations for a given severity level.",
                 "level": "warning",
                 "tags": ["security"],

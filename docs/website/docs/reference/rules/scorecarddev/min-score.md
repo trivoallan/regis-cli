@@ -1,22 +1,22 @@
 ---
 tags:
-  - scorecard
+  - security
   - rules
 ---
 
-# scorecard.min-score
+# min-score
 
-Ensures the OpenSSF Scorecard score for the source repository is above a certain threshold.
+OpenSSF Scorecard score is above the threshold.
 
-| Provider                                          | Level   | Tags     |
-| :------------------------------------------------ | :------ | :------- |
-| [scorecarddev](/reference/analyzers/scorecarddev) | Warning | Security |
+| Provider     | Level   | Tags     |
+| :----------- | :------ | :------- |
+| scorecarddev | Warning | security |
 
 ## Parameters
 
-| Name        | Default Value |
-| :---------- | :------------ |
-| `min_score` | `5.0`         |
+| Name        | Default Value | Description |
+| :---------- | :------------ | :---------- |
+| `min_score` | `5.0`         | n/a         |
 
 ## Messages
 
@@ -29,9 +29,10 @@ Ensures the OpenSSF Scorecard score for the source repository is above a certain
 
 ```yaml
 rules:
-  scorecard.min-score:
-    params:
-      min_score: 7.0
+  - provider: scorecarddev
+    rule: min-score
+    options:
+      min_score: 5.0
 ```
 
 ## Condition

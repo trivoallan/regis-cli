@@ -23,7 +23,7 @@ class HadolintAnalyzer(BaseAnalyzer):
     def default_rules(cls) -> list[dict[str, Any]]:
         return [
             {
-                "slug": "hadolint.severity-count",
+                "slug": "severity-count",
                 "description": "Max allowed violations for a given severity level.",
                 "level": "warning",
                 "tags": ["best-practices"],

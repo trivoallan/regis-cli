@@ -1,22 +1,22 @@
 ---
 tags:
-  - core
+  - security
   - rules
 ---
 
-# core.registry-domain-whitelist
+# registry-domain-whitelist
 
 Checks if requested image registry domain is in the domains list.
 
 | Provider | Level    | Tags     |
 | :------- | :------- | :------- |
-| core     | critical | security |
+| core     | Critical | security |
 
 ## Parameters
 
-| Name      | Default Value                                                 |
-| :-------- | :------------------------------------------------------------ |
-| `domains` | `['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` |
+| Name      | Default Value                                                 | Description |
+| :-------- | :------------------------------------------------------------ | :---------- |
+| `domains` | `['docker.io', 'registry-1.docker.io', 'quay.io', 'ghcr.io']` | n/a         |
 
 ## Messages
 
@@ -29,9 +29,14 @@ Checks if requested image registry domain is in the domains list.
 
 ```yaml
 rules:
-  core.registry-domain-whitelist:
-    params:
-      domains: ["my-registry.com"]
+  - provider: core
+    rule: registry-domain-whitelist
+    options:
+      domains:
+        - docker.io
+        - registry-1.docker.io
+        - quay.io
+        - ghcr.io
 ```
 
 ## Condition
