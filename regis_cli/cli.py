@@ -1043,42 +1043,62 @@ def rules_group():
 
 
 def _render_rule_markdown(rule: dict[str, Any]) -> str:
-    """Render a single rule as a detailed Markdown document."""
+    """Render a single rule as a detailed Markdown document matching the documentation template."""
     slug = rule.get("slug", "unknown")
     description = rule.get("description", "n/a")
     provider = rule.get("provider", "custom")
     level = rule.get("level", "info")
-    tags = ", ".join(rule.get("tags", []))
+    tags = rule.get("tags", [])
     params = rule.get("params", {})
     condition = rule.get("condition", {})
     messages = rule.get("messages", {})
 
+    # 1. YAML Frontmatter
+    frontmatter = ["---"]
+    if tags:
+        frontmatter.append("tags:")
+        for tag in tags:
+            frontmatter.append(f"  - {tag}")
+    frontmatter.append("  - rules")
+    frontmatter.append("---\n")
+
+    # 2. Header and Description
     lines = [
         f"# {slug}",
         "",
-        f"- **Description**: {description}",
-        f"- **Provider**: {provider}",
-        f"- **Level**: {level}",
-        f"- **Tags**: {tags}",
+        description,
+        "",
+        # 3. Metadata Table
+        "| Provider | Level | Tags |",
+        "| :--- | :--- | :--- |",
+        f"| {provider} | {level.capitalize()} | {', '.join(tags)} |",
         "",
     ]
 
+    # 4. Parameters Table
     if params:
         lines.append("## Parameters")
         lines.append("")
+        lines.append("| Name | Default Value | Description |")
+        lines.append("| :--- | :--- | :--- |")
         for k, v in params.items():
-            lines.append(f"- **{k}**: `{v}`")
+            # For dynamic templates, we use a simple representation
+            lines.append(f"| `{k}` | `{v}` | n/a |")
         lines.append("")
 
+    # 5. Messages Table
     if messages:
         lines.append("## Messages")
         lines.append("")
+        lines.append("| Type | Message |")
+        lines.append("| :--- | :--- |")
         if "pass" in messages:
-            lines.append(f"- **Pass**: {messages['pass']}")
+            lines.append(f"| **Pass** | {messages['pass']} |")
         if "fail" in messages:
-            lines.append(f"- **Fail**: {messages['fail']}")
+            lines.append(f"| **Fail** | {messages['fail']} |")
         lines.append("")
 
+    # 6. Condition
     if condition:
         lines.append("## Condition")
         lines.append("")
@@ -1087,7 +1107,7 @@ def _render_rule_markdown(rule: dict[str, Any]) -> str:
         lines.append("```")
         lines.append("")
 
-    return "\n".join(lines)
+    return "\n".join(frontmatter + lines)
 
 
 @rules_group.command(name="list")

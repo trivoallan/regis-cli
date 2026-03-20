@@ -195,6 +195,55 @@
           }
         }
       }
+    },
+    "rules": {
+      "type": "array",
+      "description": "Custom rule overrides or template instantiations.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string",
+            "description": "Unique identifier for the rule instance."
+          },
+          "provider": {
+            "type": "string",
+            "description": "Analyzer name (e.g. 'trivy')."
+          },
+          "rule": {
+            "type": "string",
+            "description": "Template name within the provider (e.g. 'cve-max')."
+          },
+          "options": {
+            "type": "object",
+            "description": "Configuration parameters for the rule template.",
+            "additionalProperties": true
+          },
+          "enable": {
+            "type": "boolean",
+            "description": "Whether to enable this rule.",
+            "default": true
+          },
+          "level": {
+            "type": "string",
+            "enum": ["info", "warning", "critical", "none"],
+            "description": "Severity level of the rule."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Arbitrary tags."
+          },
+          "messages": {
+            "type": "object",
+            "properties": {
+              "pass": { "type": "string" },
+              "fail": { "type": "string" }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
     }
   },
   "$defs": {
