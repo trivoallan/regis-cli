@@ -1,3 +1,9 @@
+---
+tags:
+  - scorecarddev
+  - analyzers
+---
+
 # scorecarddev
 
 The `scorecarddev` analyzer fetches [OpenSSF Scorecard](https://scorecard.dev/) security assessments for the image source repository.

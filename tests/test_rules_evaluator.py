@@ -6,18 +6,18 @@ from regis_cli.rules.evaluator import evaluate_rules, get_default_rules, merge_r
 def test_get_default_rules():
     rules = get_default_rules(["skopeo", "freshness"])
     slugs = [r.get("slug") for r in rules]
-    assert "trusted-domain" in slugs
+    assert "core-trusted-domain" in slugs
     assert "skopeo-no-root" in slugs
     assert "freshness-age" in slugs
 
 
 def test_merge_rules():
-    defaults = [{"slug": "test-1", "title": "A", "messages": {"pass": "ok"}}]
-    custom = [{"slug": "test-1", "title": "B", "messages": {"fail": "bad"}}]
+    defaults = [{"slug": "test-1", "description": "A", "messages": {"pass": "ok"}}]
+    custom = [{"slug": "test-1", "description": "B", "messages": {"fail": "bad"}}]
 
     merged = merge_rules(defaults, custom)
     assert len(merged) == 1
-    assert merged[0]["title"] == "B"
+    assert merged[0]["description"] == "B"
     assert merged[0]["messages"]["pass"] == "ok"
     assert merged[0]["messages"]["fail"] == "bad"
 
@@ -68,7 +68,9 @@ def test_evaluate_rules():
     res2 = evaluate_rules(report, rules_def_broken)
 
     # Disabled rule should not be in results
-    assert len(res2["rules"]) == 3  # trusted-domain + freshness-age + missing-data-rule
+    assert (
+        len(res2["rules"]) == 3
+    )  # core-trusted-domain + freshness-age + missing-data-rule
     assert not any(r["slug"] == "disabled-rule" for r in res2["rules"])
 
 

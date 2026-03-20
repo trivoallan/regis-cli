@@ -77,7 +77,7 @@ class TrivyAnalyzer(BaseAnalyzer):
         return [
             {
                 "slug": "trivy-no-critical",
-                "title": "No CRITICAL vulnerabilities found by Trivy.",
+                "description": "No CRITICAL vulnerabilities found by Trivy.",
                 "level": "critical",
                 "tags": ["security"],
                 "params": {"max_count": 0},
@@ -94,7 +94,7 @@ class TrivyAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "trivy-no-high",
-                "title": "No HIGH vulnerabilities found by Trivy.",
+                "description": "No HIGH vulnerabilities found by Trivy.",
                 "level": "warning",
                 "tags": ["security"],
                 "params": {"max_count": 0},
@@ -111,7 +111,7 @@ class TrivyAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "trivy-fix-available",
-                "title": "All vulnerabilities should be fixed if a patch exists.",
+                "description": "All vulnerabilities should be fixed if a patch exists.",
                 "level": "warning",
                 "tags": ["security"],
                 "params": {"max_count": 0},
@@ -128,7 +128,7 @@ class TrivyAnalyzer(BaseAnalyzer):
             },
             {
                 "slug": "trivy-secret-scan",
-                "title": "No secrets or credentials should be embedded in the image.",
+                "description": "No secrets or credentials should be embedded in the image.",
                 "level": "critical",
                 "tags": ["security"],
                 "params": {"max_count": 0},

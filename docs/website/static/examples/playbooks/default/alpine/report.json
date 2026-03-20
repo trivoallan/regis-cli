@@ -870,7 +870,7 @@
       "analyzers": ["skopeo"]
     },
     {
-      "slug": "trusted-domain",
+      "slug": "core-trusted-domain",
       "title": "Image must originate from a trusted domain.",
       "level": "critical",
       "tags": ["security"],
@@ -1015,7 +1015,7 @@
     "total": [
       "skopeo-forbidden-env",
       "skopeo-no-root",
-      "trusted-domain",
+      "core-trusted-domain",
       "skopeo-exposed-ports",
       "skopeo-max-layers",
       "skopeo-max-size",
@@ -1033,7 +1033,7 @@
     "passed": [
       "skopeo-forbidden-env",
       "skopeo-no-root",
-      "trusted-domain",
+      "core-trusted-domain",
       "skopeo-exposed-ports",
       "skopeo-max-layers",
       "skopeo-max-size",
@@ -1044,7 +1044,7 @@
         "rules": [
           "skopeo-forbidden-env",
           "skopeo-no-root",
-          "trusted-domain",
+          "core-trusted-domain",
           "skopeo-exposed-ports",
           "dockle-no-fatal",
           "trivy-no-critical",
@@ -1056,7 +1056,7 @@
         "passed_rules": [
           "skopeo-forbidden-env",
           "skopeo-no-root",
-          "trusted-domain",
+          "core-trusted-domain",
           "skopeo-exposed-ports"
         ],
         "score": 40
@@ -1649,7 +1649,7 @@
           "analyzers": ["skopeo"]
         },
         {
-          "slug": "trusted-domain",
+          "slug": "core-trusted-domain",
           "title": "Image must originate from a trusted domain.",
           "level": "critical",
           "tags": ["security"],
@@ -1794,7 +1794,7 @@
         "total": [
           "skopeo-forbidden-env",
           "skopeo-no-root",
-          "trusted-domain",
+          "core-trusted-domain",
           "skopeo-exposed-ports",
           "skopeo-max-layers",
           "skopeo-max-size",
@@ -1812,7 +1812,7 @@
         "passed": [
           "skopeo-forbidden-env",
           "skopeo-no-root",
-          "trusted-domain",
+          "core-trusted-domain",
           "skopeo-exposed-ports",
           "skopeo-max-layers",
           "skopeo-max-size",
@@ -1823,7 +1823,7 @@
             "rules": [
               "skopeo-forbidden-env",
               "skopeo-no-root",
-              "trusted-domain",
+              "core-trusted-domain",
               "skopeo-exposed-ports",
               "dockle-no-fatal",
               "trivy-no-critical",
@@ -1835,7 +1835,7 @@
             "passed_rules": [
               "skopeo-forbidden-env",
               "skopeo-no-root",
-              "trusted-domain",
+              "core-trusted-domain",
               "skopeo-exposed-ports"
             ],
             "score": 40
@@ -2463,7 +2463,7 @@
         "analyzers": ["skopeo"]
       },
       {
-        "slug": "trusted-domain",
+        "slug": "core-trusted-domain",
         "title": "Image must originate from a trusted domain.",
         "level": "critical",
         "tags": ["security"],
@@ -2608,7 +2608,7 @@
       "total": [
         "skopeo-forbidden-env",
         "skopeo-no-root",
-        "trusted-domain",
+        "core-trusted-domain",
         "skopeo-exposed-ports",
         "skopeo-max-layers",
         "skopeo-max-size",
@@ -2626,7 +2626,7 @@
       "passed": [
         "skopeo-forbidden-env",
         "skopeo-no-root",
-        "trusted-domain",
+        "core-trusted-domain",
         "skopeo-exposed-ports",
         "skopeo-max-layers",
         "skopeo-max-size",
@@ -2637,7 +2637,7 @@
           "rules": [
             "skopeo-forbidden-env",
             "skopeo-no-root",
-            "trusted-domain",
+            "core-trusted-domain",
             "skopeo-exposed-ports",
             "dockle-no-fatal",
             "trivy-no-critical",
@@ -2649,7 +2649,7 @@
           "passed_rules": [
             "skopeo-forbidden-env",
             "skopeo-no-root",
-            "trusted-domain",
+            "core-trusted-domain",
             "skopeo-exposed-ports"
           ],
           "score": 40

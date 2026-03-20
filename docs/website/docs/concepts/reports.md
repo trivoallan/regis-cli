@@ -1,3 +1,8 @@
+---
+tags:
+  - reports
+---
+
 # Reports
 
 One of the core missions of `regis-cli` is to bridge the gap between automated tools and human review through **Visual Excellence**.

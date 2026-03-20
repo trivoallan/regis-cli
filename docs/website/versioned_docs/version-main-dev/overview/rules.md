@@ -13,7 +13,7 @@ To provide immediate value out of the box, each analyzer (like Trivy, Dockle, or
 - `trivy-no-critical`: Fails if Trivy finds any critical vulnerabilities.
 - `dockle-no-fatal`: Fails if Dockle finds fatal issues.
 - `skopeo-no-root`: Fails if the image is configured to run as root.
-- `trusted-domain`: Fails if the image does not originate from a trusted registry registry.
+- `core-trusted-domain`: Fails if the image does not originate from a trusted registry registry.
 
 You can view all available default rules by running:
 
@@ -89,7 +89,7 @@ rules:
       forbidden_user: "admin"
 
   # Restrict to specific trusted domains
-  - slug: trusted-domain
+  - slug: core-trusted-domain
     params:
       domains: ["my-private-registry.com"]
 ```
@@ -127,7 +127,7 @@ RegiS includes a set of standard rules out-of-the-box. Below are the most common
 ### Lifecycle Rules
 
 - `freshness-age`: Fails if the image is older than `max_days` (default: 30).
-- `trusted-domain`: Restricts image origin to a list of `domains`.
+- `core-trusted-domain`: Restricts image origin to a list of `domains`.
 
 ## Rule Evaluation Mechanism
 

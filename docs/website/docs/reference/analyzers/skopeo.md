@@ -1,3 +1,9 @@
+---
+tags:
+  - skopeo
+  - analyzers
+---
+
 # skopeo
 
 The `skopeo` analyzer fetches image metadata and platform details using the [Skopeo](https://github.com/containers/skopeo) CLI.

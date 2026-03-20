@@ -1,3 +1,9 @@
+---
+tags:
+  - popularity
+  - analyzers
+---
+
 # popularity
 
 The `popularity` analyzer provides community adoption metrics from public registries.

@@ -1,3 +1,9 @@
+---
+tags:
+  - provenance
+  - analyzers
+---
+
 # provenance
 
 The `provenance` analyzer checks for SLSA (Supply-chain Levels for Software Artifacts) provenance and build attestations.

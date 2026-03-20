@@ -29,7 +29,7 @@ docker run --rm trivoallan/regis-cli --help
 
 ### Local Installation
 
-If you prefer a local installation, ensure you have **Python 3.14 or later** and **Skopeo** installed in your system.
+If you prefer a local installation, ensure you have **Python 3.13 or later** and **Skopeo** installed in your system.
 
 ```bash
 pip install regis-cli

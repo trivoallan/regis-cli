@@ -58,7 +58,7 @@ class FreshnessAnalyzer(BaseAnalyzer):
         return [
             {
                 "slug": "freshness-age",
-                "title": "Image should be less than expected days old.",
+                "description": "Image should be less than expected days old.",
                 "level": "warning",
                 "tags": ["freshness"],
                 "params": {"max_days": 30},
