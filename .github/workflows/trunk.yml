@@ -30,7 +30,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha || github.ref }}
 
       - name: Trunk Install
         uses: trunk-io/trunk-action/setup@v1
