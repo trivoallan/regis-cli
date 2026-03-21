@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Archive Repo Setup
+# Archive Repository
 
 The `bootstrap archive --repo` command scaffolds a standalone archive viewer site and publishes it to a new remote repository in a single step — no manual git or platform configuration required.
 
