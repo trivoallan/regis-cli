@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
 import yaml
 
 from regis_cli.playbook.engine import _flatten, evaluate, load_playbook
