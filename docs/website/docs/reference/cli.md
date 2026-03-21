@@ -113,16 +113,17 @@ regis-cli bootstrap archive [OUTPUT_DIR] [OPTIONS]
 
 _Options:_
 
-| Option                        | Default                            | Description                                                           |
-| :---------------------------- | :--------------------------------- | :-------------------------------------------------------------------- |
-| `--no-input`                  | `False`                            | Skip cookiecutter prompts; use template defaults.                     |
-| `--platform [github\|gitlab]` | _(prompt)_                         | Target platform. Skips the cookiecutter platform prompt.              |
-| `--dev`                       | `False`                            | After scaffolding, run `pnpm install` and start the local dev server. |
-| `--port INTEGER`              | `3000`                             | Port for the dev server (only with `--dev`).                          |
-| `--repo`                      | `False`                            | After scaffolding, create a remote repository and enable Pages.       |
-| `--repo-name TEXT`            | project slug                       | Name of the remote repository (only with `--repo`).                   |
-| `--public / --private`        | public (GitHub) / private (GitLab) | Repository visibility (only with `--repo`).                           |
-| `--org TEXT`                  | _(current user)_                   | Organisation or GitLab group (only with `--repo`).                    |
+| Option                        | Default                            | Description                                                                                                                                          |
+| :---------------------------- | :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--no-input`                  | `False`                            | Skip cookiecutter prompts; use template defaults.                                                                                                    |
+| `--platform [github\|gitlab]` | _(prompt)_                         | Target platform. Skips the cookiecutter platform prompt.                                                                                             |
+| `--dev`                       | `False`                            | After scaffolding, run `pnpm install` and start the local dev server.                                                                                |
+| `--port INTEGER`              | `3000`                             | Port for the dev server (only with `--dev`).                                                                                                         |
+| `--repo`                      | `False`                            | After scaffolding, create a remote repository and enable Pages.                                                                                      |
+| `--repo-name TEXT`            | project slug                       | Name of the remote repository (only with `--repo`).                                                                                                  |
+| `--public / --private`        | public (GitHub) / private (GitLab) | Repository visibility (only with `--repo`).                                                                                                          |
+| `--org TEXT`                  | _(current user)_                   | Organisation or GitLab group (only with `--repo`).                                                                                                   |
+| `--sync-from PATH`            | —                                  | Sync UI changes from a working copy back to the cookiecutter template. See [Customizing the Archive UI](../usage/integrations/archive-customize.md). |
 
 `--dev` and `--repo` are mutually exclusive.
 

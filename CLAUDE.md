@@ -8,6 +8,9 @@ pipenv run pytest           # Run test suite
 pipenv run ruff check .     # Lint
 pipenv run ruff format .    # Format
 pipenv run regis-cli --help # Run CLI locally
+trunk check                   # Run trunk check
+trunk check --fix             # Fix issues
+trunk check --fix --all       # Fix issues in all files
 ```
 
 ## Architecture
