@@ -15,25 +15,37 @@ The following diagram illustrates the relationship between the CLI and the gener
 
 ```mermaid
 C4Component
-    title Component diagram for regis-cli Report Viewer
+    title Component Diagram — Report Viewer
 
-    Person(user, "User / Security Reviewer", "Interacts with the security dashboard.")
+    Person(user, "User / Security Reviewer", "Reviews security findings in a browser.")
 
     Container_Boundary(cli_boundary, "regis-cli (CLI)") {
-        Component(engine, "Analysis Engine", "Python", "Orchestrates analyzers and playbooks.")
-        Component(reporter, "Docusaurus Reporter", "Python", "Manages SPA build and data injection.")
+        Component(engine, "Analysis Engine", "Python", "Orchestrates analyzers and playbooks; produces consolidated results.")
+        Component(reporter, "Docusaurus Reporter", "Python", "Injects analysis data into the SPA and triggers the static build.")
     }
 
     Container_Boundary(spa_boundary, "Report Viewer (SPA)") {
-        Component(react_app, "React Application", "React / Docusaurus", "Modern UI for viewing security data.")
-        Component(json_data, "report.json", "JSON", "Consolidated analysis results.")
+        Component(react_app, "React Application", "React / Docusaurus", "Interactive dashboard for browsing security findings.")
+        Component(json_data, "report.json", "JSON", "Static data file bundled with the SPA at build time.")
     }
 
-    Rel(engine, reporter, "Provides analysis results", "Data")
-    Rel(reporter, json_data, "Writes to reports/", "File")
-    Rel(reporter, react_app, "Triggers build & copy", "Subprocess / Filesystem")
-    Rel(react_app, json_data, "Fetches", "HTTP/Static")
-    Rel(user, react_app, "Views results", "Interactive UI")
+    Rel(engine, reporter, "Passes analysis results", "In-process")
+    Rel(reporter, json_data, "Writes", "File system")
+    Rel(reporter, react_app, "Triggers build & deploy", "Subprocess / File system")
+    Rel(react_app, json_data, "Fetches at runtime", "HTTP / Static")
+    Rel(user, react_app, "Browses findings", "Browser")
+
+    UpdateElementStyle(user, $fontColor="white", $bgColor="#08427B", $borderColor="#052E56")
+    UpdateElementStyle(engine, $fontColor="white", $bgColor="#1A8C4E", $borderColor="#136B3B")
+    UpdateElementStyle(reporter, $fontColor="white", $bgColor="#1168BD", $borderColor="#0B4A87")
+    UpdateElementStyle(react_app, $fontColor="white", $bgColor="#7B2D8B", $borderColor="#5C2168")
+    UpdateElementStyle(json_data, $fontColor="white", $bgColor="#B7770D", $borderColor="#8C5B0A")
+    UpdateRelStyle(engine, reporter, $textColor="#1168BD", $lineColor="#1168BD")
+    UpdateRelStyle(reporter, json_data, $textColor="#B7770D", $lineColor="#B7770D")
+    UpdateRelStyle(reporter, react_app, $textColor="#7B2D8B", $lineColor="#7B2D8B")
+    UpdateRelStyle(react_app, json_data, $textColor="#B7770D", $lineColor="#B7770D")
+    UpdateRelStyle(user, react_app, $textColor="#7B2D8B", $lineColor="#7B2D8B")
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="2")
 ```
 
 This architecture allows for:

@@ -23,46 +23,72 @@ You use `regis-cli` to:
 
 ```mermaid
 C4Context
-    title System Context diagram for regis-cli
+    title System Context — regis-cli
 
-    Person(user, "User / CI Bot", "A developer or a CI/CD pipeline.")
-    System(regis, "regis-cli", "Analyzes container images and generates reports.")
+    Person(user, "User / CI Bot", "Developer or automated CI/CD pipeline.")
+    System(regis, "regis-cli", "Analyzes container images, evaluates security playbooks, and generates HTML and JSON reports.")
+    System_Ext(registry, "Container Registry", "OCI-compliant registry: GHCR, Docker Hub, etc.")
+    System_Ext(tools, "Security Tools", "External binaries: Trivy, Skopeo, Hadolint.")
 
-    System_Ext(registry, "Container Registry", "External registry (GHCR, Docker Hub, etc.).")
-    System_Ext(tools, "Security Tools", "External binaries (Trivy, Skopeo, Hadolint).")
+    Rel(user, regis, "Invokes", "CLI / GitHub Actions")
+    Rel(regis, tools, "Orchestrates", "Subprocess")
+    Rel(tools, registry, "Pulls image data", "HTTPS")
+    Rel(regis, user, "Delivers", "HTML / JSON report")
 
-    Rel(user, regis, "Uses", "CLI")
-    Rel(regis, tools, "Orchestrates", "Shell")
-    Rel(tools, registry, "Queries", "HTTPS")
-    Rel(regis, user, "Delivers reports", "HTML/JSON")
+    UpdateElementStyle(user, $fontColor="white", $bgColor="#08427B", $borderColor="#052E56")
+    UpdateElementStyle(regis, $fontColor="white", $bgColor="#1168BD", $borderColor="#0B4A87")
+    UpdateElementStyle(registry, $fontColor="white", $bgColor="#5D6D7E", $borderColor="#3D4D5E")
+    UpdateElementStyle(tools, $fontColor="white", $bgColor="#5D6D7E", $borderColor="#3D4D5E")
+    UpdateRelStyle(user, regis, $textColor="#1168BD", $lineColor="#1168BD")
+    UpdateRelStyle(regis, user, $textColor="#1A8C4E", $lineColor="#1A8C4E")
+    UpdateRelStyle(regis, tools, $textColor="#B7770D", $lineColor="#B7770D")
+    UpdateRelStyle(tools, registry, $textColor="#5D6D7E", $lineColor="#5D6D7E")
 ```
 
 ### Container View
 
 ```mermaid
 C4Container
-    title Container diagram for regis-cli
+    title Container Diagram — regis-cli
 
-    Person(user, "User / CI Bot", "A developer or a CI/CD pipeline.")
+    Person(user, "User / CI Bot", "Developer or automated CI/CD pipeline.")
     System_Boundary(boundary, "regis-cli") {
-        Container(cli, "CLI Application", "Python, Click", "Handles user input.")
-        Container(engine, "Analysis Engine", "Python", "Manages analyzer lifecycle.")
-        Container(playbook, "Playbook Engine", "Python, JSON Logic", "Evaluates security rules.")
-        Container(reporting, "Reporting Engine", "React, Docusaurus", "Generates interactive SPA reports.")
-        Container(connectors, "Registry Connectors", "Python", "Interacts with external tools.")
+        Container(cli, "CLI", "Python · Click", "Entry point: parses arguments and orchestrates the analysis workflow.")
+        Container(engine, "Analysis Engine", "Python", "Manages the analyzer lifecycle, shared auth, and result aggregation.")
+        Container(playbook, "Playbook Engine", "Python · JSON Logic", "Evaluates consolidated metadata against user-defined security rules.")
+        Container(reporting, "Reporting Engine", "React · Docusaurus", "Generates interactive SPA dashboards and structured JSON reports.")
+        Container(connectors, "Registry Connectors", "Python", "Delegates extraction tasks to external security tools via subprocess.")
     }
 
-    System_Ext(registry, "Container Registry", "External registry.")
+    System_Ext(registry, "Container Registry", "OCI-compliant registry: GHCR, Docker Hub, etc.")
     System_Ext(tools, "Security Tools", "Trivy, Skopeo, Hadolint, Dockle.")
 
-    Rel(user, cli, "Invokes", "CLI")
-    Rel(cli, engine, "Triggers", "Calls")
-    Rel(engine, connectors, "Uses", "Calls")
+    Rel(user, cli, "Invokes", "CLI / GitHub Actions")
+    Rel(cli, engine, "Triggers analysis", "Function call")
+    Rel(engine, connectors, "Delegates extraction", "Function call")
     Rel(connectors, tools, "Executes", "Subprocess")
-    Rel(tools, registry, "Queries", "HTTPS")
-    Rel(engine, playbook, "Metadata", "Data")
-    Rel(playbook, reporting, "Results", "Data")
-    Rel(reporting, user, "Outputs", "Files")
+    Rel(tools, registry, "Pulls image data", "HTTPS")
+    Rel(engine, playbook, "Passes metadata", "Data")
+    Rel(playbook, reporting, "Passes results", "Data")
+    Rel(reporting, user, "Outputs", "HTML / JSON files")
+
+    UpdateElementStyle(user, $fontColor="white", $bgColor="#08427B", $borderColor="#052E56")
+    UpdateElementStyle(cli, $fontColor="white", $bgColor="#1168BD", $borderColor="#0B4A87")
+    UpdateElementStyle(engine, $fontColor="white", $bgColor="#1A8C4E", $borderColor="#136B3B")
+    UpdateElementStyle(playbook, $fontColor="white", $bgColor="#B7770D", $borderColor="#8C5B0A")
+    UpdateElementStyle(reporting, $fontColor="white", $bgColor="#7B2D8B", $borderColor="#5C2168")
+    UpdateElementStyle(connectors, $fontColor="white", $bgColor="#0D7F8C", $borderColor="#0A5F69")
+    UpdateElementStyle(registry, $fontColor="white", $bgColor="#5D6D7E", $borderColor="#3D4D5E")
+    UpdateElementStyle(tools, $fontColor="white", $bgColor="#5D6D7E", $borderColor="#3D4D5E")
+    UpdateRelStyle(user, cli, $textColor="#1168BD", $lineColor="#1168BD")
+    UpdateRelStyle(cli, engine, $textColor="#1A8C4E", $lineColor="#1A8C4E")
+    UpdateRelStyle(engine, connectors, $textColor="#0D7F8C", $lineColor="#0D7F8C")
+    UpdateRelStyle(connectors, tools, $textColor="#5D6D7E", $lineColor="#5D6D7E")
+    UpdateRelStyle(tools, registry, $textColor="#5D6D7E", $lineColor="#5D6D7E")
+    UpdateRelStyle(engine, playbook, $textColor="#B7770D", $lineColor="#B7770D")
+    UpdateRelStyle(playbook, reporting, $textColor="#7B2D8B", $lineColor="#7B2D8B")
+    UpdateRelStyle(reporting, user, $textColor="#1A8C4E", $lineColor="#1A8C4E")
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
 
 ## Core Components
