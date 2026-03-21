@@ -68,18 +68,27 @@ def build_report_site(
         "NODE_ENV": "production",
     }
 
-    # Prefer pnpm, fall back to npx
+    # Check if node_modules exists
+    if not (_VIEWER_DIR / "node_modules").is_dir():
+        logger.warning(
+            "node_modules not found in %s. Docusaurus build may fail. "
+            "Run 'pnpm install' in the workspace root.",
+            _VIEWER_DIR,
+        )
+
+    # Prefer pnpm, fall back to npm
     pnpm_path = shutil.which("pnpm")
     if pnpm_path:
-        build_cmd = [pnpm_path, "docusaurus", "build"]
+        # Use 'run build' to leverage scripts in package.json
+        build_cmd = [pnpm_path, "run", "build"]
     else:
-        npx_path = shutil.which("npx")
-        if not npx_path:
+        npm_path = shutil.which("npm")
+        if not npm_path:
             raise RuntimeError(
-                "Neither pnpm nor npx found in PATH. "
+                "Neither pnpm nor npm found in PATH. "
                 "Install Node.js and pnpm to build report sites."
             )
-        build_cmd = [npx_path, "docusaurus", "build"]
+        build_cmd = [npm_path, "run", "build"]
 
     logger.info("Building report site with: %s", " ".join(build_cmd))
 

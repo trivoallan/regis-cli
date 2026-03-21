@@ -63,27 +63,6 @@ jobs:
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
 
-      - name: Generate Schema Docs
-        run: |
-          # Copy all schemas first to allow cross-category resolution
-          mkdir -p docs/website/static/schemas
-          cp -rv regis_cli/schemas/* docs/website/static/schemas/
-
-          for cat in $(find regis_cli/schemas/* -maxdepth 0 -type d); do
-            cat=$(basename $cat);
-            mkdir -p docs/website/docs/reference/schemas/$cat
-            pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
-          done
-
-      - name: Generate Rules Reference
-        run: pipenv run regis-cli rules list -f markdown -D docs/website/docs/reference/rules
-
-      - name: Generate Example Reports
-        run: |
-          mkdir -p docs/website/examples/playbooks/default
-          pipenv run regis-cli analyze --evaluate alpine:latest -s -D docs/website/examples/playbooks/default/alpine
-          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:0.16.0 -s -D docs/website/examples/playbooks/default/regis-cli
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -110,7 +89,27 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: docs/website
+
+      - name: Generate Schema Docs
+        run: |
+          # Copy all schemas first to allow cross-category resolution
+          mkdir -p docs/website/static/schemas
+          cp -rv regis_cli/schemas/* docs/website/static/schemas/
+
+          for cat in $(find regis_cli/schemas/* -maxdepth 0 -type d); do
+            cat=$(basename $cat);
+            mkdir -p docs/website/docs/reference/schemas/$cat
+            pipenv run generate-schema-doc --config-file docs/website/json-schema-for-humans.config.json docs/website/static/schemas/$cat docs/website/docs/reference/schemas/$cat
+          done
+
+      - name: Generate Rules Reference
+        run: pipenv run regis-cli rules list -f markdown -D docs/website/docs/reference/rules
+
+      - name: Generate Example Reports
+        run: |
+          mkdir -p docs/website/examples/playbooks/default
+          pipenv run regis-cli analyze --evaluate alpine:latest -s -D docs/website/examples/playbooks/default/alpine
+          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:0.16.0 -s -D docs/website/examples/playbooks/default/regis-cli
 
       - name: Docusaurus build
         run: pnpm run build
