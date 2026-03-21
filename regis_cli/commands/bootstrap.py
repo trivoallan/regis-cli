@@ -312,13 +312,15 @@ def bootstrap_archive(
             err=True,
         )
         try:
-            subprocess.run(  # nosec B603
+            subprocess.run(  # nosec B603 B607
                 ["pnpm", "dev", "--port", str(port)],
                 cwd=str(project_path),
                 check=False,
             )
-        except FileNotFoundError:
-            raise click.ClickException("'pnpm' not found in PATH. Is it installed?")
+        except FileNotFoundError as err:
+            raise click.ClickException(
+                "'pnpm' not found in PATH. Is it installed?"
+            ) from err
         return
 
     if not repo:

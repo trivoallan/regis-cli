@@ -14,7 +14,6 @@ from regis_cli.commands.bootstrap import bootstrap
 from regis_cli.commands.check import check, version_cmd
 from regis_cli.commands.rules import rules_group
 from regis_cli.gitlab_cli import gitlab_cmd
-from regis_cli.registry.client import RegistryClient
 from regis_cli.utils.process import require_tool, run_cmd
 from regis_cli.utils.report import (
     escape_jinja,

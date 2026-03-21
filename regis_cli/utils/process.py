@@ -25,8 +25,10 @@ def run_cmd(
             text=True,
             check=False,
         )
-    except FileNotFoundError:
-        raise click.ClickException(f"'{args[0]}' not found in PATH. Is it installed?")
+    except FileNotFoundError as err:
+        raise click.ClickException(
+            f"'{args[0]}' not found in PATH. Is it installed?"
+        ) from err
     if check and result.returncode != 0:
         detail = (result.stderr or result.stdout).strip()
         raise click.ClickException(
