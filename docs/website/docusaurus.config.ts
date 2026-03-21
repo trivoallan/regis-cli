@@ -57,6 +57,12 @@ const config: Config = {
       {
         docs: {
           routeBasePath: "/",
+          versions: {
+            current: {
+              label: "main-dev",
+              banner: "unreleased",
+            },
+          },
           editUrl:
             "https://github.com/trivoallan/regis-cli/edit/main/docs/website/",
         },
