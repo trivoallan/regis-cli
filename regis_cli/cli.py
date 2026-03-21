@@ -990,75 +990,62 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
     is_flag=True,
     help="Do not prompt for parameters and only use cookiecutter.json defaults.",
 )
-def bootstrap_archive(output_dir: str, no_input: bool) -> None:
-    """Bootstrap a standalone archive viewer site for regis-cli reports."""
-    try:
-        from importlib import resources
-
-        from cookiecutter.main import cookiecutter
-    except ImportError as exc:
-        raise click.ClickException(
-            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
-        ) from None
-
-    template_path = resources.files("regis_cli") / "cookiecutters" / "archive"
-
-    click.echo(f"Bootstrapping archive site into {output_dir}...", err=True)
-    try:
-        project_dir = cookiecutter(
-            str(template_path),
-            no_input=no_input,
-            output_dir=output_dir,
-        )
-        click.echo("  ✓ Archive site bootstrapped successfully.", err=True)
-
-        # Handle post-install notes
-        notes_file = Path(project_dir) / ".regis-post-install.md"
-        if notes_file.exists():
-            click.echo("\n" + "=" * 40, err=True)
-            click.echo("POST-INSTALL NOTES:", err=True)
-            click.echo("=" * 40, err=True)
-            click.echo(notes_file.read_text(encoding="utf-8"), err=True)
-            click.echo("=" * 40 + "\n", err=True)
-            notes_file.unlink()
-
-    except Exception as exc:
-        raise click.ClickException(f"Failed to bootstrap archive site: {exc}") from exc
-
-
-@bootstrap.command(name="archive-repo")
-@click.argument(
-    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
-)
-@click.option(
-    "--no-input",
-    is_flag=True,
-    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
-)
-@click.option("--repo-name", default=None, help="Name of the remote repository.")
-@click.option(
-    "--public/--private",
-    default=None,
-    help="Repository visibility (default: public for GitHub, private for GitLab).",
-)
-@click.option(
-    "--org", default=None, help="Organisation or group to create the repo in."
-)
 @click.option(
     "--platform",
     type=click.Choice(["github", "gitlab"], case_sensitive=False),
     default=None,
     help="Target platform. Skips the cookiecutter platform prompt.",
 )
-def bootstrap_archive_repo(
+@click.option(
+    "--dev",
+    is_flag=True,
+    help="After scaffolding, run pnpm install and start the local dev server.",
+)
+@click.option(
+    "--port",
+    default=3000,
+    show_default=True,
+    help="Port for the dev server (only with --dev).",
+)
+@click.option(
+    "--repo",
+    is_flag=True,
+    help="After scaffolding, create a remote repository and enable Pages.",
+)
+@click.option(
+    "--repo-name",
+    default=None,
+    help="Name of the remote repository (only with --repo).",
+)
+@click.option(
+    "--public/--private",
+    default=None,
+    help="Repository visibility (only with --repo; default: public for GitHub, private for GitLab).",
+)
+@click.option(
+    "--org",
+    default=None,
+    help="Organisation or group to create the repo in (only with --repo).",
+)
+def bootstrap_archive(
     output_dir: str,
     no_input: bool,
+    platform: str | None,
+    dev: bool,
+    port: int,
+    repo: bool,
     repo_name: str | None,
     public: bool | None,
     org: str | None,
-    platform: str | None,
 ) -> None:
-    """Bootstrap an archive site and push it to a new remote repository."""
+    """Bootstrap a standalone archive viewer site for regis-cli reports.
+
+    Use --dev to start a local dev server after scaffolding.
+    Use --repo to create a remote repository and enable Pages.
+    """
+    if dev and repo:
+        raise click.UsageError("--dev and --repo are mutually exclusive.")
+
     try:
         from importlib import resources
 
@@ -1068,16 +1055,24 @@ def bootstrap_archive_repo(
             f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
         ) from None
 
-    # Step 0 — Pre-flight
-    click.echo("Checking required tools...", err=True)
-    _require_tool("pnpm")
-    _require_tool("git")
-    click.echo("  ✓ pnpm and git found.", err=True)
+    # Pre-flight for modes that need extra tools
+    if repo:
+        click.echo("Checking required tools...", err=True)
+        _require_tool("pnpm")
+        _require_tool("git")
+        click.echo("  ✓ pnpm and git found.", err=True)
 
-    # Step 1 — Scaffold
+    # Determine extra_context: explicit platform > implicit github for --dev
+    if platform:
+        extra_context: dict[str, str] | None = {"platform": platform}
+    elif dev:
+        extra_context = {"platform": "github"}  # CI platform irrelevant for local dev
+    else:
+        extra_context = None
+
+    # Scaffold
     template_path = resources.files("regis_cli") / "cookiecutters" / "archive"
     click.echo(f"\nScaffolding archive site into {output_dir}...", err=True)
-    extra_context = {"platform": platform} if platform else None
     try:
         project_dir = cookiecutter(
             str(template_path),
@@ -1100,26 +1095,50 @@ def bootstrap_archive_repo(
         click.echo("=" * 40 + "\n", err=True)
         notes_file.unlink()
 
-    # Step 2 — Detect platform from scaffolded files
+    # --dev: install deps and start local server
+    if dev:
+        _require_tool("pnpm")
+        click.echo("\nInstalling Node dependencies (pnpm install)...", err=True)
+        _run_cmd(["pnpm", "install"], cwd=project_path, step_label="pnpm install")
+        click.echo("  ✓ Dependencies installed.", err=True)
+        click.echo(f"\nStarting dev server on http://localhost:{port} ...", err=True)
+        click.echo(
+            f"  Add reports: regis-cli analyze <IMAGE> --archive {project_path}/static/archive",
+            err=True,
+        )
+        try:
+            subprocess.run(  # nosec B603
+                ["pnpm", "dev", "--port", str(port)],
+                cwd=str(project_path),
+                check=False,
+            )
+        except FileNotFoundError:
+            raise click.ClickException("'pnpm' not found in PATH. Is it installed?")
+        return
+
+    if not repo:
+        return
+
+    # --repo: detect platform, install, git init, create remote, enable Pages
+
+    # Detect platform from scaffolded files
     if (project_path / ".github").is_dir():
-        platform, tool = "github", "gh"
+        detected_platform, tool = "github", "gh"
     elif (project_path / ".gitlab-ci.yml").is_file():
-        platform, tool = "gitlab", "glab"
+        detected_platform, tool = "gitlab", "glab"
     else:
         raise click.ClickException("Cannot detect platform from scaffolded files.")
 
-    click.echo(f"  ✓ Platform detected: {platform}.", err=True)
+    click.echo(f"  ✓ Platform detected: {detected_platform}.", err=True)
     _require_tool(tool)
     click.echo(f"\nChecking {tool} authentication...", err=True)
     _run_cmd([tool, "auth", "status"], step_label=f"{tool} auth check")
     click.echo(f"  ✓ {tool} authenticated.", err=True)
 
-    # Step 3 — pnpm install
     click.echo("\nInstalling Node dependencies (pnpm install)...", err=True)
     _run_cmd(["pnpm", "install"], cwd=project_path, step_label="pnpm install")
     click.echo("  ✓ Dependencies installed.", err=True)
 
-    # Step 4 — git init + commit
     click.echo("\nInitialising local git repository...", err=True)
     _run_cmd(["git", "init", "-b", "main"], cwd=project_path)
     _run_cmd(["git", "add", "."], cwd=project_path)
@@ -1129,12 +1148,10 @@ def bootstrap_archive_repo(
     )
     click.echo("  ✓ Initial commit created.", err=True)
 
-    # Step 5 — Resolve effective repo name
     effective_repo_name = repo_name or project_path.name
 
-    # Step 6 — Create remote repository
     click.echo(f"\nCreating remote repository '{effective_repo_name}'...", err=True)
-    if platform == "github":
+    if detected_platform == "github":
         is_public = public if public is not None else True
         visibility = "--public" if is_public else "--private"
         target = f"{org}/{effective_repo_name}" if org else effective_repo_name
@@ -1170,7 +1187,6 @@ def bootstrap_archive_repo(
             glab_args.append(f"--group={org}")
         create_result = _run_cmd(glab_args, check=False, step_label="glab repo create")
         if create_result.returncode != 0:
-            # Check if the failure is because the repo already exists (retry scenario)
             view_result = _run_cmd(
                 ["glab", "repo", "view", effective_repo_name],
                 check=False,
@@ -1204,8 +1220,7 @@ def bootstrap_archive_repo(
         _run_cmd(["git", "push", "-u", "origin", "main"], cwd=project_path)
         click.echo("  ✓ Code pushed.", err=True)
 
-    # Step 7 — Enable GitHub Pages (GitHub only)
-    if platform == "github":
+    if detected_platform == "github":
         click.echo("\nEnabling GitHub Pages...", err=True)
         owner = org
         if not owner:
@@ -1226,9 +1241,6 @@ def bootstrap_archive_repo(
             step_label="enable GitHub Pages",
         )
         click.echo("  ✓ GitHub Pages enabled (workflow mode).", err=True)
-
-    # Step 8 — Display URL and next steps
-    if platform == "github":
         pages_url = f"https://{owner}.github.io/{effective_repo_name}/"
     else:
         pages_url = f"https://{namespace}.gitlab.io/{effective_repo_name}/"

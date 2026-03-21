@@ -108,8 +108,48 @@ regis-cli bootstrap playbook [OUTPUT_DIR] [--no-input]
 Bootstrap a standalone archive viewer site for browsing and filtering historical regis-cli reports. The generated site is built with Docusaurus and Tremor, deploys to GitHub Pages or GitLab Pages, and exposes a PowerBI-compatible JSON endpoint.
 
 ```bash
-regis-cli bootstrap archive [OUTPUT_DIR] [--no-input]
+regis-cli bootstrap archive [OUTPUT_DIR] [OPTIONS]
 ```
+
+_Options:_
+
+| Option                        | Default                            | Description                                                           |
+| :---------------------------- | :--------------------------------- | :-------------------------------------------------------------------- |
+| `--no-input`                  | `False`                            | Skip cookiecutter prompts; use template defaults.                     |
+| `--platform [github\|gitlab]` | _(prompt)_                         | Target platform. Skips the cookiecutter platform prompt.              |
+| `--dev`                       | `False`                            | After scaffolding, run `pnpm install` and start the local dev server. |
+| `--port INTEGER`              | `3000`                             | Port for the dev server (only with `--dev`).                          |
+| `--repo`                      | `False`                            | After scaffolding, create a remote repository and enable Pages.       |
+| `--repo-name TEXT`            | project slug                       | Name of the remote repository (only with `--repo`).                   |
+| `--public / --private`        | public (GitHub) / private (GitLab) | Repository visibility (only with `--repo`).                           |
+| `--org TEXT`                  | _(current user)_                   | Organisation or GitLab group (only with `--repo`).                    |
+
+`--dev` and `--repo` are mutually exclusive.
+
+**`--dev` mode** — local iteration without a remote repository:
+
+```bash
+regis-cli bootstrap archive ./my-archive --no-input --dev
+# Scaffolds, runs pnpm install, starts http://localhost:3000
+```
+
+**`--repo` mode** — full remote setup:
+
+1. Checks that `pnpm`, `git`, and `gh` / `glab` are available and authenticated.
+2. Scaffolds the archive site.
+3. Runs `pnpm install`.
+4. Creates an initial git commit.
+5. Creates the remote repository (`gh repo create` or `glab repo create`).
+6. Enables GitHub Pages in workflow mode (GitHub only; GitLab Pages activates via the `pages` job).
+7. Prints the expected Pages URL and the command to add your first report.
+
+```bash
+regis-cli bootstrap archive ./my-archive --repo --platform github --no-input
+```
+
+:::tip
+If the remote repository already exists (for example after a failed first attempt), the creation step is skipped and the code is pushed to the existing repository.
+:::
 
 :::note
 After a successful bootstrap, all `bootstrap` commands display **Post-install notes** from the template (and then remove the temporary `.regis-post-install.md` file). These notes contain setup instructions for GitHub/GitLab and next steps.

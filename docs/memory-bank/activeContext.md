@@ -92,18 +92,14 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 
 ## Current Objective
 
-UI overhaul of the Docusaurus report viewer using Tremor components.
+`bootstrap archive-repo` command implementation and related fixes.
 
-## Recent Changes (branch: feature/report-viewer-tremor)
+## Recent Changes (branch: feature/archive-viewer)
 
-- **Navbar swizzle** (`src/theme/Navbar/Logo/index.tsx`): Replaced broken `custom-imageIdentity` navbar item with a `Navbar/Logo` swizzle. Renders identity badges (Registry, Repository, Tag, Digest) centered in the navbar. Click copies the value to clipboard. Digest is truncated to 19 chars for display.
-- **Raw JSON link**: Moved from static `docusaurus.config.ts` `href: "/report.json"` (broken with non-root baseUrl) into `Navbar/Logo` using `siteConfig.baseUrl` to construct the correct URL dynamically.
-- **`StatCard` component** (`src/components/StatCard.tsx`): Shared KPI card for all analyzer pages. Centered value, configurable font size (xl/lg/md/sm). No badges displayed in card body.
-- **`AnalyzerPage` component** (`src/components/AnalyzerPage.tsx`): Shared wrapper for each analyzer MDX page. Shows warning if analyzer was not run.
-- **Analyzers sidebar section**: Replaced monolithic `playbook.mdx` with 12 individual analyzer MDX pages in `docs/analyzers/` (dockle, endoflife, freshness, hadolint, popul­arity, provenance, sbom, scorecarddev, size, skopeo, trivy, versioning). Sidebar uses `type: "category"` with items sorted alphabetically.
-- **All analyzer sections rewritten** with `StatCard` + Tremor `Table` components for consistent layout across all 12 pages.
-- **TrivySection**: Shows only Critical and High CVEs. Two separate paginated tables (50/page, independent paginators). Sorted by most recent `PublishedDate`. Columns: ID, Package, Installed, Fixed, Published (Title removed).
-- **VersioningSection**: Fixed crash — `variants` field is array of objects `{name, count, percentage, examples}`, not strings.
-- **SummaryView**: Added analyzer badges with links (`/analyzers/{name}`) in the Failed Rules table.
-- **RulesTable**: Analyzer badges wrapped in `@docusaurus/Link` pointing to analyzer pages.
-- **Dashboard components** (`src/components/Dashboard/`): ScoreCard, VulnerabilityChart, ComplianceDonut, AnalyzerCoverageCard, RulesByLevelCard, RulesByTagCard used on Summary page.
+- **`bootstrap archive-repo` command** (`regis_cli/cli.py`): New subcommand that automates the full archive site setup flow — scaffold, `pnpm install`, git init, remote repo creation via `gh`/`glab`, and GitHub Pages activation.
+- **`--platform` flag**: Injects `extra_context={"platform": ...}` into cookiecutter, skipping the interactive platform prompt.
+- **`glab` compatibility fixes**: Use `--public`/`--private` flags (not `--visibility=`); HTTPS remote URL instead of SSH.
+- **Idempotent retry**: `glab repo create` failure is checked against `glab repo view`; creation is skipped if repo exists.
+- **`ARCHIVE_BASE_URL` fix** (GitLab CI): Derive base URL from `CI_PAGES_URL` via Node.js `new URL(...).pathname` to correctly handle subgroups and custom domains. Override via CI/CD variable supported on both platforms.
+- **Progress output**: Each step in `bootstrap archive-repo` emits a `✓` or warning line to stderr.
+- **Documentation**: Updated `docs/website/docs/reference/cli.md`, `progress.md`, `decisionLog.md`.

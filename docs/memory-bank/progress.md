@@ -26,6 +26,10 @@
 - Integrated the new report viewer into the workspace (`pnpm`).
 - **Added GitLab artifact support** with dynamic `baseUrl` calculation and `--base-url` flag.
 - **Updated documentation** across the site to reflect the new report architecture.
+- Added `bootstrap archive-repo` command: full end-to-end scaffold → remote repo creation → GitHub/GitLab Pages activation in a single command.
+  - `--platform [github|gitlab]` flag skips the cookiecutter prompt via `extra_context`.
+  - Robust `ARCHIVE_BASE_URL` derivation: GitLab uses `CI_PAGES_URL` (handles subgroups and custom domains); GitHub exposes `vars.ARCHIVE_BASE_URL` override.
+  - Idempotent retry: if the remote repo already exists, creation is skipped and push continues.
 - **Tremor UI overhaul** of the report viewer (branch: `feature/report-viewer-tremor`):
   - Navbar identity badges (Registry, Repository, Tag, Digest) with clipboard copy.
   - Raw JSON link uses dynamic `siteConfig.baseUrl` (fixes broken link with non-root baseUrl).

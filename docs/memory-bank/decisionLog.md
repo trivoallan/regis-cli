@@ -32,6 +32,22 @@
 - **Decision**: Create 12 individual MDX pages in `docs/analyzers/` with a sidebar category, rather than a single page with tabs.
 - **Rationale**: Enables direct linking to analyzer pages (used by analyzer badges in rules tables), allows Docusaurus to handle navigation naturally, and avoids URL-state management complexity.
 
+## 2026-03-21: `bootstrap archive-repo` — Full Automation via `gh` / `glab`
+
+- **Decision**: Add `bootstrap archive-repo` as a new subcommand of the `bootstrap` group that wraps cookiecutter scaffold + `pnpm install` + git init + remote repo creation + Pages activation in a single command.
+- **Rationale**: `bootstrap archive` leaves the user with manual steps (create repo, push, enable Pages). Automating these via `gh` / `glab` subprocess calls reduces friction for first-time setup.
+- **Key choices**:
+  - Platform detected from scaffolded files (`.github/` vs `.gitlab-ci.yml`) after cookiecutter runs; can be forced early via `--platform` flag passed as `extra_context`.
+  - `glab repo create` uses `--public` / `--private` flags (not `--visibility=`).
+  - GitLab remote uses HTTPS (`https://gitlab.com/...`) not SSH to avoid host-key prompts.
+  - Idempotent: if `glab/gh repo create` fails, checks whether repo already exists and continues if so.
+
+## 2026-03-21: `ARCHIVE_BASE_URL` Derivation from `CI_PAGES_URL`
+
+- **Decision**: Derive `ARCHIVE_BASE_URL` from `CI_PAGES_URL` in GitLab CI using Node.js URL parsing (`new URL(...).pathname`), rather than hardcoding `/${CI_PROJECT_NAME}/`.
+- **Rationale**: `CI_PROJECT_NAME` is only the leaf name; for projects in subgroups the Pages URL path includes the full subgroup chain. Custom domains also diverge from the default `gitlab.io` pattern. `CI_PAGES_URL` is always authoritative.
+- **Override**: Both platforms expose `ARCHIVE_BASE_URL` as an overridable CI/CD variable for custom domain setups.
+
 ## 2026-03-21: Adopt OCI Image Labels
 
 - **Decision**: Add standard OCI labels (`org.opencontainers.image.*`) to the project's `Dockerfile`.

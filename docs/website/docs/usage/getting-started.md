@@ -6,43 +6,34 @@ sidebar_position: 1
 
 `regis-cli` is designed to be easy to set up and run, whether locally or in a CI/CD environment.
 
-## Prerequisites
-
-- **Python 3.10+**: Ensure you have Python installed.
-- **Docker**: For running certain analyzers like Trivy or Hadolint locally.
-- **Pipenv**: (Recommended) For managing dependencies.
-
 ## Installation
 
-You can install `regis-cli` via `pip`:
+### Docker (Recommended)
+
+The easiest way to use `regis-cli` without managing local dependencies is to use the official Docker image. It comes pre-packaged with Skopeo, Trivy, Hadolint, and Dockle.
+
+```bash
+docker run --rm trivoallan/regis-cli --help
+```
+
+### Local Installation
+
+#### Prerequisites
+
+The requirements depend on whether you use the Docker image or install the tool locally.
+
+- **Core Requirement**:
+  - **Skopeo**: Essential for multi-architecture registry inspection and metadata extraction.
+- **Optional Analyzers**:
+  - **Trivy**: Required for vulnerability scanning and SBOM generation.
+  - **Hadolint**: Required for Dockerfile linting.
+  - **Dockle**: Required for container image security linting.
 
 ```bash
 pip install regis-cli
 ```
 
-Or using `pipenv`:
-
-```bash
-pipenv install regis-cli
-```
-
-## Your First Analysis
-
-Once installed, you can analyze any public container image with a single command:
-
-```bash
-regis analyze alpine:latest
-```
-
-This will:
-
-1. Fetch metadata via **Skopeo**.
-2. Run security scans via **Trivy**.
-3. Evaluate the default playbook.
-4. Generate an HTML report in the `output/` directory.
-
-## What's Next?
-
-- Learn how to create a [Custom Playbook](./custom-playbook.md).
-- Understand how [Analyzers](../concepts/analyzers.md) work.
-- Integrate `regis-cli` into your [CI/CD Pipeline](./integrations/github.md).
+:::tip
+For developers wanting to contribute to the project, use **Pipenv**:
+`pipenv install --dev`
+:::

@@ -50,6 +50,15 @@ def test_bootstrap_archive_success():
         assert not notes_file.exists()
 
 
+def test_bootstrap_archive_dev_and_repo_mutually_exclusive():
+    runner = CliRunner()
+    result = runner.invoke(
+        main, ["bootstrap", "archive", "--dev", "--repo", "--no-input"]
+    )
+    assert result.exit_code != 0
+    assert "mutually exclusive" in result.output.lower()
+
+
 def _make_subprocess_mock(stdout: str = "myuser\n") -> MagicMock:
     """Return a subprocess.run mock where every call succeeds."""
 
@@ -67,11 +76,12 @@ def _make_subprocess_mock(stdout: str = "myuser\n") -> MagicMock:
 class TestBootstrapArchiveRepo:
     def test_help(self):
         runner = CliRunner()
-        result = runner.invoke(main, ["bootstrap", "archive-repo", "--help"])
+        result = runner.invoke(main, ["bootstrap", "archive", "--help"])
         assert result.exit_code == 0
         assert "--repo-name" in result.output
         assert "--public" in result.output
         assert "--org" in result.output
+        assert "--repo" in result.output
 
     @patch("regis_cli.cli.shutil.which", return_value="/usr/bin/fake")
     @patch("regis_cli.cli.subprocess.run")
@@ -80,7 +90,7 @@ class TestBootstrapArchiveRepo:
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(
-                main, ["bootstrap", "archive-repo", "test-repo", "--no-input"]
+                main, ["bootstrap", "archive", "test-repo", "--repo", "--no-input"]
             )
         assert result.exit_code == 0, result.output
         assert "github.io" in result.output
@@ -93,11 +103,17 @@ class TestBootstrapArchiveRepo:
         ).side_effect
         runner = CliRunner()
         with runner.isolated_filesystem():
-            # Simulate interactive prompts: accept defaults except "platform" → choose "gitlab"
             result = runner.invoke(
                 main,
-                ["bootstrap", "archive-repo", "test-repo"],
-                input="\n\n2\n\n\n\n\n",
+                [
+                    "bootstrap",
+                    "archive",
+                    "test-repo",
+                    "--repo",
+                    "--platform",
+                    "gitlab",
+                    "--no-input",
+                ],
             )
         assert result.exit_code == 0, result.output
         assert "gitlab.io" in result.output
@@ -105,7 +121,7 @@ class TestBootstrapArchiveRepo:
     @patch("regis_cli.cli.shutil.which", return_value=None)
     def test_missing_pnpm_fails(self, _mock_which):
         runner = CliRunner()
-        result = runner.invoke(main, ["bootstrap", "archive-repo", "--no-input"])
+        result = runner.invoke(main, ["bootstrap", "archive", "--repo", "--no-input"])
         assert result.exit_code != 0
         assert "pnpm" in result.output
 
@@ -128,7 +144,7 @@ class TestBootstrapArchiveRepo:
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(
-                main, ["bootstrap", "archive-repo", "test-repo", "--no-input"]
+                main, ["bootstrap", "archive", "test-repo", "--repo", "--no-input"]
             )
         assert result.exit_code != 0
         assert "failed" in result.output.lower()
@@ -152,7 +168,7 @@ class TestBootstrapArchiveRepo:
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(
-                main, ["bootstrap", "archive-repo", "test-repo", "--no-input"]
+                main, ["bootstrap", "archive", "test-repo", "--repo", "--no-input"]
             )
         assert result.exit_code != 0
         assert "pnpm install" in result.output
@@ -175,7 +191,7 @@ class TestBootstrapArchiveRepo:
         runner = CliRunner()
         with runner.isolated_filesystem():
             result = runner.invoke(
-                main, ["bootstrap", "archive-repo", "test-repo", "--no-input"]
+                main, ["bootstrap", "archive", "test-repo", "--repo", "--no-input"]
             )
         assert result.exit_code == 0, result.output
         assert any("regis-archive" in arg for arg in gh_create_args)
@@ -201,8 +217,9 @@ class TestBootstrapArchiveRepo:
                 main,
                 [
                     "bootstrap",
-                    "archive-repo",
+                    "archive",
                     "test-repo",
+                    "--repo",
                     "--no-input",
                     "--org",
                     "myorg",
