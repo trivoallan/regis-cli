@@ -990,6 +990,51 @@ def bootstrap_playbook(output_dir: str, no_input: bool) -> None:
         raise click.ClickException(f"Failed to bootstrap playbook: {exc}") from exc
 
 
+@bootstrap.command(name="archive")
+@click.argument(
+    "output_dir", type=click.Path(file_okay=False, dir_okay=True), default="."
+)
+@click.option(
+    "--no-input",
+    is_flag=True,
+    help="Do not prompt for parameters and only use cookiecutter.json defaults.",
+)
+def bootstrap_archive(output_dir: str, no_input: bool) -> None:
+    """Bootstrap a standalone archive viewer site for regis-cli reports."""
+    try:
+        from importlib import resources
+
+        from cookiecutter.main import cookiecutter
+    except ImportError as exc:
+        raise click.ClickException(
+            f"cookiecutter not found or failed to import: {exc}. Please install it with 'pip install cookiecutter'."
+        ) from None
+
+    template_path = resources.files("regis_cli") / "cookiecutters" / "archive"
+
+    click.echo(f"Bootstrapping archive site into {output_dir}...", err=True)
+    try:
+        project_dir = cookiecutter(
+            str(template_path),
+            no_input=no_input,
+            output_dir=output_dir,
+        )
+        click.echo("  ✓ Archive site bootstrapped successfully.", err=True)
+
+        # Handle post-install notes
+        notes_file = Path(project_dir) / ".regis-post-install.md"
+        if notes_file.exists():
+            click.echo("\n" + "=" * 40, err=True)
+            click.echo("POST-INSTALL NOTES:", err=True)
+            click.echo("=" * 40, err=True)
+            click.echo(notes_file.read_text(encoding="utf-8"), err=True)
+            click.echo("=" * 40 + "\n", err=True)
+            notes_file.unlink()
+
+    except Exception as exc:
+        raise click.ClickException(f"Failed to bootstrap archive site: {exc}") from exc
+
+
 @main.command(name="check")
 @click.argument("url")
 @click.option(
