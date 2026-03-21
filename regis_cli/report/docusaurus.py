@@ -41,6 +41,9 @@ def build_report_site(
     Raises:
         RuntimeError: If the Docusaurus build fails.
     """
+    # Ensure base_url ends with a slash for Docusaurus
+    if not base_url.endswith("/"):
+        base_url += "/"
     if not _VIEWER_DIR.is_dir():
         raise RuntimeError(
             f"Report viewer app not found at {_VIEWER_DIR}. "
