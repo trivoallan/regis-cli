@@ -1,10 +1,6 @@
 """Tests for regis_cli.utils.report — uncovered paths."""
 
-import json
-from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from regis_cli.utils.report import escape_jinja, run_playbooks
 
@@ -84,8 +80,6 @@ class TestRunPlaybooks:
     def test_remote_path_shows_downloading(self, mock_eval, mock_load, capsys):
         mock_load.return_value = {}
         mock_eval.return_value = self._make_pb_result()
-
-        import click
 
         with patch("regis_cli.utils.report.click.echo") as mock_echo:
             run_playbooks(

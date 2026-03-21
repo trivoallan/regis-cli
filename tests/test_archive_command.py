@@ -1,7 +1,6 @@
 """Tests for 'regis-cli archive' command group."""
 
 import json
-from pathlib import Path
 
 from click.testing import CliRunner
 

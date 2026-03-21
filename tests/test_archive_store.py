@@ -3,8 +3,6 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from regis_cli.archive.store import (
     _load_json_array,
     _make_summary,

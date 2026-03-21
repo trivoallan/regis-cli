@@ -1,12 +1,9 @@
 """Tests for 'regis-cli rules show' and 'rules evaluate' commands."""
 
 import json
-import sys
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
-import yaml
 from click.testing import CliRunner
 
 from regis_cli.cli import main
