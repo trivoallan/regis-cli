@@ -1,7 +1,7 @@
-import React, {type ReactNode} from 'react';
-import Content from '@theme-original/DocSidebar/Desktop/Content';
-import type ContentType from '@theme/DocSidebar/Desktop/Content';
-import type {WrapperProps} from '@docusaurus/types';
+import React, { type ReactNode } from "react";
+import Content from "@theme-original/DocSidebar/Desktop/Content";
+import type ContentType from "@theme/DocSidebar/Desktop/Content";
+import type { WrapperProps } from "@docusaurus/types";
 
 import { useReport } from "@site/src/components/ReportProvider";
 import { RiFileListLine } from "@remixicon/react";

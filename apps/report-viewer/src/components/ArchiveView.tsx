@@ -267,7 +267,10 @@ export function ArchiveView(): React.JSX.Element {
               if (input) {
                 const searchParams = new URLSearchParams(search);
                 searchParams.set("archive_url", input);
-                history.push({ pathname: "/", search: searchParams.toString() });
+                history.push({
+                  pathname: "/",
+                  search: searchParams.toString(),
+                });
               }
             }}
             className="flex flex-col gap-3 max-w-sm mx-auto"

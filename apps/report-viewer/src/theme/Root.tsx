@@ -20,16 +20,20 @@ interface RootProps {
 /**
  * Inner component that can consume useReport() from the provider.
  */
-function RootContent({ children }: { children: React.ReactNode }): React.JSX.Element {
+function RootContent({
+  children,
+}: {
+  children: React.ReactNode;
+}): React.JSX.Element {
   const { search } = useLocation();
   const { error, loading } = useReport();
   const params = new URLSearchParams(search);
   const hasSpecificReport = params.has("url");
 
   // Redirection is no longer needed for the homepage as "/" is now the archive.
-  // We only keep a fallback for explicit archive view requests if needed, 
+  // We only keep a fallback for explicit archive view requests if needed,
   // but since "/" is the archive, we can simplify.
-  
+
   return <>{children}</>;
 }
 
@@ -43,7 +47,9 @@ export default function Root({ children }: RootProps): React.JSX.Element {
   const paramUrl = params.get("url");
 
   // On client side, read from sessionStorage if param is missing
-  const [activeReportUrl, setActiveReportUrl] = React.useState<string | null>(null);
+  const [activeReportUrl, setActiveReportUrl] = React.useState<string | null>(
+    null,
+  );
 
   // 2. Handle archive URL persistence
   const paramArchiveUrl = params.get("archive_url");
