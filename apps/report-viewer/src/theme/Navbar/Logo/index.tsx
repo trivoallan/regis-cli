@@ -38,13 +38,22 @@ export default function NavbarLogo(): React.JSX.Element {
       <button
         onClick={() => setDialogOpen(true)}
         className="navbar__item navbar__link inline-flex items-center gap-1"
-        style={{ marginLeft: "auto", flexShrink: 0, background: "none", border: "none", cursor: "pointer" }}
+        style={{
+          marginLeft: "auto",
+          flexShrink: 0,
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+        }}
         title="Load report from URL"
       >
         <RiLinkM size={14} />
         Load URL
       </button>
-      <ReportUrlDialog isOpen={dialogOpen} onClose={() => setDialogOpen(false)} />
+      <ReportUrlDialog
+        isOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+      />
       <a
         href={`${siteConfig.baseUrl}report.json`}
         className="navbar__item navbar__link"
