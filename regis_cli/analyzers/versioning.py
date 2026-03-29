@@ -46,6 +46,7 @@ _VARIANT_TOKENS: set[str] = {
     "stretch",
     "trixie",
     "trusty",
+    "wheezy",
     "xenial",
     # Generic qualifiers
     "slim",
@@ -55,8 +56,15 @@ _VARIANT_TOKENS: set[str] = {
     "lite",
     # Explicit OS names
     "linux",
+    "ubuntu",
     "windows",
     "windowsservercore",
+    "distroless",
+    # C library variants
+    "glibc",
+    "musl",
+    "uclibc",
+    "gnu",
     # Runtime variants
     "cli",
     "fpm",
@@ -98,6 +106,12 @@ _VARIANT_TOKEN_RE = re.compile(
 # Captures (optional v prefix)(semver digits)-(variant suffix)
 _SEMVER_VARIANT_RE = re.compile(r"^v?(\d+\.\d+\.\d+)-(.+)$")
 
+# Partial version + variant: 1-glibc, 1.23-musl (not strict semver)
+_NUMERIC_VARIANT_RE = re.compile(r"^v?\d+(?:\.\d+)*-(.+)$")
+
+# True pre-release keywords only: -alpha, -beta, -rc (with optional numeric suffix)
+_PRERELEASE_RE = re.compile(r"^(alpha|beta|rc)(\.?\d+)*$", re.IGNORECASE)
+
 
 def _extract_variants(tag: str) -> list[str]:
     """Extract variant tokens from a tag string."""
@@ -136,10 +150,12 @@ def _classify_tag(tag: str) -> str:
     try:
         ver = semver.Version.parse(tag.lstrip("v"))
         if ver.prerelease:
-            # Check whether the "prerelease" part is actually an OS variant.
             if _is_variant_suffix(ver.prerelease):
                 return "semver-variant"
-            return "semver-prerelease"
+            if _PRERELEASE_RE.match(ver.prerelease):
+                return "semver-prerelease"
+            # Unknown suffix (e.g. 1.0.0-customfork) — treat as variant.
+            return "semver-variant"
         return "semver"
     except ValueError:
         pass
@@ -147,6 +163,11 @@ def _classify_tag(tag: str) -> str:
     # Loose numeric (e.g. "1.2" or "8").
     if _NUMERIC_RE.match(tag):
         return "numeric"
+
+    # Partial version + variant suffix (e.g. "1-glibc", "1.23-musl").
+    m = _NUMERIC_VARIANT_RE.match(tag)
+    if m and _is_variant_suffix(m.group(1)):
+        return "numeric-variant"
 
     # Git commit hashes.
     if _HASH_RE.match(tag):
@@ -229,98 +250,101 @@ class VersioningAnalyzer(BaseAnalyzer):
             else "unknown"
         )
 
-        # SemVer-specific summary (semver + prerelease + variant all count).
+        # SemVer-specific summary: strict semver + variants + numeric aliases all count.
+        # Numeric tags (1, 1.23) and numeric-variant tags (1-glibc) are floating
+        # aliases that always point to a specific semver release.
         semver_count = (
             len(classifications.get("semver", []))
             + len(classifications.get("semver-prerelease", []))
             + len(classifications.get("semver-variant", []))
+            + len(classifications.get("numeric", []))
+            + len(classifications.get("numeric-variant", []))
         )
         semver_compliant = round(semver_count / len(tags) * 100, 1) if tags else 0
 
-        # Determine release lines if the current tag is an alias
         current_pattern = _classify_tag(tag)
-        release_lines = []
-        if current_pattern not in ("semver", "semver-prerelease", "semver-variant"):
-            inspect_target = f"docker://{registry}/{repository}:{tag}"
 
-            inspect_cmd = ["skopeo", "inspect", inspect_target]
-            if platform:
-                try:
-                    os_str, arch = platform.split("/", 1)
-                    inspect_cmd.extend(
-                        ["--override-os", os_str, "--override-arch", arch]
-                    )
-                except ValueError:
-                    logger.debug(
-                        "Invalid platform format %s, ignoring for inspect", platform
-                    )
-            else:
-                # Default to linux/amd64 to avoid host architecture mismatch for multi-arch images
-                inspect_cmd.extend(
-                    ["--override-os", "linux", "--override-arch", "amd64"]
-                )
-
-            if client.username and client.password:
-                inspect_cmd.extend(["--creds", f"{client.username}:{client.password}"])
-
+        # Always inspect to find all tags sharing the same digest (aliases).
+        inspect_target = f"docker://{registry}/{repository}:{tag}"
+        inspect_cmd = ["skopeo", "inspect", inspect_target]
+        if platform:
             try:
-                res_inspect = subprocess.run(
-                    inspect_cmd,
-                    capture_output=True,
-                    text=True,
-                    check=True,
+                os_str, arch = platform.split("/", 1)
+                inspect_cmd.extend(["--override-os", os_str, "--override-arch", arch])
+            except ValueError:
+                logger.debug(
+                    "Invalid platform format %s, ignoring for inspect", platform
                 )
-                inspect_data = json.loads(res_inspect.stdout)
-                repo_tags = inspect_data.get("RepoTags", [])
+        else:
+            # Default to linux/amd64 to avoid host architecture mismatch for multi-arch images
+            inspect_cmd.extend(["--override-os", "linux", "--override-arch", "amd64"])
 
-                # Filter to numeric release tags (semver-like)
-                # We want 3, 3.14, 3.14.3 etc.
-                numeric_tags = []
-                for t in repo_tags:
-                    p = _classify_tag(t)
-                    if p in ("semver", "numeric"):
-                        # Ensure it's not a variant or prerelease (handled by _classify_tag)
-                        numeric_tags.append(t)
+        if client.username and client.password:
+            inspect_cmd.extend(["--creds", f"{client.username}:{client.password}"])
 
-                if numeric_tags:
-                    # Sort to find the most specific one
-                    # (3 < 3.14 < 3.14.3)
-                    numeric_tags.sort(
-                        key=lambda x: [
-                            int(c)
-                            for c in x.lstrip("v").split(".")
-                            if x.lstrip("v").replace(".", "").isdigit()
-                        ]
-                    )
+        aliases: list[str] = []
+        repo_tags: list[str] = []
+        try:
+            res_inspect = subprocess.run(  # nosec B603
+                inspect_cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            inspect_data = json.loads(res_inspect.stdout)
+            repo_tags = inspect_data.get("RepoTags", [])
+            aliases = sorted(t for t in repo_tags if t != tag)
+        except Exception as e:
+            logger.debug("Failed to inspect %s to find aliases: %s", tag, e)
 
-                    most_specific = numeric_tags[-1]
-                    # Identify hierarchy: if most specific is 3.14.3, we want [3, 3.14, 3.14.3]
-                    # But only if those tags actually exist in numeric_tags
-                    parts = most_specific.lstrip("v").split(".")
-                    hierarchy = []
-                    for i in range(1, len(parts) + 1):
-                        prefix = ".".join(parts[:i])
-                        # Handle "v" prefix if present
-                        if f"v{prefix}" in numeric_tags:
-                            hierarchy.append(f"v{prefix}")
-                        elif prefix in numeric_tags:
-                            hierarchy.append(prefix)
+        # Release lines: only meaningful for floating/alias tags.
+        release_lines: list[str] = []
+        if (
+            current_pattern
+            not in ("semver", "semver-prerelease", "semver-variant", "numeric-variant")
+            and repo_tags
+        ):
+            # Filter to numeric release tags (semver-like): 3, 3.14, 3.14.3 etc.
+            numeric_tags = []
+            for t in repo_tags:
+                p = _classify_tag(t)
+                if p in ("semver", "numeric"):
+                    numeric_tags.append(t)
 
-                    release_lines = hierarchy
-
-                # Also fallback if no numeric hierarchy found
-                if not release_lines:
-                    semver_tags = [
-                        t
-                        for t in repo_tags
-                        if _classify_tag(t) in ("semver", "calver", "semver-variant")
+            if numeric_tags:
+                # Sort to find the most specific one (3 < 3.14 < 3.14.3)
+                numeric_tags.sort(
+                    key=lambda x: [
+                        int(c)
+                        for c in x.lstrip("v").split(".")
+                        if x.lstrip("v").replace(".", "").isdigit()
                     ]
-                    if semver_tags:
-                        semver_tags.sort(key=len, reverse=True)
-                        release_lines = [semver_tags[0]]
+                )
 
-            except Exception as e:
-                logger.debug("Failed to inspect %s to find release lines: %s", tag, e)
+                most_specific = numeric_tags[-1]
+                # Identify hierarchy: if most specific is 3.14.3, we want [3, 3.14, 3.14.3]
+                # but only if those tags actually exist in numeric_tags.
+                parts = most_specific.lstrip("v").split(".")
+                hierarchy = []
+                for i in range(1, len(parts) + 1):
+                    prefix = ".".join(parts[:i])
+                    if f"v{prefix}" in numeric_tags:
+                        hierarchy.append(f"v{prefix}")
+                    elif prefix in numeric_tags:
+                        hierarchy.append(prefix)
+
+                release_lines = hierarchy
+
+            # Fallback if no numeric hierarchy found.
+            if not release_lines:
+                semver_tags = [
+                    t
+                    for t in repo_tags
+                    if _classify_tag(t) in ("semver", "calver", "semver-variant")
+                ]
+                if semver_tags:
+                    semver_tags.sort(key=len, reverse=True)
+                    release_lines = [semver_tags[0]]
 
         report = {
             "analyzer": self.name,
@@ -340,6 +364,7 @@ class VersioningAnalyzer(BaseAnalyzer):
                     variant_counts.items(), key=lambda x: x[1], reverse=True
                 )
             ],
+            "aliases": aliases,
             "release_lines": release_lines,
         }
 

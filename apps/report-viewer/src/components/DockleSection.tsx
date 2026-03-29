@@ -41,7 +41,7 @@ export function DockleSection({
   const byLevel = Object.entries(data.issues_by_level ?? {}).filter(
     ([level, n]) => n > 0 && level !== "PASS" && level !== "SKIP",
   );
-  const displayedIssues = data.issues.filter(
+  const displayedIssues = (data.issues ?? []).filter(
     (i) => i.level !== "PASS" && i.level !== "SKIP",
   );
 

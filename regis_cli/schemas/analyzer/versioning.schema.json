@@ -11,7 +11,8 @@
     "dominant_pattern",
     "semver_compliant_percentage",
     "patterns",
-    "variants"
+    "variants",
+    "aliases"
   ],
   "properties": {
     "analyzer": {
@@ -37,10 +38,18 @@
         "semver-variant",
         "calver",
         "numeric",
+        "numeric-variant",
         "hash",
         "named",
         "unknown"
       ]
+    },
+    "aliases": {
+      "type": "array",
+      "description": "Other tags in the repository that resolve to the same digest as the analyzed tag.",
+      "items": {
+        "type": "string"
+      }
     },
     "release_lines": {
       "type": "array",
@@ -71,6 +80,7 @@
               "semver-variant",
               "calver",
               "numeric",
+              "numeric-variant",
               "hash",
               "named"
             ]

@@ -31,6 +31,7 @@ interface VersioningData {
   semver_compliant_percentage?: number;
   patterns?: TagPattern[];
   variants?: TagVariant[];
+  aliases?: string[];
 }
 
 export function VersioningSection({
@@ -92,6 +93,21 @@ export function VersioningSection({
               ))}
             </TableBody>
           </Table>
+        </Card>
+      )}
+
+      {data.aliases && data.aliases.length > 0 && (
+        <Card>
+          <Text className="font-medium mb-3">
+            Aliases — other tags pointing to this digest ({data.aliases.length})
+          </Text>
+          <div className="flex flex-wrap gap-1.5">
+            {data.aliases.map((a) => (
+              <Badge key={a} color="gray">
+                {a}
+              </Badge>
+            ))}
+          </div>
         </Card>
       )}
 

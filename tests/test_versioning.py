@@ -87,10 +87,32 @@ class TestClassifyTag:
     @pytest.mark.parametrize(
         "tag,expected",
         [
+            ("1.0.0-glibc", "semver-variant"),
+            ("1.0.0-musl", "semver-variant"),
+            ("1.24.1-ubuntu", "semver-variant"),
+        ],
+    )
+    def test_semver_variant_libc(self, tag, expected):
+        assert _classify_tag(tag) == expected
+
+    @pytest.mark.parametrize(
+        "tag,expected",
+        [
+            ("1-glibc", "numeric-variant"),
+            ("1-musl", "numeric-variant"),
+            ("1.23-ubuntu", "numeric-variant"),
+            ("1-alpine", "numeric-variant"),
+        ],
+    )
+    def test_numeric_variant(self, tag, expected):
+        assert _classify_tag(tag) == expected
+
+    @pytest.mark.parametrize(
+        "tag,expected",
+        [
             ("latest", "named"),
             ("alpine", "named"),
             ("bookworm-slim", "named"),
-            ("1-alpine", "named"),
         ],
     )
     def test_named(self, tag, expected):
@@ -259,10 +281,8 @@ class TestVersioningAnalyzer:
 
     @patch("regis_cli.analyzers.versioning.subprocess.run")
     def test_release_line_detection_for_alias(self, mock_run):
-        """Test detection of release_line for alias tags."""
-        # mock_run will be called twice:
-        # 1. skopeo list-tags
-        # 2. skopeo inspect
+        """Test detection of release_lines and aliases for alias tags."""
+        # mock_run will be called twice: 1. skopeo list-tags  2. skopeo inspect
         mock_list_tags = MagicMock()
         mock_list_tags.stdout = json.dumps({"Tags": ["1", "1.10", "1.10.4", "latest"]})
 
@@ -278,7 +298,29 @@ class TestVersioningAnalyzer:
         report = analyzer.analyze(client, "library/test", "1")
         analyzer.validate(report)
 
-        assert "release_lines" in report
         assert report["release_lines"] == ["1", "1.10", "1.10.4"]
-        assert "release_line" not in report
+        assert report["aliases"] == ["1.10", "1.10.4", "latest"]
+        assert mock_run.call_count == 2
+
+    @patch("regis_cli.analyzers.versioning.subprocess.run")
+    def test_aliases_for_semver_tag(self, mock_run):
+        """Aliases are detected even when the analyzed tag is a strict semver."""
+        mock_list_tags = MagicMock()
+        mock_list_tags.stdout = json.dumps({"Tags": ["1", "1.10", "1.10.4", "latest"]})
+
+        mock_inspect = MagicMock()
+        mock_inspect.stdout = json.dumps(
+            {"RepoTags": ["1", "1.10", "1.10.4", "latest"]}
+        )
+
+        mock_run.side_effect = [mock_list_tags, mock_inspect]
+
+        client = MockRegistryClient()
+        analyzer = VersioningAnalyzer()
+        report = analyzer.analyze(client, "library/test", "1.10.4")
+        analyzer.validate(report)
+
+        assert report["aliases"] == ["1", "1.10", "latest"]
+        # release_lines must be empty: 1.10.4 is semver, not a floating alias
+        assert report["release_lines"] == []
         assert mock_run.call_count == 2

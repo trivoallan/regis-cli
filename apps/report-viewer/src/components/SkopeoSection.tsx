@@ -37,7 +37,7 @@ export function SkopeoSection({
 }: {
   data: SkopeoData;
 }): React.JSX.Element {
-  const platforms = data.platforms.filter(
+  const platforms = (data.platforms ?? []).filter(
     (p) => !(p.os === "unknown" && p.architecture === "unknown"),
   );
 
