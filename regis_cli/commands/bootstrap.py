@@ -11,6 +11,52 @@ import click
 from regis_cli.utils.process import require_tool, run_cmd
 
 
+def _run_initial_analyze(project_path: Path) -> None:
+    """Run a first regis-cli analysis on the regis-cli image itself.
+
+    The image URL is read from the generated .regis-sync.json context so it
+    always matches the scaffolded version.  Failures are non-blocking: a
+    warning is printed and the bootstrap continues normally.
+    """
+    sync_file = project_path / ".regis-sync.json"
+    if not sync_file.exists():
+        click.echo(
+            "  ⚠ .regis-sync.json not found — skipping initial analysis.",
+            err=True,
+        )
+        return
+
+    context = json.loads(sync_file.read_text(encoding="utf-8")).get("context", {})
+    image_url: str = context.get("regis_cli_image_url", "")
+    if not image_url:
+        click.echo(
+            "  ⚠ regis_cli_image_url not set in context — skipping initial analysis.",
+            err=True,
+        )
+        return
+
+    archive_dir = project_path / "static" / "archive"
+    click.echo(f"\nRunning initial analysis: {image_url} ...", err=True)
+    try:
+        result = subprocess.run(  # nosec B603 B607
+            ["regis-cli", "analyze", image_url, "--archive", str(archive_dir)],
+            check=False,
+            capture_output=False,
+        )
+        if result.returncode != 0:
+            click.echo(
+                "  ⚠ Initial analysis finished with errors (non-blocking).",
+                err=True,
+            )
+        else:
+            click.echo("  ✓ Initial analysis complete.", err=True)
+    except FileNotFoundError:
+        click.echo(
+            "  ⚠ 'regis-cli' not found in PATH — skipping initial analysis.",
+            err=True,
+        )
+
+
 def _sync_archive_template(working_copy: str) -> None:
     """Sync UI changes from a working copy back to the archive cookiecutter template.
 
@@ -306,6 +352,7 @@ def bootstrap_archive(
         click.echo("\nInstalling Node dependencies (pnpm install)...", err=True)
         run_cmd(["pnpm", "install"], cwd=project_path, step_label="pnpm install")
         click.echo("  ✓ Dependencies installed.", err=True)
+        _run_initial_analyze(project_path)
         click.echo(f"\nStarting dev server on http://localhost:{port} ...", err=True)
         click.echo(
             f"  Add reports: regis-cli analyze <IMAGE> --archive {project_path}/static/archive",
@@ -342,6 +389,8 @@ def bootstrap_archive(
     click.echo("\nInstalling Node dependencies (pnpm install)...", err=True)
     run_cmd(["pnpm", "install"], cwd=project_path, step_label="pnpm install")
     click.echo("  ✓ Dependencies installed.", err=True)
+
+    _run_initial_analyze(project_path)
 
     click.echo("\nInitialising local git repository...", err=True)
     run_cmd(["git", "init", "-b", "main"], cwd=project_path)
