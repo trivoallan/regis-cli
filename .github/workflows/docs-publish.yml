@@ -117,6 +117,9 @@ jobs:
             -D docs/website/static/examples/playbooks/default/regis-cli \
             --base-url /regis-cli/examples/playbooks/default/regis-cli/
 
+      - name: Generate Viewer
+        run: pipenv run regis-cli viewer export -o docs/website/static/viewer
+
       - name: Create Docusaurus version snapshot
         if: github.event_name == 'release'
         run: |
@@ -130,9 +133,6 @@ jobs:
       - name: Docusaurus build
         run: pnpm run build
         working-directory: docs/website
-
-      - name: Build Viewer
-        run: pipenv run regis-cli viewer export -o docs/website/static/viewer
 
       - name: Commit versioned docs snapshot
         if: github.event_name == 'release'
