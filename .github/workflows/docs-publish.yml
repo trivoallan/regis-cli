@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - docs/**
-      - app/report-viewer/**
+      - apps/report-viewer/docs/**
   release:
     types: [published]
   workflow_dispatch:
