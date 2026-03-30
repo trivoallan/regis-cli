@@ -53,9 +53,9 @@ jobs:
         with:
           branch: ${{ github.head_ref }}
           commit_message: "style: apply automated trunk fmt"
-          commit_user_name: github-actions[bot]
-          commit_user_email: github-actions[bot]@users.noreply.github.com
-          commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          commit_user_name: regis-ci[bot]
+          commit_user_email: regis-ci[bot]@users.noreply.github.com
+          commit_author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
 
       - name: Fail if formatting fixes were needed
         if: steps.commit.outputs.changes_detected == 'true'
