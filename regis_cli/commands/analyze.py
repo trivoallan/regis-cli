@@ -371,17 +371,17 @@ def analyze(
         from regis_cli.archive.store import add_to_archive
 
         add_to_archive(final_report, archive_dir)
-
-    render_and_save_reports(
-        final_report,
-        formats,
-        output_template,
-        output_dir_template,
-        theme,
-        pretty,
-        base_url=base_url,
-        open_browser=open_browser,
-    )
+    else:
+        render_and_save_reports(
+            final_report,
+            formats,
+            output_template,
+            output_dir_template,
+            theme,
+            pretty,
+            base_url=base_url,
+            open_browser=open_browser,
+        )
 
     if not archive_dir:
         render_mr_templates(final_report, output_dir_template)
