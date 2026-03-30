@@ -31,6 +31,7 @@ _SUMMARY_KEYS = [
     "age_days",
     "sbom_component_count",
     "scorecard_score",
+    "status",
     "path",
 ]
 
@@ -88,8 +89,30 @@ def _make_summary(report: dict[str, Any], path: str) -> dict[str, Any]:
         "age_days": freshness.get("age_days"),
         "sbom_component_count": sbom.get("component_count"),
         "scorecard_score": scorecard.get("score"),
+        "status": _calculate_status(report),
         "path": path,
     }
+
+
+def _calculate_status(report: dict[str, Any]) -> str:
+    """Determine the overall analysis status (highest failure level or 'pass')."""
+    rules = report.get("rules") or []
+    # If no rules evaluated, we can't really say it passed/failed rules
+    if not rules and not report.get("rules_summary"):
+        return "pass"
+
+    level_order = {"critical": 1, "warning": 2, "info": 3}
+    max_failure_rank = 99
+
+    for r in rules:
+        if not r.get("passed", False):
+            lvl = str(r.get("level") or "info").lower()
+            rank = level_order.get(lvl, 3)
+            if rank < max_failure_rank:
+                max_failure_rank = rank
+
+    inv_level_order = {1: "critical", 2: "warning", 3: "info"}
+    return inv_level_order.get(max_failure_rank, "pass")
 
 
 def add_to_archive(

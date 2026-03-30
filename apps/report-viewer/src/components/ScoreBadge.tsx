@@ -75,6 +75,8 @@ export function levelToVariant(level: string): ScoreBadgeProps["variant"] {
     case "gold":
     case "silver":
     case "bronze":
+    case "pass":
+    case "none":
       return "success";
     default:
       return "default";

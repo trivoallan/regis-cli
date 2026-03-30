@@ -43,6 +43,7 @@ export interface ArchiveEntry {
   age_days?: number;
   sbom_component_count?: number;
   scorecard_score?: number;
+  status?: string;
   path: string;
 }
 
@@ -80,6 +81,7 @@ function tierVariant(
 }
 
 const TIERS = ["All", "Gold", "Silver", "Bronze", "None"];
+const STATUSES = ["All", "Pass", "Critical", "Warning", "Info"];
 
 // ---------------------------------------------------------------------------
 // Trend chart
@@ -149,6 +151,7 @@ export function ArchiveView(): React.JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [imageFilter, setImageFilter] = useState("");
   const [tierFilter, setTierFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [archiveUrl, setArchiveUrl] = useState<string>("");
@@ -199,9 +202,16 @@ export function ArchiveView(): React.JSX.Element {
           )
             return false;
         }
+        if (statusFilter !== "All") {
+          if (statusFilter === "Pass") {
+            if (e.status !== "pass") return false;
+          } else if (e.status?.toLowerCase() !== statusFilter.toLowerCase()) {
+            return false;
+          }
+        }
         return true;
       }),
-    [entries, imageFilter, tierFilter],
+    [entries, imageFilter, tierFilter, statusFilter],
   );
 
   const uniqueImages = useMemo(
@@ -340,11 +350,22 @@ export function ArchiveView(): React.JSX.Element {
         <Select
           value={tierFilter}
           onValueChange={setTierFilter}
-          className="max-w-[10rem]"
+          className="max-w-[8rem]"
         >
           {TIERS.map((t) => (
             <SelectItem key={t} value={t}>
               {t}
+            </SelectItem>
+          ))}
+        </Select>
+        <Select
+          value={statusFilter}
+          onValueChange={setStatusFilter}
+          className="max-w-[8rem]"
+        >
+          {STATUSES.map((s) => (
+            <SelectItem key={s} value={s}>
+              {s}
             </SelectItem>
           ))}
         </Select>
@@ -382,6 +403,12 @@ export function ArchiveView(): React.JSX.Element {
                       </Text>
                     </div>
                     <div className="flex items-center gap-3">
+                      {latest.status && (
+                        <ScoreBadge
+                          label={latest.status === "pass" ? "PASS" : latest.status}
+                          variant={levelToVariant(latest.status)}
+                        />
+                      )}
                       {latest.tier && (
                         <ScoreBadge
                           label={latest.tier}
@@ -433,6 +460,7 @@ export function ArchiveView(): React.JSX.Element {
                 <TableRow>
                   <TableHeaderCell>Date</TableHeaderCell>
                   <TableHeaderCell>Image</TableHeaderCell>
+                  <TableHeaderCell>Status</TableHeaderCell>
                   <TableHeaderCell>Tier</TableHeaderCell>
                   <TableHeaderCell>Score</TableHeaderCell>
                   <TableHeaderCell>Rules</TableHeaderCell>
@@ -453,6 +481,16 @@ export function ArchiveView(): React.JSX.Element {
                     </TableCell>
                     <TableCell className="font-mono text-xs">
                       {imageKey(e)}
+                    </TableCell>
+                    <TableCell>
+                      {e.status ? (
+                        <ScoreBadge
+                          label={e.status === "pass" ? "PASS" : e.status}
+                          variant={levelToVariant(e.status)}
+                        />
+                      ) : (
+                        <Text className="text-xs opacity-50">—</Text>
+                      )}
                     </TableCell>
                     <TableCell>
                       {e.tier ? (
