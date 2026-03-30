@@ -412,18 +412,53 @@ export function ArchiveView(): React.JSX.Element {
 
   if (loading) return <p className="p-6">Loading archive…</p>;
 
-  if (error)
+  if (error) {
+    const isManifestErr =
+      error.includes("404") ||
+      error.includes("Unexpected token '<'") ||
+      error.includes("manifest.json");
+
     return (
-      <div className="p-6">
-        <div className="alert alert--warning">
-          <p>Archive not available: {error}</p>
-          <p className="text-sm mt-2 opacity-70">
-            Run <code>regis-cli analyze … --archive ./static/archive</code> to
-            populate the archive.
-          </p>
+      <div className="p-16 max-w-2xl mx-auto text-center">
+        <div className="bg-gray-50/50 dark:bg-gray-800/20 p-10 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">
+          <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <Title className="text-2xl font-bold mb-3">
+            {isManifestErr ? "No Archive Index" : "Archive Error"}
+          </Title>
+          <Text className="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
+            {isManifestErr
+              ? "We couldn't find a local manifest.json. You can browse an external archive by providing its URL below."
+              : error}
+          </Text>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const input = (e.currentTarget.elements[0] as HTMLInputElement).value;
+              if (input) {
+                const url = new URL(window.location.href);
+                url.searchParams.set("archive_url", input);
+                window.location.href = url.toString();
+              }
+            }}
+            className="flex flex-col gap-3 max-w-sm mx-auto"
+          >
+            <TextInput placeholder="https://example.com/manifest.json" required />
+            <button
+              type="submit"
+              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-sm cursor-pointer"
+            >
+              Explore Archive
+            </button>
+          </form>
         </div>
       </div>
     );
+  }
 
   if (detailEntry)
     return (
