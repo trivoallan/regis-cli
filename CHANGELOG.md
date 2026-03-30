@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.23.0](https://github.com/trivoallan/regis-cli/compare/v0.22.0...v0.23.0) (2026-03-30)
+
+
+### Features
+
+* **ci:** add auto-rebase and auto-merge workflows for PRs ([#115](https://github.com/trivoallan/regis-cli/issues/115)) ([cc2688b](https://github.com/trivoallan/regis-cli/commit/cc2688b671a4f3ca7e3fc5c75e3fcb96ff7d4b4d))
+* **ci:** auto-rebase Dependabot PRs via [@dependabot](https://github.com/dependabot) rebase comment ([#140](https://github.com/trivoallan/regis-cli/issues/140)) ([8d913e5](https://github.com/trivoallan/regis-cli/commit/8d913e5ee7e0a5b01a95e5ee5522ad1e870280c1))
+* **ci:** skip schema/rules doc generation when source unchanged ([#139](https://github.com/trivoallan/regis-cli/issues/139)) ([d5dd9c1](https://github.com/trivoallan/regis-cli/commit/d5dd9c101085a9ddad18c98204e3f4f6d464be15))
+
+
+### Bug Fixes
+
+* **ci:** fall back to github.token when App secrets unavailable (dependabot PRs) ([#137](https://github.com/trivoallan/regis-cli/issues/137)) ([7cd0c69](https://github.com/trivoallan/regis-cli/commit/7cd0c69cece6f06db36ae4ebfef576b89a118435))
+* **ci:** remove broken [@dependabot](https://github.com/dependabot) rebase comment approach ([#142](https://github.com/trivoallan/regis-cli/issues/142)) ([30cd17a](https://github.com/trivoallan/regis-cli/commit/30cd17a38884e9b7c468cbfc755f74e7fbcdf6ca))
+* **ci:** revert actions/create-github-app-token to v1 in docs-publish workflow ([#106](https://github.com/trivoallan/regis-cli/issues/106)) ([6ffaab5](https://github.com/trivoallan/regis-cli/commit/6ffaab59a82f548bcf38d7d41ee909a8eb203d87))
+* **ci:** skip auto-merge for release-please PRs ([#144](https://github.com/trivoallan/regis-cli/issues/144)) ([a933af0](https://github.com/trivoallan/regis-cli/commit/a933af03a8ea945061193caf9fdfad941b3b5b43))
+* **ci:** use GitHub App token for Trunk auto-commit to trigger new workflow runs ([#108](https://github.com/trivoallan/regis-cli/issues/108)) ([7a19d35](https://github.com/trivoallan/regis-cli/commit/7a19d3523388a2d243affdd2c5b30c8aec58b805))
+* **ci:** use personal_token for peaceiris/actions-gh-pages in docs-publish ([#113](https://github.com/trivoallan/regis-cli/issues/113)) ([5613da2](https://github.com/trivoallan/regis-cli/commit/5613da201b21142bec147a72f86ac9b96302d66d))
+* **ci:** use pull_request_target so auto-merge works on Dependabot PRs ([#143](https://github.com/trivoallan/regis-cli/issues/143)) ([eac77c0](https://github.com/trivoallan/regis-cli/commit/eac77c08518f9a713be095a4a5d82851615650a5))
+* update GitHub App ID secret reference in docs-publish workflow ([adc0e99](https://github.com/trivoallan/regis-cli/commit/adc0e9933114704e1ab3924455d927a22e3cc53b))
+* update GitHub App private key secret reference in docs-publish workflow ([72725ea](https://github.com/trivoallan/regis-cli/commit/72725ea03eb7950dc7a31df9e7b84275fb1beaaa))
+
+
+### Reverts
+
+* **ci:** remove broken [@dependabot](https://github.com/dependabot) rebase comment approach ([#141](https://github.com/trivoallan/regis-cli/issues/141)) ([9580b6c](https://github.com/trivoallan/regis-cli/commit/9580b6c75af674deee1b506c4ec973260b57699a))
+
+
+### Documentation
+
+* add CI/CD gotchas for Dependabot, Release Please, and auto-rebase ([3737d55](https://github.com/trivoallan/regis-cli/commit/3737d557f1b673f302860669194a1fe69dd90773))
+* **ci:** update memory bank with GitHub Actions auth unification ([#114](https://github.com/trivoallan/regis-cli/issues/114)) ([9df431a](https://github.com/trivoallan/regis-cli/commit/9df431a8cf0700ab5870ca7f07444df239160b3d))
+* snapshot versioned docs for v0.22.0 ([e1ac04f](https://github.com/trivoallan/regis-cli/commit/e1ac04f5911285c8a1f870a74178cfbdcaec0736))
+* update documentation reference and snapshots ([#103](https://github.com/trivoallan/regis-cli/issues/103)) ([8b9ff9c](https://github.com/trivoallan/regis-cli/commit/8b9ff9c88d0db65d61f3b51e508bc1b6497b4af3))
+* update documentation reference and snapshots ([#107](https://github.com/trivoallan/regis-cli/issues/107)) ([c7d8772](https://github.com/trivoallan/regis-cli/commit/c7d87724f0878ec31788cb0f6a38d7cb65070493))
+* update documentation reference and snapshots ([#109](https://github.com/trivoallan/regis-cli/issues/109)) ([467b9d6](https://github.com/trivoallan/regis-cli/commit/467b9d65733b96b44ffc2537ca22f26516f225a8))
+* update documentation reference and snapshots ([#110](https://github.com/trivoallan/regis-cli/issues/110)) ([56e0557](https://github.com/trivoallan/regis-cli/commit/56e05579c71fb6654ff3e8444d62970b9887ff99))
+* update documentation reference and snapshots ([#112](https://github.com/trivoallan/regis-cli/issues/112)) ([0fedaee](https://github.com/trivoallan/regis-cli/commit/0fedaee057ca5d740f3937d5121eae9c3fbc1d63))
+* update documentation reference and snapshots ([#116](https://github.com/trivoallan/regis-cli/issues/116)) ([ad715b7](https://github.com/trivoallan/regis-cli/commit/ad715b719e4b18e0c6b62f85fa2ee03823302715))
+* update documentation reference and snapshots ([#118](https://github.com/trivoallan/regis-cli/issues/118)) ([71bc0de](https://github.com/trivoallan/regis-cli/commit/71bc0de6a1ddd65e5ba4f941738352fc59f363e0))
+* update documentation reference and snapshots ([#135](https://github.com/trivoallan/regis-cli/issues/135)) ([a8bc72f](https://github.com/trivoallan/regis-cli/commit/a8bc72ff4a4cfc75b57c76211de211dbbc41601e))
+
 ## [0.22.0](https://github.com/trivoallan/regis-cli/compare/v0.21.0...v0.22.0) (2026-03-30)
 
 ### Features
