@@ -107,15 +107,11 @@ jobs:
       - name: Generate Rules Reference
         run: pipenv run regis-cli rules list -f markdown -D docs/website/docs/reference/rules
 
-      - name: Generate Example Reports
+      - name: Generate Default Archive
         run: |
-          mkdir -p docs/website/static/examples/playbooks/default
-          pipenv run regis-cli analyze --evaluate alpine:latest -s \
-            -D docs/website/static/examples/playbooks/default/alpine \
-            --base-url /regis-cli/examples/playbooks/default/alpine/
-          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:latest -s \
-            -D docs/website/static/examples/playbooks/default/regis-cli \
-            --base-url /regis-cli/examples/playbooks/default/regis-cli/
+          mkdir -p docs/website/static/archives/default
+          pipenv run regis-cli analyze --evaluate alpine:latest -A docs/website/static/archives/default/
+          pipenv run regis-cli analyze --evaluate ghcr.io/trivoallan/regis-cli:latest -A docs/website/static/archives/default/
 
       - name: Create Docusaurus version snapshot
         if: github.event_name == 'release'
