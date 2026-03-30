@@ -132,6 +132,7 @@ jobs:
         working-directory: docs/website
 
       - name: Create Pull Request for documentation updates
+        id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
@@ -155,6 +156,12 @@ jobs:
             docs/website/versioned_docs/**
             docs/website/versioned_sidebars/**
             docs/website/versions.json
+
+      - name: Enable Auto-Merge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        run: gh pr merge --auto --merge "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Deploy docs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
