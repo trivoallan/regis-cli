@@ -1,0 +1,92 @@
+name: Publish Viewer
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/report-viewer/**
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: viewer-publish
+  cancel-in-progress: true
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Determine deploy path and base URL
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            echo "deploy_path=tools/${VERSION}/viewer" >> "$GITHUB_OUTPUT"
+            echo "base_url=/regis-cli/tools/${VERSION}/viewer/" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy_path=tools/main/viewer" >> "$GITHUB_OUTPUT"
+            echo "base_url=/regis-cli/tools/main/viewer/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Report Viewer
+        run: pnpm run build
+        working-directory: apps/report-viewer
+        env:
+          REPORT_URL: https://trivoallan.github.io
+          REPORT_BASE_URL: ${{ steps.meta.outputs.base_url }}
+
+      - name: Deploy Viewer to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: apps/report-viewer/build
+          destination_dir: ${{ steps.meta.outputs.deploy_path }}
+          keep_files: true
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: "ci(viewer): deploy viewer to ${{ steps.meta.outputs.deploy_path }}"
