@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.21.0](https://github.com/trivoallan/regis-cli/compare/v0.20.0...v0.21.0) (2026-03-30)
+
+
+### Features
+
+* **analyzer/endoflie:** enhance EndOfLifeSection to display detailed cycle information and prune report.json data ([2b6f72a](https://github.com/trivoallan/regis-cli/commit/2b6f72a47ad2c759b959e534640e231d136ade72))
+* **analyzer/versioning:** improve tag classification and expose digest aliases ([#97](https://github.com/trivoallan/regis-cli/issues/97)) ([5f77b73](https://github.com/trivoallan/regis-cli/commit/5f77b73eb7ed6aa6b4aaa106314afbe964e6928b))
+* **cli:** run initial regis-cli image analysis during bootstrap archive ([3407788](https://github.com/trivoallan/regis-cli/commit/34077888d879174fa2aa8bdaa313a97f65fa6484))
+* prevent concurrent use of --site and --archive and skip template rendering when archiving ([14247fb](https://github.com/trivoallan/regis-cli/commit/14247fb4b7cfbca4dabadae5bbef89fa0bdbee10))
+* **report:** implement dynamic archive loading and build robustness ([#98](https://github.com/trivoallan/regis-cli/issues/98)) ([6cf6f7b](https://github.com/trivoallan/regis-cli/commit/6cf6f7b23ec0f29c88ee048c34e0de2a29e95187))
+* **report:** load report from a custom URL via query parameter ([#94](https://github.com/trivoallan/regis-cli/issues/94)) ([f47047f](https://github.com/trivoallan/regis-cli/commit/f47047fa4df9865c4f4a4ceddc680d1bedd374d1))
+* **template:** implement two-pass sync to add new files from working directory to template ([8423efd](https://github.com/trivoallan/regis-cli/commit/8423efd933aaa05a8990ca42dd3732d38fdf4c22))
+* **templates:** implement comprehensive dashboard components and reporting UI for container analysis ([7dc3333](https://github.com/trivoallan/regis-cli/commit/7dc3333dba4791b43f280919962341903a2c90d6))
+
+
+### Bug Fixes
+
+* **analyzer/skopeo:** filter out unknown platform entries in SkopeoSection ([ad04aa6](https://github.com/trivoallan/regis-cli/commit/ad04aa67cb7f52c5fa9a52d9e2856a136a379bfb))
+
 ## [0.20.0](https://github.com/trivoallan/regis-cli/compare/v0.19.0...v0.20.0) (2026-03-21)
 
 ### Features
