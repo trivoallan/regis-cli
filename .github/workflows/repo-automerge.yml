@@ -1,4 +1,4 @@
-name: Enable auto-merge on PRs
+name: Repo / Auto-merge
 
 on:
   pull_request_target:
