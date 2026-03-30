@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - docs/**
-      - apps/report-viewer/docs/**
+      - regis_cli/**
   release:
     types: [published]
   workflow_dispatch:
@@ -43,6 +43,16 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           ref: main
           fetch-depth: 0
+
+      - name: Detect changed sources
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            schemas:
+              - 'regis_cli/schemas/**'
+            rules:
+              - 'regis_cli/**'
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -104,6 +114,7 @@ jobs:
         run: pnpm install
 
       - name: Generate Schema Docs
+        if: steps.filter.outputs.schemas == 'true' || github.event_name != 'push'
         run: |
           # Copy all schemas first to allow cross-category resolution
           mkdir -p docs/website/static/schemas
@@ -118,6 +129,7 @@ jobs:
           done
 
       - name: Generate Rules Reference
+        if: steps.filter.outputs.rules == 'true' || github.event_name != 'push'
         run: pipenv run regis-cli rules list -f markdown -D docs/website/docs/reference/rules
 
       - name: Generate Default Archive
