@@ -17,7 +17,6 @@ permissions:
   id-token: write
   actions: write
 
-
 concurrency:
   group: docs-publish
   cancel-in-progress: true
@@ -148,7 +147,6 @@ jobs:
         with:
           token: ${{ steps.generate-token.outputs.token }}
           commit-message: "docs: update documentation reference and snapshots"
-          committer: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
           author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
           branch: docs/automated-updates
           delete-branch: true
