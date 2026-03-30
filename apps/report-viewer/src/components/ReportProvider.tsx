@@ -125,12 +125,14 @@ interface ReportContextValue {
   report: ReportData | null;
   loading: boolean;
   error: string | null;
+  reportUrl: string;
 }
 
 const ReportContext = createContext<ReportContextValue>({
   report: null,
   loading: true,
   error: null,
+  reportUrl: "",
 });
 
 export function useReport(): ReportContextValue {
@@ -151,13 +153,21 @@ export function ReportProvider({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     fetch(reportUrl)
       .then((res) => {
-        if (!res.ok) throw new Error(`Failed to load report: ${res.status}`);
+        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(
+            "Response was not a valid JSON report (check if file exists)",
+          );
+        }
         return res.json();
       })
       .then((data) => {
         setReport(data);
+        setError(null);
         setLoading(false);
       })
       .catch((err) => {
@@ -167,7 +177,7 @@ export function ReportProvider({
   }, [reportUrl]);
 
   return (
-    <ReportContext.Provider value={{ report, loading, error }}>
+    <ReportContext.Provider value={{ report, loading, error, reportUrl }}>
       {children}
     </ReportContext.Provider>
   );

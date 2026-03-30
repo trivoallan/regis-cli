@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { useLocation, useHistory } from "@docusaurus/router";
 import {
   AreaChart,
   Badge,
@@ -45,37 +46,6 @@ export interface ArchiveEntry {
   path: string;
 }
 
-interface RuleResult {
-  slug: string;
-  description?: string;
-  level: string;
-  passed: boolean;
-  message?: string;
-  analyzers?: string[];
-}
-
-interface ReportData {
-  request?: {
-    registry?: string;
-    repository?: string;
-    tag?: string;
-    timestamp?: string;
-  };
-  rules?: RuleResult[];
-  rules_summary?: {
-    score?: number;
-    total?: number | unknown[];
-    passed?: number | unknown[];
-  };
-  tier?: string;
-  badges?: Array<{
-    label: string;
-    class: string;
-    scope?: string;
-    value?: string;
-  }>;
-}
-
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -90,6 +60,8 @@ function formatDate(ts: string) {
       year: "numeric",
       month: "short",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   } catch {
     return ts;
@@ -98,7 +70,7 @@ function formatDate(ts: string) {
 
 function tierVariant(
   tier?: string,
-): "success" | "warning" | "info" | "outline" {
+): "success" | "warning" | "critical" | "info" | "outline" | "default" {
   if (!tier) return "outline";
   const t = tier.toLowerCase();
   if (t === "gold") return "success";
@@ -107,39 +79,33 @@ function tierVariant(
   return "outline";
 }
 
-function badgeColor(
-  cls: string,
-): "emerald" | "amber" | "rose" | "indigo" | "gray" {
-  if (cls === "success") return "emerald";
-  if (cls === "warning") return "amber";
-  if (cls === "error") return "rose";
-  if (cls === "information") return "indigo";
-  return "gray";
-}
-
 const TIERS = ["All", "Gold", "Silver", "Bronze", "None"];
-const LEVEL_ORDER = ["critical", "warning", "info"];
 
 // ---------------------------------------------------------------------------
 // Trend chart
 // ---------------------------------------------------------------------------
 
-function ImageTrendChart({ entries }: { entries: ArchiveEntry[] }) {
+function ImageTrendChart({
+  entries,
+}: {
+  entries: ArchiveEntry[];
+}): React.JSX.Element {
   const sorted = [...entries].sort(
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
   );
-  const scoreData = sorted.map((e) => ({
+  const chartData = sorted.map((e) => ({
     date: formatDate(e.timestamp),
     Score: e.score,
     "CVE Critical": e.cve_critical ?? 0,
     "CVE High": e.cve_high ?? 0,
   }));
+
   return (
     <div className="space-y-4 mt-4">
       <Card>
         <Text className="font-medium mb-3">Score over time</Text>
         <AreaChart
-          data={scoreData}
+          data={chartData}
           index="date"
           categories={["Score"]}
           colors={["blue"]}
@@ -150,11 +116,11 @@ function ImageTrendChart({ entries }: { entries: ArchiveEntry[] }) {
           className="h-36"
         />
       </Card>
-      {scoreData.some((d) => d["CVE Critical"] > 0 || d["CVE High"] > 0) && (
+      {chartData.some((d) => d["CVE Critical"] > 0 || d["CVE High"] > 0) && (
         <Card>
           <Text className="font-medium mb-3">CVE counts over time</Text>
           <AreaChart
-            data={scoreData}
+            data={chartData}
             index="date"
             categories={["CVE Critical", "CVE High"]}
             colors={["rose", "orange"]}
@@ -169,190 +135,13 @@ function ImageTrendChart({ entries }: { entries: ArchiveEntry[] }) {
 }
 
 // ---------------------------------------------------------------------------
-// Report detail panel
-// ---------------------------------------------------------------------------
-
-function ReportDetailPanel({
-  entry,
-  baseUrl,
-  onClose,
-}: {
-  entry: ArchiveEntry;
-  baseUrl: string;
-  onClose: () => void;
-}) {
-  const [report, setReport] = useState<ReportData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch(`${baseUrl}archive/${entry.path}`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`${r.status}`);
-        return r.json();
-      })
-      .then((d) => {
-        setReport(d);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setError(e.message);
-        setLoading(false);
-      });
-  }, [baseUrl, entry.path]);
-
-  const rules = report?.rules ?? [];
-  const failedRules = rules.filter((r) => !r.passed);
-  const failedByLevel = failedRules.reduce<Record<string, RuleResult[]>>(
-    (acc, r) => {
-      const lvl = r.level ?? "other";
-      (acc[lvl] ??= []).push(r);
-      return acc;
-    },
-    {},
-  );
-  const groups = Object.entries(failedByLevel).sort(([a], [b]) => {
-    return LEVEL_ORDER.indexOf(a) - LEVEL_ORDER.indexOf(b);
-  });
-
-  return (
-    <div className="mt-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <Title>{imageKey(entry)}</Title>
-          <Text className="text-tremor-content">
-            {formatDate(entry.timestamp)}
-          </Text>
-        </div>
-        <button
-          onClick={onClose}
-          className="px-3 py-1.5 text-sm rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          ← Back to archive
-        </button>
-      </div>
-
-      {/* KPI */}
-      <Grid numItemsSm={4} className="gap-4">
-        <Card>
-          <Text className="font-medium">Score</Text>
-          <div className="flex items-center justify-center my-3">
-            <span style={{ fontSize: "2.5rem", fontWeight: 700 }}>
-              {entry.score}%
-            </span>
-          </div>
-        </Card>
-        <Card>
-          <Text className="font-medium">Tier</Text>
-          <div className="flex items-center justify-center my-3">
-            {entry.tier ? (
-              <ScoreBadge
-                label={entry.tier}
-                variant={tierVariant(entry.tier)}
-                size="lg"
-              />
-            ) : (
-              <Text>—</Text>
-            )}
-          </div>
-        </Card>
-        <Card>
-          <Text className="font-medium">Rules</Text>
-          <div className="flex items-center justify-center my-3">
-            <span style={{ fontSize: "2rem", fontWeight: 700 }}>
-              {entry.rules_passed}/{entry.rules_total}
-            </span>
-          </div>
-        </Card>
-        <Card>
-          <Text className="font-medium">CVE C / H</Text>
-          <div className="flex items-center justify-center gap-2 my-3">
-            <span className="text-rose-600 font-bold text-2xl">
-              {entry.cve_critical ?? "—"}
-            </span>
-            <span className="text-gray-400">/</span>
-            <span className="text-orange-500 font-bold text-2xl">
-              {entry.cve_high ?? "—"}
-            </span>
-          </div>
-        </Card>
-      </Grid>
-
-      {/* Badges */}
-      {(report?.badges?.length ?? 0) > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {report!.badges!.map((b, i) => (
-            <Badge key={i} color={badgeColor(b.class)}>
-              {b.label}
-            </Badge>
-          ))}
-        </div>
-      )}
-
-      {/* Failed rules */}
-      {loading && <Text>Loading report…</Text>}
-      {error && (
-        <div className="alert alert--warning">
-          Could not load full report: {error}
-        </div>
-      )}
-      {!loading && !error && groups.length > 0 && (
-        <div>
-          <Title className="mb-4">Failed Rules</Title>
-          <div className="space-y-4">
-            {groups.map(([level, levelRules]) => (
-              <div key={level}>
-                <div className="flex items-center gap-2 mb-2">
-                  <ScoreBadge label={level} variant={levelToVariant(level)} />
-                  <Text className="text-sm">{levelRules.length} failed</Text>
-                </div>
-                <Card>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableHeaderCell>Rule</TableHeaderCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {levelRules.map((r, i) => (
-                        <TableRow key={r.slug ?? i}>
-                          <TableCell>
-                            <Text className="font-medium">
-                              {r.description ?? r.slug}
-                            </Text>
-                            {r.message && (
-                              <Text className="text-sm opacity-70 mt-0.5">
-                                {r.message}
-                              </Text>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Card>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      {!loading && !error && groups.length === 0 && (
-        <Card>
-          <Badge color="emerald" size="lg">
-            All rules passed
-          </Badge>
-        </Card>
-      )}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Main ArchiveView
 // ---------------------------------------------------------------------------
 
 export function ArchiveView(): React.JSX.Element {
   const { siteConfig } = useDocusaurusContext();
+  const history = useHistory();
+  const { search } = useLocation();
   const baseUrl = siteConfig.baseUrl;
 
   const [entries, setEntries] = useState<ArchiveEntry[]>([]);
@@ -361,23 +150,33 @@ export function ArchiveView(): React.JSX.Element {
   const [imageFilter, setImageFilter] = useState("");
   const [tierFilter, setTierFilter] = useState("All");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [detailEntry, setDetailEntry] = useState<ArchiveEntry | null>(null);
+
+  const archiveUrl = useMemo(() => {
+    const params = new URLSearchParams(search);
+    return (
+      params.get("archive_url") ||
+      sessionStorage.getItem("regis_active_archive_url") ||
+      `${window.location.origin}${baseUrl}archive/manifest.json`
+    );
+  }, [search, baseUrl]);
 
   useEffect(() => {
-    fetch(`${baseUrl}archive/manifest.json`)
+    setLoading(true);
+    fetch(archiveUrl)
       .then((r) => {
         if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
         return r.json();
       })
       .then((data: ArchiveEntry[]) => {
         setEntries(data);
+        setError(null);
         setLoading(false);
       })
       .catch((e) => {
-        setError(e.message);
+        setError(`${e.message} (from ${archiveUrl})`);
         setLoading(false);
       });
-  }, [baseUrl]);
+  }, [archiveUrl]);
 
   const filtered = useMemo(
     () =>
@@ -404,13 +203,28 @@ export function ArchiveView(): React.JSX.Element {
     () => Array.from(new Set(filtered.map(imageKey))),
     [filtered],
   );
+
   const uniqueImagesAll = new Set(entries.map(imageKey)).size;
   const avgScore =
     entries.length > 0
       ? Math.round(entries.reduce((s, e) => s + e.score, 0) / entries.length)
       : 0;
 
-  if (loading) return <p className="p-6">Loading archive…</p>;
+  const handleSelectReport = (entry: ArchiveEntry) => {
+    const params = new URLSearchParams(search);
+    // Resolve relative path to manifest URL
+    const fullUrl = new URL(entry.path, archiveUrl).toString();
+    params.set("url", fullUrl);
+    params.delete("view");
+    history.push({ pathname: `${baseUrl}report`, search: params.toString() });
+  };
+
+  if (loading)
+    return (
+      <div className="p-12 text-center">
+        <Text>Loading archive…</Text>
+      </div>
+    );
 
   if (error) {
     const isManifestErr =
@@ -420,7 +234,7 @@ export function ArchiveView(): React.JSX.Element {
 
     return (
       <div className="p-16 max-w-2xl mx-auto text-center">
-        <div className="bg-gray-50/50 dark:bg-gray-800/20 p-10 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">
+        <div className="bg-gray-50/50 dark:bg-gray-800/20 p-10 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm transition-all hover:shadow-md">
           <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <svg
               className="w-8 h-8 text-blue-600 dark:text-blue-400"
@@ -451,42 +265,47 @@ export function ArchiveView(): React.JSX.Element {
               const input = (e.currentTarget.elements[0] as HTMLInputElement)
                 .value;
               if (input) {
-                const url = new URL(window.location.href);
-                url.searchParams.set("archive_url", input);
-                window.location.href = url.toString();
+                const searchParams = new URLSearchParams(search);
+                searchParams.set("archive_url", input);
+                history.push({
+                  pathname: "/",
+                  search: searchParams.toString(),
+                });
               }
             }}
             className="flex flex-col gap-3 max-w-sm mx-auto"
           >
             <TextInput
               placeholder="https://example.com/manifest.json"
+              className="rounded-xl"
               required
             />
             <button
               type="submit"
-              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-sm cursor-pointer"
+              className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all shadow-sm active:scale-[0.98] cursor-pointer"
             >
               Explore Archive
             </button>
           </form>
+
+          <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-800">
+            <Text className="text-xs opacity-40">
+              Alternately, click <strong>Load URL</strong> in the top bar to
+              load a single report JSON.
+            </Text>
+          </div>
         </div>
       </div>
     );
   }
 
-  if (detailEntry)
-    return (
-      <div className="p-6">
-        <ReportDetailPanel
-          entry={detailEntry}
-          baseUrl={baseUrl}
-          onClose={() => setDetailEntry(null)}
-        />
-      </div>
-    );
-
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 max-w-7xl mx-auto">
+      <div className="flex flex-col gap-2">
+        <Title>Report Archive</Title>
+        <Text>Browse historical reports archived from this repository.</Text>
+      </div>
+
       {/* KPI */}
       <Grid numItemsSm={3} className="gap-4">
         {[
@@ -494,10 +313,10 @@ export function ArchiveView(): React.JSX.Element {
           { label: "Unique Images", value: uniqueImagesAll },
           { label: "Avg. Score", value: `${avgScore}%` },
         ].map(({ label, value }) => (
-          <Card key={label}>
+          <Card key={label} decoration="top" decorationColor="blue">
             <Text className="font-medium">{label}</Text>
             <div className="flex items-center justify-center my-3">
-              <span style={{ fontSize: "2.5rem", fontWeight: 700 }}>
+              <span className="text-4xl font-bold text-gray-900 dark:text-gray-100">
                 {value}
               </span>
             </div>
@@ -506,9 +325,9 @@ export function ArchiveView(): React.JSX.Element {
       </Grid>
 
       {/* Filters */}
-      <Flex className="gap-3 flex-wrap">
+      <Flex className="gap-3 flex-wrap items-center">
         <TextInput
-          placeholder="Filter by image…"
+          placeholder="Filter by image name…"
           value={imageFilter}
           onValueChange={setImageFilter}
           className="max-w-xs"
@@ -524,40 +343,40 @@ export function ArchiveView(): React.JSX.Element {
             </SelectItem>
           ))}
         </Select>
-        <Text className="text-tremor-content self-center">
-          {filtered.length} report{filtered.length !== 1 ? "s" : ""}
+        <div className="flex-grow" />
+        <Text className="text-tremor-content italic">
+          Showing {filtered.length} report{filtered.length !== 1 ? "s" : ""}
           {uniqueImages.length !== uniqueImagesAll
-            ? ` · ${uniqueImages.length} image${uniqueImages.length !== 1 ? "s" : ""}`
+            ? ` (${uniqueImages.length} images)`
             : ""}
         </Text>
       </Flex>
 
-      {/* Images */}
+      {/* Images Grouped View */}
       {uniqueImages.length > 0 && (
         <section>
-          <Title className="mb-4">Images</Title>
-          <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-4">
+            <Title>Images</Title>
+            <Badge color="gray">{uniqueImages.length}</Badge>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {uniqueImages.map((img) => {
               const imgEntries = filtered.filter((e) => imageKey(e) === img);
               const latest = imgEntries[0];
               const isOpen = selectedImage === img;
               return (
-                <Card
-                  key={img}
-                  className="cursor-pointer"
-                  onClick={() => setSelectedImage(isOpen ? null : img)}
-                >
+                <Card key={img} className="p-4">
                   <Flex alignItems="center" justifyContent="between">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-sm font-mono font-semibold truncate">
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-mono font-bold truncate">
                         {img}
                       </span>
-                      <Badge color="gray" size="xs">
-                        {imgEntries.length} report
+                      <Text className="text-xs opacity-60">
+                        {imgEntries.length} execution
                         {imgEntries.length !== 1 ? "s" : ""}
-                      </Badge>
+                      </Text>
                     </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-3">
                       {latest.tier && (
                         <ScoreBadge
                           label={latest.tier}
@@ -577,9 +396,12 @@ export function ArchiveView(): React.JSX.Element {
                       >
                         {latest.score}%
                       </Badge>
-                      <span className="text-tremor-content text-xs">
-                        {isOpen ? "▲" : "▼"}
-                      </span>
+                      <button
+                        onClick={() => setSelectedImage(isOpen ? null : img)}
+                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors text-xs"
+                      >
+                        {isOpen ? "Hide Trends" : "Show Trends"}
+                      </button>
                     </div>
                   </Flex>
                   {isOpen && imgEntries.length > 1 && (
@@ -592,7 +414,7 @@ export function ArchiveView(): React.JSX.Element {
         </section>
       )}
 
-      {/* Table */}
+      {/* Full Reports Table */}
       <section>
         <Title className="mb-4">All Reports</Title>
         {filtered.length === 0 ? (
@@ -600,9 +422,9 @@ export function ArchiveView(): React.JSX.Element {
             <Text>No reports match the current filters.</Text>
           </Card>
         ) : (
-          <Card>
+          <Card className="p-0 overflow-hidden">
             <Table>
-              <TableHead>
+              <TableHead className="bg-gray-50 dark:bg-gray-800/50">
                 <TableRow>
                   <TableHeaderCell>Date</TableHeaderCell>
                   <TableHeaderCell>Image</TableHeaderCell>
@@ -610,16 +432,21 @@ export function ArchiveView(): React.JSX.Element {
                   <TableHeaderCell>Score</TableHeaderCell>
                   <TableHeaderCell>Rules</TableHeaderCell>
                   <TableHeaderCell>CVE C/H</TableHeaderCell>
-                  <TableHeaderCell></TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Action
+                  </TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filtered.map((e) => (
-                  <TableRow key={e.id}>
+                  <TableRow
+                    key={e.id}
+                    className="hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors"
+                  >
                     <TableCell className="text-sm whitespace-nowrap">
                       {formatDate(e.timestamp)}
                     </TableCell>
-                    <TableCell className="font-mono text-sm">
+                    <TableCell className="font-mono text-xs">
                       {imageKey(e)}
                     </TableCell>
                     <TableCell>
@@ -647,30 +474,30 @@ export function ArchiveView(): React.JSX.Element {
                         {e.score}%
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm">
+                    <TableCell className="text-sm font-medium">
                       {e.rules_passed}/{e.rules_total}
                     </TableCell>
                     <TableCell className="text-sm">
                       {e.cve_critical != null || e.cve_high != null ? (
-                        <span>
-                          <span className="text-rose-600 font-medium">
-                            {e.cve_critical ?? "—"}
+                        <Flex justifyContent="start" className="gap-1.5">
+                          <span className="text-rose-600 font-bold">
+                            {e.cve_critical ?? 0}
                           </span>
-                          {" / "}
-                          <span className="text-orange-500 font-medium">
-                            {e.cve_high ?? "—"}
+                          <span className="opacity-30">/</span>
+                          <span className="text-orange-500 font-bold">
+                            {e.cve_high ?? 0}
                           </span>
-                        </span>
+                        </Flex>
                       ) : (
                         "—"
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-right">
                       <button
-                        onClick={() => setDetailEntry(e)}
-                        className="px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        onClick={() => handleSelectReport(e)}
+                        className="px-3 py-1 text-xs font-semibold rounded bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800 transition-colors"
                       >
-                        View
+                        View Full Report
                       </button>
                     </TableCell>
                   </TableRow>
@@ -680,14 +507,6 @@ export function ArchiveView(): React.JSX.Element {
           </Card>
         )}
       </section>
-
-      {/* PowerBI hint */}
-      <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-        <Text className="text-xs opacity-50">
-          PowerBI: <strong>Get Data → JSON</strong> →{" "}
-          <code>{baseUrl}archive/data.json</code>
-        </Text>
-      </div>
     </div>
   );
 }
