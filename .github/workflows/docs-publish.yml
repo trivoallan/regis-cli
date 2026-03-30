@@ -117,6 +117,19 @@ jobs:
             -D docs/website/static/examples/playbooks/default/regis-cli \
             --base-url /regis-cli/examples/playbooks/default/regis-cli/
 
+      - name: Build Report Viewer
+        run: pnpm run build
+        working-directory: apps/report-viewer
+        env:
+          REPORT_URL: https://trivoallan.github.io
+          REPORT_BASE_URL: /regis-cli/viewer/
+
+      - name: Inject viewer assets into package
+        run: |
+          ASSETS_DIR=$(pipenv run python -c "import regis_cli; import pathlib; print(pathlib.Path(regis_cli.__file__).parent / 'viewer_assets')")
+          mkdir -p "$ASSETS_DIR"
+          cp -r apps/report-viewer/build/. "$ASSETS_DIR"/
+
       - name: Generate Viewer
         run: pipenv run regis-cli viewer export -o docs/website/static/viewer
 
