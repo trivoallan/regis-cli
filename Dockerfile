@@ -59,7 +59,8 @@ COPY --chown=regis:regis . .
 RUN apt-get update && apt-get install -y git
 
 # Install regis-cli
-RUN pip install --no-cache-dir .
+RUN git config --global --add safe.directory /app && \
+    pip install --no-cache-dir .
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
