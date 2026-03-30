@@ -153,21 +153,13 @@ export function ReportProvider({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
     fetch(reportUrl)
       .then((res) => {
-        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error(
-            "Response was not a valid JSON report (check if file exists)",
-          );
-        }
+        if (!res.ok) throw new Error(`Failed to load report: ${res.status}`);
         return res.json();
       })
       .then((data) => {
         setReport(data);
-        setError(null);
         setLoading(false);
       })
       .catch((err) => {
