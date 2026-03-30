@@ -222,7 +222,12 @@ def analyze(
         logger.debug("Failed to fetch digest: %s", exc)
         digest = ref.tag
 
-    formats = ["json"]
+    if site and archive_dir:
+        raise click.UsageError("--site and --archive are mutually exclusive.")
+
+    formats = []
+    if not archive_dir:
+        formats.append("json")
     if site:
         formats.append("html")
 
@@ -378,7 +383,8 @@ def analyze(
         open_browser=open_browser,
     )
 
-    render_mr_templates(final_report, output_dir_template)
+    if not archive_dir:
+        render_mr_templates(final_report, output_dir_template)
 
     if evaluate and fail:
         level_order = {"critical": 1, "warning": 2, "info": 3, "none": 4}
