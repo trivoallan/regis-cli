@@ -96,4 +96,4 @@ Specific value: `"freshness"`
 
 ---
 
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 22:10:00 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-30 at 22:34:59 +0000
