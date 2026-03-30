@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 import json
 import subprocess  # nosec B404
 from pathlib import Path
@@ -85,6 +86,8 @@ def _sync_archive_template(working_copy: str) -> None:
     if not context:
         raise click.ClickException(".regis-sync.json is missing the 'context' key.")
 
+    ignore_globs: list[str] = sync_meta.get("ignore", [])
+
     template_path = Path(
         str(
             resources.files("regis_cli")
@@ -103,14 +106,21 @@ def _sync_archive_template(working_copy: str) -> None:
     _SKIP_DIRS = {"node_modules", ".next", "build", ".git"}
     _SKIP_DIR_PREFIXES = {"static/archive"}
 
+    def _is_ignored(rel: Path) -> bool:
+        """Return True if *rel* matches any user-defined ignore glob."""
+        rel_str = str(rel)
+        return any(fnmatch.fnmatch(rel_str, pat) for pat in ignore_globs)
+
     sorted_context = sorted(
         context.items(), key=lambda kv: len(str(kv[1])), reverse=True
     )
 
     updated: list[Path] = []
+    added: list[Path] = []
     skipped_complex: list[Path] = []
     missing: list[Path] = []
 
+    # Pass 1 — update files already present in the template.
     for tmpl_file in sorted(template_path.rglob("*")):
         if not tmpl_file.is_file():
             continue
@@ -122,6 +132,8 @@ def _sync_archive_template(working_copy: str) -> None:
         if any(str(rel).startswith(prefix) for prefix in _SKIP_DIR_PREFIXES):
             continue
         if rel.name in _SKIP_NAMES:
+            continue
+        if _is_ignored(rel):
             continue
 
         working_file = working_path / rel
@@ -153,11 +165,51 @@ def _sync_archive_template(working_copy: str) -> None:
             tmpl_file.write_text(new_content, encoding="utf-8")
             updated.append(rel)
 
+    # Pass 2 — copy files that exist in the working copy but are absent from the template.
+    for working_file in sorted(working_path.rglob("*")):
+        if not working_file.is_file():
+            continue
+
+        rel = working_file.relative_to(working_path)
+
+        if any(part in _SKIP_DIRS for part in rel.parts):
+            continue
+        if any(str(rel).startswith(prefix) for prefix in _SKIP_DIR_PREFIXES):
+            continue
+        if rel.name in _SKIP_NAMES:
+            continue
+        if _is_ignored(rel):
+            continue
+
+        tmpl_file = template_path / rel
+        if tmpl_file.exists():
+            continue  # already handled in pass 1
+
+        try:
+            working_content = working_file.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue  # binary file — skip
+
+        new_content = working_content
+        for key, value in sorted_context:
+            if value and isinstance(value, str):
+                new_content = new_content.replace(
+                    value, f"{{{{ cookiecutter.{key} }}}}"
+                )
+
+        tmpl_file.parent.mkdir(parents=True, exist_ok=True)
+        tmpl_file.write_text(new_content, encoding="utf-8")
+        added.append(rel)
+
     click.echo(f"\nSync: {working_path} → template", err=True)
     if updated:
         click.echo(f"\n  Updated ({len(updated)}):", err=True)
         for f in sorted(updated):
             click.echo(f"    ✓ {f}", err=True)
+    if added:
+        click.echo(f"\n  Added to template ({len(added)}):", err=True)
+        for f in sorted(added):
+            click.echo(f"    + {f}", err=True)
     if skipped_complex:
         click.echo(
             f"\n  Skipped — Jinja2 block tags, manual sync required ({len(skipped_complex)}):",
@@ -169,7 +221,7 @@ def _sync_archive_template(working_copy: str) -> None:
         click.echo(f"\n  Not found in working copy ({len(missing)}):", err=True)
         for f in sorted(missing):
             click.echo(f"    - {f}", err=True)
-    if not updated:
+    if not updated and not added:
         click.echo("\n  No changes detected.", err=True)
 
 

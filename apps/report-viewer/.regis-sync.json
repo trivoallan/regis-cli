@@ -1,0 +1,15 @@
+{
+  "template": "archive",
+  "context": {
+    "project_name": "Report Viewer",
+    "project_slug": "report-viewer",
+    "description": "Report Viewer",
+    "version": "1.0.0"
+  },
+  "ignore": [
+    ".docusaurus/**",
+    "docs/**",
+    "build/**",
+    "static/**"
+  ]
+}
