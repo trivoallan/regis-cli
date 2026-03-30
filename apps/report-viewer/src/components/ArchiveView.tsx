@@ -405,7 +405,9 @@ export function ArchiveView(): React.JSX.Element {
                     <div className="flex items-center gap-3">
                       {latest.status && (
                         <ScoreBadge
-                          label={latest.status === "pass" ? "PASS" : latest.status}
+                          label={
+                            latest.status === "pass" ? "PASS" : latest.status
+                          }
                           variant={levelToVariant(latest.status)}
                         />
                       )}
