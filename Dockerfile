@@ -1,5 +1,5 @@
 # Stage 1: Build the React viewer assets
-FROM node:22-slim AS frontend-builder
+FROM node:25-slim AS frontend-builder
 RUN corepack enable pnpm
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
