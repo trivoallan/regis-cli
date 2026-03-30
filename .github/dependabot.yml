@@ -9,6 +9,11 @@ updates:
     directory: /apps/report-viewer
     schedule:
       interval: weekly
+    ignore:
+      # Tailwind v4 is a breaking change (PostCSS plugin split, config format changed)
+      # Pin to v3 until a proper migration is done
+      - dependency-name: tailwindcss
+        versions: [">=4"]
 
   - package-ecosystem: npm
     directory: /docs/website
