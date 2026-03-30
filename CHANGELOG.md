@@ -2,15 +2,13 @@
 
 ## [0.24.0](https://github.com/trivoallan/regis-cli/compare/v0.23.7...v0.24.0) (2026-03-30)
 
-
 ### Features
 
-* **ci:** handle autorelease:tagged as fallback for version snapshot ([#173](https://github.com/trivoallan/regis-cli/issues/173)) ([706f4d5](https://github.com/trivoallan/regis-cli/commit/706f4d5e2ae9ac15ee0178a0deb1f45bf7f22716))
-
+- **ci:** handle autorelease:tagged as fallback for version snapshot ([#173](https://github.com/trivoallan/regis-cli/issues/173)) ([706f4d5](https://github.com/trivoallan/regis-cli/commit/706f4d5e2ae9ac15ee0178a0deb1f45bf7f22716))
 
 ### Documentation
 
-* update documentation reference and snapshots ([#171](https://github.com/trivoallan/regis-cli/issues/171)) ([a5170cc](https://github.com/trivoallan/regis-cli/commit/a5170cc05d7387cf8348ef7fff85a1b4242681ad))
+- update documentation reference and snapshots ([#171](https://github.com/trivoallan/regis-cli/issues/171)) ([a5170cc](https://github.com/trivoallan/regis-cli/commit/a5170cc05d7387cf8348ef7fff85a1b4242681ad))
 
 ## [0.23.7](https://github.com/trivoallan/regis-cli/compare/v0.23.6...v0.23.7) (2026-03-30)
 
