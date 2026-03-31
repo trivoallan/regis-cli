@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.26.2](https://github.com/trivoallan/regis/compare/v0.26.1...v0.26.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* **ci:** fix cd-docs deploy failures after repo rename ([#237](https://github.com/trivoallan/regis/issues/237)) ([22726a9](https://github.com/trivoallan/regis/commit/22726a9f620e7524d249c1fb5ed914c208b354d2))
+
 ## [0.26.1](https://github.com/trivoallan/regis-cli/compare/v0.26.0...v0.26.1) (2026-03-31)
 
 ### Bug Fixes
