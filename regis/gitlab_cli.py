@@ -73,28 +73,22 @@ def update_mr(report_path: str, report_url: str, mr_url: str, token: str) -> Non
     This command reads the report.json, posts a comment with a link to the HTML report,
     updates the MR description to include the link and any checklists, and applies labels.
     """
+    from urllib.parse import urlparse
+
+    parsed_url = urlparse(mr_url)
+    # e.g. mr_url = "https://gitlab.example.com/api/v4/projects/123/merge_requests/456"
+    host = f"{parsed_url.scheme}://{parsed_url.netloc}"
+
+    path_parts = parsed_url.path.strip("/").split("/")
+    # Find 'projects' index and extract project ID and MR IID
     try:
-        from urllib.parse import urlparse
-
-        parsed_url = urlparse(mr_url)
-        # e.g. mr_url = "https://gitlab.example.com/api/v4/projects/123/merge_requests/456"
-        host = f"{parsed_url.scheme}://{parsed_url.netloc}"
-
-        path_parts = parsed_url.path.strip("/").split("/")
-        # Find 'projects' index and extract project ID and MR IID
-        try:
-            proj_idx = path_parts.index("projects")
-            project_id = int(path_parts[proj_idx + 1])
-            mr_iid = int(path_parts[proj_idx + 3])
-        except (ValueError, IndexError) as exc:
-            raise click.ClickException(
-                f"Invalid MR URL format: {mr_url}. Expected format containing /projects/<id>/merge_requests/<iid>"
-            ) from exc
-
-    except Exception as exc:
-        if isinstance(exc, click.ClickException):
-            raise
-        raise click.ClickException(f"Failed to parse MR URL: {exc}") from exc
+        proj_idx = path_parts.index("projects")
+        project_id = int(path_parts[proj_idx + 1])
+        mr_iid = int(path_parts[proj_idx + 3])
+    except (ValueError, IndexError) as exc:
+        raise click.ClickException(
+            f"Invalid MR URL format: {mr_url}. Expected format containing /projects/<id>/merge_requests/<iid>"
+        ) from exc
 
     # Read the JSON report
     try:

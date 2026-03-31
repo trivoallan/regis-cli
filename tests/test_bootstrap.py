@@ -1,11 +1,95 @@
 """Tests for the regis bootstrap command."""
 
+import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from click.testing import CliRunner
 
 from regis.cli import main
+from regis.commands.bootstrap import _run_initial_analyze
+
+
+class TestRunInitialAnalyze:
+    """Tests for _run_initial_analyze helper."""
+
+    def test_no_sync_file(self, tmp_path, capsys):
+        _run_initial_analyze(tmp_path)
+        assert "not found" in capsys.readouterr().err
+
+    def test_empty_image_url(self, tmp_path, capsys):
+        sync = tmp_path / ".regis-sync.json"
+        sync.write_text(json.dumps({"context": {"regis_image_url": ""}}))
+        _run_initial_analyze(tmp_path)
+        assert "not set" in capsys.readouterr().err
+
+    @patch("regis.commands.bootstrap.subprocess.run")
+    def test_analysis_succeeds(self, mock_run, tmp_path, capsys):
+        sync = tmp_path / ".regis-sync.json"
+        sync.write_text(json.dumps({"context": {"regis_image_url": "alpine:latest"}}))
+        mock_run.return_value = MagicMock(returncode=0)
+        _run_initial_analyze(tmp_path)
+        assert "complete" in capsys.readouterr().err
+
+    @patch("regis.commands.bootstrap.subprocess.run")
+    def test_analysis_fails_non_blocking(self, mock_run, tmp_path, capsys):
+        sync = tmp_path / ".regis-sync.json"
+        sync.write_text(json.dumps({"context": {"regis_image_url": "alpine:latest"}}))
+        mock_run.return_value = MagicMock(returncode=1)
+        _run_initial_analyze(tmp_path)
+        assert "non-blocking" in capsys.readouterr().err.lower()
+
+    @patch(
+        "regis.commands.bootstrap.subprocess.run",
+        side_effect=FileNotFoundError("regis"),
+    )
+    def test_regis_not_in_path(self, _mock_run, tmp_path, capsys):
+        sync = tmp_path / ".regis-sync.json"
+        sync.write_text(json.dumps({"context": {"regis_image_url": "alpine:latest"}}))
+        _run_initial_analyze(tmp_path)
+        assert "not found" in capsys.readouterr().err.lower()
+
+
+class TestBootstrapPlaybookErrors:
+    """Tests for playbook bootstrap error paths."""
+
+    @patch(
+        "cookiecutter.main.cookiecutter", side_effect=RuntimeError("template broken")
+    )
+    def test_cookiecutter_runtime_error(self, _mock_cc):
+        runner = CliRunner()
+        result = runner.invoke(main, ["bootstrap", "playbook", "--no-input"])
+        assert result.exit_code != 0
+        assert "template broken" in result.output.lower()
+
+    @patch("cookiecutter.main.cookiecutter", side_effect=RuntimeError("archive broken"))
+    def test_archive_cookiecutter_runtime_error(self, _mock_cc):
+        runner = CliRunner()
+        result = runner.invoke(main, ["bootstrap", "archive", "--no-input"])
+        assert result.exit_code != 0
+        assert "archive broken" in result.output.lower()
+
+
+class TestBootstrapArchiveDev:
+    """Tests for bootstrap archive --dev path."""
+
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
+    @patch("regis.commands.bootstrap.subprocess.run")
+    def test_dev_starts_server(self, mock_bootstrap_run, mock_process_run, _mock_which):
+        mock_process_run.side_effect = _make_subprocess_mock().side_effect
+        mock_bootstrap_run.return_value = MagicMock(returncode=0)
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                ["bootstrap", "archive", ".", "--dev", "--no-input"],
+            )
+        assert result.exit_code == 0, result.output
+        assert (
+            "dev server" in result.output.lower()
+            or "localhost" in result.output.lower()
+        )
 
 
 def test_bootstrap_help():
@@ -188,6 +272,79 @@ class TestBootstrapArchiveRepo:
             )
         assert result.exit_code == 0, result.output
         assert any("regis-archive" in arg for arg in gh_create_args)
+
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
+    def test_gitlab_repo_already_exists(self, mock_run, _mock_which):
+        call_count = 0
+
+        def _side_effect(args, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            result = MagicMock()
+            result.returncode = 0
+            result.stdout = '{"username":"myuser"}\n'
+            result.stderr = ""
+            # Fail the glab repo create, succeed on glab repo view
+            if args[0] == "glab" and "create" in args:
+                result.returncode = 1
+                result.stdout = "already exists"
+                result.stderr = "already exists"
+            return result
+
+        mock_run.side_effect = _side_effect
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                [
+                    "bootstrap",
+                    "archive",
+                    "test-repo",
+                    "--repo",
+                    "--platform",
+                    "gitlab",
+                    "--no-input",
+                ],
+            )
+        assert result.exit_code == 0, result.output
+        assert "already exists" in result.output.lower()
+
+    @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
+    @patch("regis.utils.process.subprocess.run")
+    def test_gitlab_repo_create_fails(self, mock_run, _mock_which):
+        def _side_effect(args, **kwargs):
+            result = MagicMock()
+            result.returncode = 0
+            result.stdout = '{"username":"myuser"}\n'
+            result.stderr = ""
+            if args[0] == "glab" and "create" in args:
+                result.returncode = 1
+                result.stdout = ""
+                result.stderr = "permission denied"
+            elif args[0] == "glab" and "view" in args:
+                result.returncode = 1
+                result.stdout = ""
+                result.stderr = "not found"
+            return result
+
+        mock_run.side_effect = _side_effect
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                main,
+                [
+                    "bootstrap",
+                    "archive",
+                    "test-repo",
+                    "--repo",
+                    "--platform",
+                    "gitlab",
+                    "--no-input",
+                ],
+            )
+        assert result.exit_code != 0
+        assert "permission denied" in result.output.lower()
 
     @patch("regis.utils.process.shutil.which", return_value="/usr/bin/fake")
     @patch("regis.utils.process.subprocess.run")
