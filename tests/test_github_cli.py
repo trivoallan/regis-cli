@@ -179,6 +179,62 @@ def test_comment_body_contains_tier_and_vuln_counts(runner, report_file):
         assert "https://example.com/report.html" in post_body  # report link
 
 
+def test_applies_labels_to_pr(runner, tmp_path):
+    """Labels from playbook.labels and playbook.badge_labels are POSTed to the labels endpoint."""
+    data = {
+        "playbook": {
+            "rules_summary": {"score": 90, "total": 5, "passed": 5},
+            "tier": "Gold",
+            "labels": ["regis:security-review"],
+            "badge_labels": [{"name": "regis::trivy::critical", "class": "error"}],
+        },
+        "analyzers": {},
+    }
+    report_file = tmp_path / "report.json"
+    report_file.write_text(json.dumps(data))
+
+    with mock.patch("regis_cli.github_cli.requests") as mock_requests:
+        mock_requests.get.return_value.json.return_value = []
+        mock_requests.get.return_value.raise_for_status.return_value = None
+        mock_requests.post.return_value.status_code = 201
+        mock_requests.post.return_value.raise_for_status.return_value = None
+
+        result = runner.invoke(
+            main,
+            [
+                "github",
+                "update-pr",
+                "--report",
+                str(report_file),
+                "--report-url",
+                "https://example.com/report.html",
+                "--pr-url",
+                "https://github.com/owner/repo/pull/42",
+                "--token",
+                "ghp_fake",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+
+        # POST must be called twice: once for comment, once for labels
+        assert mock_requests.post.call_count == 2
+
+        # First call: create comment
+        comment_url = mock_requests.post.call_args_list[0][0][0]
+        assert "comments" in comment_url
+
+        # Second call: apply labels
+        labels_url = mock_requests.post.call_args_list[1][0][0]
+        assert "/labels" in labels_url
+        assert "owner/repo" in labels_url
+        assert "42" in labels_url
+
+        labels_body = mock_requests.post.call_args_list[1][1]["json"]["labels"]
+        assert "regis:security-review" in labels_body
+        assert "regis::trivy::critical" in labels_body
+
+
 def test_token_read_from_env(runner, report_file, monkeypatch):
     """The --token option should fall back to GITHUB_TOKEN env var."""
     monkeypatch.setenv("GITHUB_TOKEN", "env_token")

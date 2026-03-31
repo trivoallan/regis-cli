@@ -69,6 +69,48 @@ def _build_comment_body(report_data: dict, report_url: str) -> str:
     return "\n".join(lines)
 
 
+def _apply_labels(
+    owner: str,
+    repo: str,
+    pr_number: str,
+    token: str,
+    report_data: dict,
+    headers: dict,
+) -> None:
+    """Apply playbook labels and badge labels to a GitHub PR.
+
+    Args:
+        owner: Repository owner.
+        repo: Repository name.
+        pr_number: Pull request number as a string.
+        token: GitHub authentication token (unused directly; passed via headers).
+        report_data: Parsed report.json contents.
+        headers: Pre-built GitHub API request headers.
+    """
+    playbook = report_data.get("playbook", {})
+    labels: list[str] = list(playbook.get("labels", []))
+    badge_labels: list[dict] = playbook.get("badge_labels", [])
+    for badge in badge_labels:
+        name = badge.get("name")
+        if name:
+            labels.append(name)
+
+    if not labels:
+        return
+
+    labels_url = (
+        f"https://api.github.com/repos/{owner}/{repo}/issues/{pr_number}/labels"
+    )
+    try:
+        resp = requests.post(
+            labels_url, headers=headers, json={"labels": labels}, timeout=30
+        )
+        resp.raise_for_status()
+        click.echo(f"Applied {len(labels)} label(s) to PR.", err=True)
+    except Exception as exc:
+        click.echo(f"Warning: failed to apply labels to PR: {exc}", err=True)
+
+
 @github_cmd.command(name="update-pr")
 @click.option(
     "--report",
@@ -171,3 +213,5 @@ def update_pr(
             click.echo("Posted new PR comment.", err=True)
     except Exception as exc:
         raise click.ClickException(f"Failed to post/update PR comment: {exc}") from exc
+
+    _apply_labels(owner, repo, pr_number, token, report_data, headers)
