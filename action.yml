@@ -23,7 +23,8 @@ inputs:
     required: false
     default: ""
   github-token:
-    description: Token for posting PR comments.
+    description: >
+      Token for posting PR comments. Requires the pull-requests: write permission.
     required: false
     default: ${{ github.token }}
   pr-url:
@@ -82,7 +83,6 @@ runs:
         )
 
         if [ -n "${REGIS_AUTH}" ]; then
-          DOCKER_ARGS+=(-e REGIS_AUTH)
           CLI_ARGS+=(--auth "${REGIS_AUTH}")
         fi
 
@@ -104,6 +104,7 @@ runs:
         path: ${{ steps.analyze.outputs.report-path }}
 
     - name: Post PR comment
+      # Requires regis-cli v0.25.0+ in the Docker image for the `github update-pr` command.
       if: inputs.pr-url != '' || github.event_name == 'pull_request'
       shell: bash
       env:
@@ -113,6 +114,11 @@ runs:
         REGIS_VERSION: ${{ inputs.version }}
         REGIS_REPORT_DIR: ${{ steps.analyze.outputs.report-path }}
       run: |
+        if [ -z "${REGIS_PR_URL}" ]; then
+          echo "::error::No PR URL available. Pass pr-url explicitly or run on a pull_request event."
+          exit 1
+        fi
+
         DOCKER_ARGS=(
           run --rm
           -v "${REGIS_REPORT_DIR}:/app/reports"
