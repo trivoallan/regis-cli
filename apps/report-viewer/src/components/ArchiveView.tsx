@@ -278,7 +278,9 @@ export function ArchiveView(): React.JSX.Element {
           // Restore persisted index if available
           const stored = sessionStorage.getItem("regis_active_archive_idx");
           const idx = stored !== null ? parseInt(stored, 10) : -1;
-          setActiveArchiveIdx(idx >= 0 && idx < data.archives.length ? idx : -1);
+          setActiveArchiveIdx(
+            idx >= 0 && idx < data.archives.length ? idx : -1,
+          );
         }
       })
       .catch((err) =>
