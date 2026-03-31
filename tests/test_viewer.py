@@ -78,6 +78,22 @@ class TestParseArchives:
         assert "InvalidEntry" in str(exc_info.value)
         assert "--archive" in exc_info.value.format_message()
 
+    def test_raises_bad_parameter_when_name_is_empty(self) -> None:
+        import click
+
+        with pytest.raises(click.BadParameter) as exc_info:
+            _parse_archives((":path/to/manifest.json",))
+        assert ":path/to/manifest.json" in str(exc_info.value)
+        assert "--archive" in exc_info.value.format_message()
+
+    def test_raises_bad_parameter_when_path_is_empty(self) -> None:
+        import click
+
+        with pytest.raises(click.BadParameter) as exc_info:
+            _parse_archives(("name:",))
+        assert "name:" in str(exc_info.value)
+        assert "--archive" in exc_info.value.format_message()
+
 
 class TestViewerExportCmd:
     """Tests for the `viewer export` subcommand."""

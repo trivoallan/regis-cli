@@ -48,6 +48,11 @@ def _parse_archives(archives: tuple[str, ...]) -> list[dict[str, str]]:
                 param_hint="'--archive'",
             )
         name, path = entry.split(":", 1)
+        if not name.strip() or not path.strip():
+            raise click.BadParameter(
+                f'Invalid archive format {entry!r}. Expected "Name:path-or-url".',
+                param_hint="'--archive'",
+            )
         result.append({"name": name, "path": path})
     return result
 
@@ -136,11 +141,11 @@ def serve_cmd(  # pragma: no cover
         archives_payload = json.dumps({"archives": parsed}, indent=2).encode()
 
     class ReportRequestHandler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *args, **kwargs):
+        def __init__(self, *args, **kwargs) -> None:
             # Python 3.7+ supports the directory argument
             super().__init__(*args, directory=str(assets_dir), **kwargs)
 
-        def do_GET(self):
+        def do_GET(self) -> None:
             if (
                 archives_payload is not None
                 and self.path.split("?")[0] == "/archives.json"
