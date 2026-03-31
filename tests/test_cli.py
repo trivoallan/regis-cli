@@ -194,18 +194,14 @@ class TestCliBasics:
 class TestAnalyzeParallelism:
     """Test parallel analyzer execution."""
 
-    def _make_dummy_analyzer(self, name: str, delay: float = 0.0):
+    def _make_dummy_analyzer(self, name: str):
         """Return a DummyAnalyzer class with the given name."""
-        import time
-
         from regis.analyzers.base import BaseAnalyzer
 
         class DummyAnalyzer(BaseAnalyzer):
             analyzer_name = name
 
             def analyze(self, client, repo, tag, platform=None):
-                if delay:
-                    time.sleep(delay)
                 return {"analyzer": self.analyzer_name, "repository": repo, "tag": tag}
 
             def validate(self, report):
