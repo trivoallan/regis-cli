@@ -250,4 +250,4 @@ Specific value: `"size"`
 
 ---
 
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 08:06:15 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 08:17:55 +0000
