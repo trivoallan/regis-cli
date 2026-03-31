@@ -5,8 +5,6 @@
         "regis/cookiecutters/playbook/cookiecutter.json",
         "regis/cookiecutters/archive/cookiecutter.json",
         "README.md",
-        ".github/workflows/docs-publish.yml",
-        "docs/website/docs/examples/regis.md",
         "docs/website/docusaurus.config.ts",
         "docs/website/package.json"
       ],
