@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/popularity.schema.json",
+  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/popularity.schema.json",
   "title": "popularity.output",
   "description": "Docker Hub popularity statistics.",
   "type": "object",

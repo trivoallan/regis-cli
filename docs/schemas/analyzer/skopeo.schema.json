@@ -76,5 +76,5 @@
     }
   },
   "additionalProperties": false,
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/skopeo.schema.json"
+  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/skopeo.schema.json"
 }

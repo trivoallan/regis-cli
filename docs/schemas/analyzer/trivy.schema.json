@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/trivy.schema.json",
+  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/trivy.schema.json",
   "title": "trivy.output",
   "description": "Vulnerability scan results from Trivy.",
   "type": "object",

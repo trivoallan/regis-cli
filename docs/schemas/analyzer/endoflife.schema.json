@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/analyzer/endoflife.schema.json",
+  "$id": "https://trivoallan.github.io/regis/schemas/analyzer/endoflife.schema.json",
   "title": "endoflife.output",
   "description": "Report containing lifecycle information from endoflife.date.",
   "type": "object",

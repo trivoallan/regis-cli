@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://trivoallan.github.io/regis-cli/schemas/playbook/definition.schema.json",
+  "$id": "https://trivoallan.github.io/regis/schemas/playbook/definition.schema.json",
   "title": "playbook.definition",
-  "description": "Schema for regis-cli playbook definition files (YAML or JSON).",
+  "description": "Schema for regis playbook definition files (YAML or JSON).",
   "type": "object",
   "required": ["name"],
   "additionalProperties": false,

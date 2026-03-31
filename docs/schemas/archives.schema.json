@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ArchivesConfig",
-  "description": "Configuration listing multiple named archives for the regis-cli viewer.",
+  "description": "Configuration listing multiple named archives for the regis viewer.",
   "type": "object",
   "required": ["archives"],
   "properties": {
