@@ -206,12 +206,12 @@ regis-cli github update-pr \
   --token <github-token>  # or set GITHUB_TOKEN env var
 ```
 
-| Option | Description |
-|--------|-------------|
-| `--report` | Path to the `report.json` file produced by `regis-cli analyze` |
-| `--report-url` | URL where the HTML report is hosted (artifact, Pages, etc.) |
-| `--pr-url` | Full GitHub PR URL (`https://github.com/owner/repo/pull/42`) |
-| `--token` | GitHub token — also reads `GITHUB_TOKEN` environment variable |
+| Option         | Description                                                    |
+| -------------- | -------------------------------------------------------------- |
+| `--report`     | Path to the `report.json` file produced by `regis-cli analyze` |
+| `--report-url` | URL where the HTML report is hosted (artifact, Pages, etc.)    |
+| `--pr-url`     | Full GitHub PR URL (`https://github.com/owner/repo/pull/42`)   |
+| `--token`      | GitHub token — also reads `GITHUB_TOKEN` environment variable  |
 
 ## Viewing Reports
 
