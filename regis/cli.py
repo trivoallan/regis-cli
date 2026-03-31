@@ -13,7 +13,7 @@ from regis.commands.archive import archive
 from regis.commands.bootstrap import bootstrap
 from regis.commands.check import check, version_cmd
 from regis.commands.rules import rules_group
-from regis.commands.viewer import viewer_group
+from regis.commands.dashboard import dashboard_group
 from regis.github_cli import github_cmd
 from regis.gitlab_cli import gitlab_cmd
 from regis.utils.process import require_tool, run_cmd
@@ -70,7 +70,7 @@ main.add_command(archive)
 main.add_command(check)
 main.add_command(version_cmd, name="version")
 main.add_command(rules_group, name="rules")
-main.add_command(viewer_group, name="viewer")
+main.add_command(dashboard_group, name="dashboard")
 
 
 if __name__ == "__main__":

@@ -15,8 +15,8 @@
 | - [description](#description)   | No      | string          | No         | -          | Human-readable description of what this playbook evaluates.                                                                              |
 | - [slug](#slug)                 | No      | string          | No         | -          | Short identifier used for HTML report filename generation.                                                                               |
 | - [links](#links)               | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                                           |
-| - [pages](#pages)               | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead. |
-| - [sections](#sections)         | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead.          |
+| - [pages](#pages)               | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus dashboard. Use \`rules\` instead. |
+| - [sections](#sections)         | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus dashboard. Use \`rules\` instead.          |
 | - [sidebar](#sidebar)           | No      | object          | No         | -          | Deprecated: Sidebar navigation for the legacy Jinja2 renderer.                                                                           |
 | - [integrations](#integrations) | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                                        |
 | - [rules](#rules)               | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                                        |
@@ -113,7 +113,7 @@
 | -------- | ------- |
 | **Type** | `array` |
 
-**Description:** Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use `rules` instead.
+**Description:** Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus dashboard. Use `rules` instead.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -613,7 +613,7 @@ Must be one of:
 | -------- | ------- |
 | **Type** | `array` |
 
-**Description:** Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use `rules` instead.
+**Description:** Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus dashboard. Use `rules` instead.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
