@@ -12,8 +12,8 @@ from regis.commands.analyze import analyze, evaluate_cmd, list_analyzers
 from regis.commands.archive import archive
 from regis.commands.bootstrap import bootstrap
 from regis.commands.check import check, version_cmd
-from regis.commands.rules import rules_group
 from regis.commands.dashboard import dashboard_group
+from regis.commands.rules import rules_group
 from regis.github_cli import github_cmd
 from regis.gitlab_cli import gitlab_cmd
 from regis.utils.process import require_tool, run_cmd

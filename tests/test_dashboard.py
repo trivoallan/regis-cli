@@ -11,8 +11,8 @@ from click.testing import CliRunner
 
 from regis.commands.dashboard import (
     _parse_archives,
-    get_dashboard_assets_dir,
     dashboard_group,
+    get_dashboard_assets_dir,
 )
 
 
