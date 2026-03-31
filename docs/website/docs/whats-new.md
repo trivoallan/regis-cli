@@ -11,6 +11,14 @@ For the complete list of changes, see the [full changelog](https://github.com/tr
 
 ---
 
+## [v0.25.6](https://github.com/trivoallan/regis-cli/compare/v0.25.5...v0.25.6) — March 31, 2026
+
+### 📚 Documentation
+
+- Update documentation reference and snapshots ([#198](https://github.com/trivoallan/regis-cli/issues/198))
+
+---
+
 ## [v0.25.5](https://github.com/trivoallan/regis-cli/compare/v0.25.4...v0.25.5) — March 31, 2026
 
 ### 📚 Documentation
