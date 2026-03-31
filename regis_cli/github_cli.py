@@ -34,29 +34,32 @@ def _build_comment_body(report_data: dict, report_url: str) -> str:
     Returns:
         Markdown string to post as a PR comment.
     """
-    rules_summary = report_data.get("rules_summary", {})
-    score = rules_summary.get("score", "N/A")
-    total_rules = len(rules_summary.get("total", []))
-    passed_rules = len(rules_summary.get("passed", []))
-    tier = report_data.get("tier") or "N/A"
+    playbook = report_data.get("playbook", {})
+    summary = playbook.get("rules_summary", {})
+    score = summary.get("score", "N/A")
+    total = summary.get("total", 0)
+    passed = summary.get("passed", 0)
+    tier = playbook.get("tier") or "N/A"
 
-    trivy = report_data.get("results", {}).get("trivy", {})
-    critical_count: int | None = trivy.get("critical_count")
-    high_count: int | None = trivy.get("high_count")
+    trivy = report_data.get("analyzers", {}).get("trivy", {})
+    vuln_summary = trivy.get("vulnerabilities", {}).get("summary", {})
 
     lines = [
         _COMMENT_MARKER,
         "",
         "## regis-cli Analysis Results",
         "",
-        f"**Score:** {score}/100 &nbsp; **Tier:** {tier}",
-        f"**Rules:** {passed_rules}/{total_rules} passed",
+        "| Metric | Value |",
+        "|--------|-------|",
+        f"| **Score** | {score}/100 |",
+        f"| **Tier** | {tier} |",
+        f"| **Rules** | {passed}/{total} passed |",
     ]
 
-    if critical_count is not None and high_count is not None:
-        lines.append(
-            f"**Vulnerabilities:** {critical_count} critical, {high_count} high"
-        )
+    if vuln_summary:
+        critical = vuln_summary.get("CRITICAL", 0)
+        high = vuln_summary.get("HIGH", 0)
+        lines.append(f"| **Vulnerabilities** | {critical} critical, {high} high |")
 
     lines += [
         "",

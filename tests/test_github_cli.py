@@ -17,17 +17,21 @@ def runner():
 @pytest.fixture
 def report_data():
     return {
-        "tier": "Gold",
-        "rules_summary": {
+        "playbook": {
+            "playbook_name": "default",
             "score": 85,
-            "total": ["rule-a", "rule-b", "rule-c", "rule-d"],
-            "passed": ["rule-a", "rule-b", "rule-c"],
+            "tier": "Gold",
+            "rules_summary": {"score": 85, "total": 10, "passed": 7},
+            "badges": [],
+            "labels": [],
+            "badge_labels": [],
+            "mr_description_checklists": [],
         },
-        "results": {
+        "analyzers": {
             "trivy": {
-                "analyzer": "trivy",
-                "critical_count": 2,
-                "high_count": 5,
+                "vulnerabilities": {
+                    "summary": {"CRITICAL": 2, "HIGH": 5, "MEDIUM": 12, "LOW": 8}
+                }
             }
         },
     }
@@ -74,7 +78,8 @@ def test_creates_new_comment(runner, report_file):
 
         post_body = mock_requests.post.call_args[1]["json"]["body"]
         assert "<!-- regis-cli -->" in post_body
-        assert "85" in post_body  # score
+        assert "85/100" in post_body  # score
+        assert "7/10" in post_body  # rules
 
         # PATCH must NOT be called
         mock_requests.patch.assert_not_called()
@@ -200,5 +205,7 @@ def test_token_read_from_env(runner, report_file, monkeypatch):
 
         assert result.exit_code == 0, result.output
 
-        get_headers = mock_requests.get.call_args[1]["headers"]
-        assert get_headers["Authorization"] == "Bearer env_token"
+        # Verify the token was used in the request
+        get_call = mock_requests.get.call_args
+        headers = get_call.kwargs.get("headers", {})
+        assert headers.get("Authorization") == "Bearer env_token"
