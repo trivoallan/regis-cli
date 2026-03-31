@@ -9,19 +9,19 @@
 
 **Description:** Schema for regis playbook definition files (YAML or JSON).
 
-| Property                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                    |
-| ------------------------------- | ------- | --------------- | ---------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| + [name](#name)                 | No      | string          | No         | -          | Display name of the playbook.                                                                                                        |
-| - [description](#description)   | No      | string          | No         | -          | Human-readable description of what this playbook evaluates.                                                                          |
-| - [slug](#slug)                 | No      | string          | No         | -          | Short identifier used for HTML report filename generation.                                                                           |
-| - [links](#links)               | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                                       |
-| - [pages](#pages)               | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus dashboard. Use \`rules\` instead. |
-| - [sections](#sections)         | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus dashboard. Use \`rules\` instead.          |
-| - [sidebar](#sidebar)           | No      | object          | No         | -          | Deprecated: Sidebar navigation for the legacy Jinja2 renderer.                                                                       |
-| - [integrations](#integrations) | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                                    |
-| - [rules](#rules)               | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                                    |
-| - [tiers](#tiers)               | No      | array of object | No         | -          | Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.                 |
-| - [badges](#badges)             | No      | array of object | No         | -          | Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.          |
+| Property                        | Pattern | Type            | Deprecated | Definition | Title/Description                                                                                                                        |
+| ------------------------------- | ------- | --------------- | ---------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| + [name](#name)                 | No      | string          | No         | -          | Display name of the playbook.                                                                                                            |
+| - [description](#description)   | No      | string          | No         | -          | Human-readable description of what this playbook evaluates.                                                                              |
+| - [slug](#slug)                 | No      | string          | No         | -          | Short identifier used for HTML report filename generation.                                                                               |
+| - [links](#links)               | No      | array of object | No         | -          | Optional custom links to display as actions for this playbook.                                                                           |
+| - [pages](#pages)               | No      | array           | No         | -          | Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead. |
+| - [sections](#sections)         | No      | array           | No         | -          | Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use \`rules\` instead.          |
+| - [sidebar](#sidebar)           | No      | object          | No         | -          | Deprecated: Sidebar navigation for the legacy Jinja2 renderer.                                                                           |
+| - [integrations](#integrations) | No      | object          | No         | -          | Optional third-party platform integrations (e.g. GitLab, GitHub).                                                                        |
+| - [rules](#rules)               | No      | array of object | No         | -          | Custom rule overrides or template instantiations.                                                                                        |
+| - [tiers](#tiers)               | No      | array of object | No         | -          | Compliance tier thresholds. Each tier is awarded when its JsonLogic condition evaluates to true, evaluated in order.                     |
+| - [badges](#badges)             | No      | array of object | No         | -          | Dynamic status badges displayed in the report header. Each badge is conditionally rendered based on a JsonLogic expression.              |
 
 ## <a name="name"></a>1. ![Required](https://img.shields.io/badge/Required-blue) Property `name`
 
@@ -113,7 +113,7 @@
 | -------- | ------- |
 | **Type** | `array` |
 
-**Description:** Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus dashboard. Use `rules` instead.
+**Description:** Deprecated: List of playbook pages for the legacy Jinja2 HTML renderer. Not used by the Docusaurus report viewer. Use `rules` instead.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -613,7 +613,7 @@ Must be one of:
 | -------- | ------- |
 | **Type** | `array` |
 
-**Description:** Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus dashboard. Use `rules` instead.
+**Description:** Deprecated: List of playbook sections for the legacy renderer. Not used by the Docusaurus report viewer. Use `rules` instead.
 
 |                      | Array restrictions |
 | -------------------- | ------------------ |
@@ -1329,4 +1329,4 @@ Must be one of:
 
 ---
 
-Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 09:19:26 +0000
+Generated using [json-schema-for-humans](https://github.com/coveooss/json-schema-for-humans) on 2026-03-31 at 09:50:02 +0000
