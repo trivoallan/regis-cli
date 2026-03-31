@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.25.0](https://github.com/trivoallan/regis-cli/compare/v0.24.0...v0.25.0) (2026-03-31)
+
+
+### Features
+
+* **ci:** reusable GitHub composite action for container image analysis ([#183](https://github.com/trivoallan/regis-cli/issues/183)) ([7b81c70](https://github.com/trivoallan/regis-cli/commit/7b81c700d067c0835439358161d30d5431c3b67b))
+* **cli:** add github update-pr command for PR comment posting ([#180](https://github.com/trivoallan/regis-cli/issues/180)) ([f4ce62f](https://github.com/trivoallan/regis-cli/commit/f4ce62f8c533c8e032e1e542786fef640ae4e091))
+* **docs:** redirect root GitHub Pages URL to /docs/ ([#175](https://github.com/trivoallan/regis-cli/issues/175)) ([97c570f](https://github.com/trivoallan/regis-cli/commit/97c570fe8d8cc03365ba490c3b310be7e9c2daad))
+* multi-archive support in viewer ([#182](https://github.com/trivoallan/regis-cli/issues/182)) ([6eb818f](https://github.com/trivoallan/regis-cli/commit/6eb818f47f85073546752bc7f23e2fc8dc455e98))
+
+
+### Documentation
+
+* add Docusaurus version snapshot for v0.24.0 ([#176](https://github.com/trivoallan/regis-cli/issues/176)) ([f446fea](https://github.com/trivoallan/regis-cli/commit/f446feab51247bd2cbc30ced4ade5d8462a023a5))
+* **docs:** add public roadmap and stability commitments ([#187](https://github.com/trivoallan/regis-cli/issues/187)) ([53fdd61](https://github.com/trivoallan/regis-cli/commit/53fdd616df44d433fe29fdeb503fb7adc00457ab))
+* update documentation reference and snapshots ([#179](https://github.com/trivoallan/regis-cli/issues/179)) ([92e337a](https://github.com/trivoallan/regis-cli/commit/92e337a38ed731d924fcd34a5c743545bc0fdb77))
+* update documentation reference and snapshots ([#181](https://github.com/trivoallan/regis-cli/issues/181)) ([e8ba8d6](https://github.com/trivoallan/regis-cli/commit/e8ba8d6df8261de86189f0683f94d605c631d446))
+* update documentation reference and snapshots ([#184](https://github.com/trivoallan/regis-cli/issues/184)) ([7b038f7](https://github.com/trivoallan/regis-cli/commit/7b038f748383ed6d4d66eccdbe346f4b28f5d9f7))
+* update documentation reference and snapshots ([#186](https://github.com/trivoallan/regis-cli/issues/186)) ([b814e2d](https://github.com/trivoallan/regis-cli/commit/b814e2d463c141b2454e492a0cf1fe800a6e34c0))
+
 ## [0.24.0](https://github.com/trivoallan/regis/compare/v0.23.7...v0.24.0) (2026-03-30)
 
 ### Features
