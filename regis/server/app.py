@@ -63,6 +63,10 @@ def create_app(
         )
         app.include_router(create_gitlab_router(gitlab_config))
 
+        from regis.server.routes.trigger import create_trigger_router
+
+        app.include_router(create_trigger_router(gitlab_config))
+
     # Static files + SPA fallback must be mounted last
     app.mount("/", _SPAStaticFiles(directory=str(assets_dir), html=True), name="spa")
 
