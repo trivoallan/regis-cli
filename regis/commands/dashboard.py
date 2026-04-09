@@ -126,8 +126,38 @@ def export_cmd(
     multiple=True,
     help='Named archive to include, format "Name:path-or-url". Repeatable.',
 )
+@click.option(
+    "--gitlab-url",
+    envvar="GITLAB_URL",
+    default=None,
+    help="GitLab instance URL (e.g. https://gitlab.com). Env: GITLAB_URL.",
+)
+@click.option(
+    "--gitlab-token",
+    envvar="GITLAB_TOKEN",
+    default=None,
+    help="GitLab private token. Env: GITLAB_TOKEN.",
+)
+@click.option(
+    "--gitlab-project",
+    envvar="GITLAB_PROJECT",
+    default=None,
+    help="GitLab project ID or path. Env: GITLAB_PROJECT.",
+)
+@click.option(
+    "--webhook-secret",
+    envvar="REGIS_WEBHOOK_SECRET",
+    default=None,
+    help="Secret token to validate incoming webhooks. Env: REGIS_WEBHOOK_SECRET.",
+)
 def serve_cmd(  # pragma: no cover
-    port: int, report: Path | None = None, archives: tuple[str, ...] = ()
+    port: int,
+    report: Path | None = None,
+    archives: tuple[str, ...] = (),
+    gitlab_url: str | None = None,
+    gitlab_token: str | None = None,
+    gitlab_project: str | None = None,
+    webhook_secret: str | None = None,
 ) -> None:
     """Serve the interactive dashboard and preview the report locally."""
     import uvicorn
@@ -142,6 +172,10 @@ def serve_cmd(  # pragma: no cover
         assets_dir=assets_dir,
         report=report.absolute() if report else None,
         archives=parsed_archives,
+        gitlab_url=gitlab_url,
+        gitlab_token=gitlab_token,
+        gitlab_project=gitlab_project,
+        webhook_secret=webhook_secret,
     )
 
     url = f"http://localhost:{port}/"

@@ -18,6 +18,10 @@ def create_app(
     assets_dir: Path,
     report: Path | None = None,
     archives: list[dict[str, str]] | None = None,
+    gitlab_url: str | None = None,
+    gitlab_token: str | None = None,
+    gitlab_project: str | None = None,
+    webhook_secret: str | None = None,
 ) -> FastAPI:
     """Create and configure the dashboard FastAPI application.
 
@@ -25,6 +29,9 @@ def create_app(
         assets_dir: Path to the bundled dashboard static assets.
         report: Optional path to a report.json file to serve.
         archives: Optional list of archive dicts (name/path) for archives.json.
+        gitlab_url: GitLab instance URL (e.g. https://gitlab.com).
+        gitlab_token: GitLab private token for API access.
+        gitlab_project: GitLab project ID or path.
     """
     app = FastAPI(title="Regis Dashboard", docs_url=None, redoc_url=None)
 
@@ -47,6 +54,26 @@ def create_app(
     @app.get("/api/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    # Mount GitLab API proxy if configured
+    if gitlab_url and gitlab_token and gitlab_project:
+        from regis.server.routes.gitlab import GitLabConfig, create_gitlab_router
+
+        gitlab_config = GitLabConfig(
+            url=gitlab_url, token=gitlab_token, project_id=gitlab_project
+        )
+        app.include_router(create_gitlab_router(gitlab_config))
+
+        from regis.server.routes.trigger import create_trigger_router
+
+        app.include_router(create_trigger_router(gitlab_config))
+
+    # Webhook receiver (works with or without GitLab config)
+    from regis.server.routes.webhooks import create_webhooks_router
+
+    webhooks_router, event_bus = create_webhooks_router(webhook_secret=webhook_secret)
+    app.include_router(webhooks_router)
+    app.state.event_bus = event_bus
 
     # Static files + SPA fallback must be mounted last
     app.mount("/", _SPAStaticFiles(directory=str(assets_dir), html=True), name="spa")
