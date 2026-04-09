@@ -2,7 +2,7 @@
 # Scaffolded by: regis bootstrap gitlab-ci
 # Docs: https://trivoallan.github.io/regis/docs/concepts/playbooks
 
-name: { { cookiecutter.project_name } }
+name: "{{ cookiecutter.project_name }}"
 
 tiers:
   - name: Gold
