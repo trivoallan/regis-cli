@@ -1,11 +1,8 @@
 """Dashboard commands for regis."""
 
-import http.server
 import json
 import logging
-import os
 import shutil
-import socketserver
 import sys
 import webbrowser
 from pathlib import Path
@@ -133,60 +130,26 @@ def serve_cmd(  # pragma: no cover
     port: int, report: Path | None = None, archives: tuple[str, ...] = ()
 ) -> None:
     """Serve the interactive dashboard and preview the report locally."""
+    import uvicorn
+
+    from regis.server.app import create_app
+
     assets_dir = get_dashboard_assets_dir()
 
-    archives_payload: bytes | None = None
-    if archives:
-        parsed = _parse_archives(archives)
-        archives_payload = json.dumps({"archives": parsed}, indent=2).encode()
+    parsed_archives = _parse_archives(archives) if archives else None
 
-    class ReportRequestHandler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *args, **kwargs) -> None:
-            # Python 3.7+ supports the directory argument
-            super().__init__(*args, directory=str(assets_dir), **kwargs)
-
-        def do_GET(self) -> None:
-            if (
-                archives_payload is not None
-                and self.path.split("?")[0] == "/archives.json"
-            ):
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(archives_payload)))
-                self.end_headers()
-                self.wfile.write(archives_payload)
-                return
-            super().do_GET()
-
-        def translate_path(self, path: str) -> str:
-            if report and path == "/report.json":
-                return str(report.absolute())
-
-            res = super().translate_path(path)
-            # SPA Fallback for Docusaurus/React
-            if not os.path.exists(res):
-                return str(assets_dir / "index.html")
-            return res
-
-        def log_message(self, format: str, *args) -> None:
-            if logger.isEnabledFor(logging.DEBUG):
-                super().log_message(format, *args)
-
-    socketserver.TCPServer.allow_reuse_address = True
-    try:
-        httpd = socketserver.TCPServer(("", port), ReportRequestHandler)
-    except OSError as e:
-        click.echo(f"Error binding to port {port}: {e}", err=True)
-        sys.exit(1)
+    app = create_app(
+        assets_dir=assets_dir,
+        report=report.absolute() if report else None,
+        archives=parsed_archives,
+    )
 
     url = f"http://localhost:{port}/"
     if report:
         click.echo(f"Serving report from {report}")
     click.echo(f"Dashboard application running at {url}")
 
-    try:
-        webbrowser.open(url)
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        click.echo("\nServer stopped.")
-        httpd.server_close()
+    webbrowser.open(url)
+
+    log_level = "debug" if logger.isEnabledFor(logging.DEBUG) else "warning"
+    uvicorn.run(app, host="127.0.0.1", port=port, log_level=log_level)  # noqa: S104
