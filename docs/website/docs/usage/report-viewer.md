@@ -1,4 +1,5 @@
 ---
+sidebar_position: 5
 tags:
   - reports
   - dashboard

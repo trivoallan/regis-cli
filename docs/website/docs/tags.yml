@@ -133,3 +133,17 @@ dashboard:
   label: dashboard
   description: Related to the interactive dashboard and security dashboards.
   permalink: /usage/dashboard
+
+archives:
+  label: archives
+  description: Report archiving and historical tracking.
+  permalink: /concepts/archives
+
+concepts:
+  label: concepts
+  description: Core concepts and architecture overview.
+  permalink: /concepts
+
+troubleshooting:
+  label: troubleshooting
+  description: Common issues and solutions.

@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Archive Repository
 
-The `bootstrap archive --repo` command scaffolds a standalone archive viewer site and publishes it to a new remote repository in a single step — no manual git or platform configuration required.
+The `bootstrap archive --repo` command scaffolds a standalone [archive](../../concepts/archives.md) viewer site and publishes it to a new remote repository in a single step — no manual git or platform configuration required.
 
 :::info
 This command automates what you would otherwise do manually after running [`bootstrap archive`](../../reference/cli.md#bootstrap-archive): creating the remote repository, pushing the initial commit, and enabling Pages.

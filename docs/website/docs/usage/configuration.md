@@ -1,4 +1,5 @@
 ---
+sidebar_position: 3
 tags:
   - playbooks
   - analyzers
@@ -6,7 +7,7 @@ tags:
 
 # Advanced Configuration
 
-For more complex projects, `regis` can be configured using a dedicated YAML file or environment variables.
+For more complex projects, `regis` can be configured using a dedicated YAML file or environment variables. Configuration lets you customize which [analyzers](../concepts/analyzers.md) to run and which [playbook](../concepts/playbooks.md) to evaluate.
 
 ## Configuration File
 

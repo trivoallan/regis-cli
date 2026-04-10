@@ -1,11 +1,12 @@
 ---
+sidebar_position: 4
 tags:
   - rules
 ---
 
 # Rules
 
-Rules are the evaluation heart of RegiS. Each rule defines a specific condition that the analysis results must satisfy, together with a severity level, interpolated messages, and optional parameters.
+Rules are the evaluation heart of RegiS. Each rule defines a specific condition that the [analysis results](./analyzers.md) must satisfy, together with a severity level, interpolated messages, and optional parameters. Rules are grouped and evaluated by [playbooks](./playbooks.md), and their results feed into the overall [score](./scoring.md).
 
 ## How Rules Work
 
