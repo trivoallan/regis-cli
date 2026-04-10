@@ -152,6 +152,12 @@ function fetchManifest(
   return fetch(manifestUrl)
     .then((r) => {
       if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      const ct = r.headers.get("content-type") || "";
+      if (!ct.includes("application/json") && !ct.includes("text/plain")) {
+        throw new Error(
+          "Response is not a valid JSON manifest (check if file exists)",
+        );
+      }
       return r.json();
     })
     .then((data: any) => {
@@ -351,6 +357,12 @@ export function ArchiveView(): React.JSX.Element {
     fetch(archiveUrl)
       .then((r) => {
         if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+        const ct = r.headers.get("content-type") || "";
+        if (!ct.includes("application/json") && !ct.includes("text/plain")) {
+          throw new Error(
+            "Response is not a valid JSON manifest (check if file exists)",
+          );
+        }
         return r.json();
       })
       .then((data: any) => {
@@ -445,8 +457,11 @@ export function ArchiveView(): React.JSX.Element {
 
   if (error) {
     const isManifestErr =
-      error.includes("404") ||
-      error.includes("Unexpected token '<'") ||
+      error.startsWith("404 ") ||
+      error.startsWith("403 ") ||
+      error.includes("Not Found") ||
+      error.includes("not a valid JSON") ||
+      error.includes("Invalid archive format") ||
       error.includes("manifest.json");
 
     return (

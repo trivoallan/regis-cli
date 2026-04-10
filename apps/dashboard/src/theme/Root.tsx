@@ -18,6 +18,34 @@ interface RootProps {
 }
 
 /**
+ * Validate that a URL is safe to fetch (no file://, no private IPs, etc.).
+ * Returns the URL string if valid, or null if rejected.
+ */
+function sanitizeExternalUrl(raw: string): string | null {
+  try {
+    const url = new URL(raw, window.location.origin);
+    const blocked = ["file:", "javascript:", "data:", "blob:"];
+    if (blocked.includes(url.protocol)) return null;
+    // Block private/loopback IPs when not already on localhost
+    if (window.location.hostname !== "localhost") {
+      const host = url.hostname;
+      if (
+        host === "localhost" ||
+        host === "127.0.0.1" ||
+        host === "0.0.0.0" ||
+        host.startsWith("10.") ||
+        host.startsWith("192.168.") ||
+        /^172\.(1[6-9]|2\d|3[01])\./.test(host)
+      )
+        return null;
+    }
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Inner component that can consume useReport() from the provider.
  */
 function RootContent({
@@ -25,15 +53,6 @@ function RootContent({
 }: {
   children: React.ReactNode;
 }): React.JSX.Element {
-  const { search } = useLocation();
-  const { error, loading } = useReport();
-  const params = new URLSearchParams(search);
-  const hasSpecificReport = params.has("url");
-
-  // Redirection is no longer needed for the homepage as "/" is now the archive.
-  // We only keep a fallback for explicit archive view requests if needed,
-  // but since "/" is the archive, we can simplify.
-
   return <>{children}</>;
 }
 
@@ -44,7 +63,8 @@ export default function Root({ children }: RootProps): React.JSX.Element {
   // 1. Determine the report URL to load
   // Order: 1. query param, 2. session storage, 3. default report.json
   const params = new URLSearchParams(search);
-  const paramUrl = params.get("url");
+  const rawParamUrl = params.get("url");
+  const paramUrl = rawParamUrl ? sanitizeExternalUrl(rawParamUrl) : null;
 
   // On client side, read from sessionStorage if param is missing
   const [activeReportUrl, setActiveReportUrl] = React.useState<string | null>(
@@ -52,7 +72,10 @@ export default function Root({ children }: RootProps): React.JSX.Element {
   );
 
   // 2. Handle archive URL persistence
-  const paramArchiveUrl = params.get("archive_url");
+  const rawArchiveUrl = params.get("archive_url");
+  const paramArchiveUrl = rawArchiveUrl
+    ? sanitizeExternalUrl(rawArchiveUrl)
+    : null;
 
   useEffect(() => {
     // Report persistence

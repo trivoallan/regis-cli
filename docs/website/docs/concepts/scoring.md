@@ -1,11 +1,12 @@
 ---
+sidebar_position: 5
 tags:
   - scoring
 ---
 
 # Scoring & Metrics
 
-`regis` doesn't just provide raw data; it translates analysis results into actionable **Scores** and **Metrics** based on your security and operational policies.
+`regis` doesn't just provide raw data; it translates [analysis results](./analyzers.md) into actionable **Scores** and **Metrics** based on your security and operational policies. Scores are derived from [rules](./rules.md) and displayed in [reports](./reports.md).
 
 ## How Scores are Calculated
 

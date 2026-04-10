@@ -112,7 +112,13 @@ Analyzers are modular components responsible for gathering data from registries 
 - **Hadolint**: Lints Dockerfiles for best practices. ([Schema](../reference/schemas/analyzer/hadolint.schema.md))
 - **Dockle**: Container image linter for security and best practices. ([Schema](../reference/schemas/analyzer/dockle.schema.md))
 - **Versioning**: Validates semantic versioning consistency. ([Schema](../reference/schemas/analyzer/versioning.schema.md))
-- **Freshness**: Calculates image age. ([Schema](../reference/schemas/analyzer/freshness.schema.md))
+- **Freshness**: Calculates image age and freshness score. ([Schema](../reference/schemas/analyzer/freshness.schema.md))
+- **SBOM**: Analyzes Software Bill of Materials and CycloneDX/SPDX generation. ([Schema](../reference/schemas/analyzer/sbom.schema.md))
+- **Size**: Calculates image size and layer breakdown. ([Schema](../reference/schemas/analyzer/size.schema.md))
+- **Popularity**: Measures registry popularity metrics. ([Schema](../reference/schemas/analyzer/popularity.schema.md))
+- **Provenance**: Verifies provenance and supply chain evidence. ([Schema](../reference/schemas/analyzer/provenance.schema.md))
+- **Scorecard**: Runs OpenSSF Scorecard checks. ([Schema](../reference/schemas/analyzer/scorecarddev.schema.md))
+- **End of Life**: Checks version support status. ([Schema](../reference/schemas/analyzer/endoflife.schema.md))
 
 ### Playbook Engine
 
@@ -134,4 +140,4 @@ The project uses the following technologies:
 - **Linting/Formatting**: Ruff
 - **External Tools**: Skopeo, Trivy, Hadolint, Dockle
 - **Testing**: Pytest
-- **CI/CD**: GitHub Actions, Release Please, Super-Linter
+- **CI/CD**: GitHub Actions, Release Please, Trunk

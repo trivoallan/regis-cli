@@ -4,7 +4,7 @@ title: Multi-Archive Setup
 description: Configure multiple archives for cross-environment comparison in the Regis dashboard.
 ---
 
-Regis supports multiple named archives, allowing you to organize analyses by environment (production, staging), team, or image typology and compare them side by side in the dashboard.
+Regis supports multiple named [archives](../concepts/archives.md), allowing you to organize analyses by environment (production, staging), team, or image typology and compare them side by side in the dashboard.
 
 ## Quick start
 

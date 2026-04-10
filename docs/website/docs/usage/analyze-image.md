@@ -1,11 +1,12 @@
 ---
+sidebar_position: 2
 tags:
   - analyzers
 ---
 
 # Image Analysis
 
-You can analyze any public container image. By default, `regis` produces a JSON report on `stdout`.
+You can analyze any public container image using the built-in [analyzers](../concepts/analyzers.md). By default, `regis` produces a JSON report on `stdout`.
 
 ```bash
 regis analyze nginx:latest
@@ -21,7 +22,7 @@ regis analyze nginx:latest --site --open
 
 The `--open` flag will automatically launch your default browser to view the generated dashboard.
 
-`regis` now uses a modern **Single Page Application (SPA)** based on Docusaurus to provide an exceptional viewing experience.
+`regis` now uses a modern **Single Page Application (SPA)** based on Docusaurus to provide an exceptional viewing experience. See [Reports](../concepts/reports.md) for details on the report architecture.
 
 Reports are written to the `reports/` directory by default (e.g., `reports/docker.io/library/nginx/sha256-.../index.html`).
 
@@ -42,8 +43,8 @@ When using the [GitLab integration](./integrations/gitlab.md), this base URL is 
 
 `regis` includes specialized subcommands for advanced workflows:
 
-- `bootstrap`: Infrastructure as Code (IaC) for your analysis. Bootstrap a new Git repository or a new playbook.
-- `evaluate`: Test playbooks against existing analysis reports without re-fetching image data.
+- `bootstrap`: Infrastructure as Code (IaC) for your analysis. Bootstrap a new Git repository or a new [playbook](../concepts/playbooks.md).
+- `evaluate`: Test [playbooks](../concepts/playbooks.md) against existing analysis reports without re-fetching image data.
 - `gitlab`: Seamless integration with GitLab CI/CD for automated reporting and MR updates.
 
 :::info
