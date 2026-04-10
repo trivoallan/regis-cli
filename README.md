@@ -22,20 +22,20 @@ Comprehensive documentation, including installation and usage guides, is availab
 
 ## Built-in Analyzers
 
-| Analyzer | Description |
-| --- | --- |
-| [`skopeo`](/docs/reference/analyzers/skopeo) | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
-| [`trivy`](/docs/reference/analyzers/trivy) | Performs vulnerability scanning and generates Software Bill of Materials (SBOM). |
-| [`sbom`](/docs/reference/analyzers/sbom) | Dedicated SBOM analysis and CycloneDX/SPDX generation. |
-| [`provenance`](/docs/reference/analyzers/provenance) | Verifies image build provenance and SLSA metadata. |
-| [`endoflife`](/docs/reference/analyzers/endoflife) | Checks for End-Of-Life (EOL) status of base images using `endoflife.date`. |
-| [`freshness`](/docs/reference/analyzers/freshness) | Calculates image age and identifies potential maintenance risks. |
-| [`hadolint`](/docs/reference/analyzers/hadolint) | Lints Dockerfiles for security and best practice violations. |
-| [`dockle`](/docs/reference/analyzers/dockle) | Container image linter for security and best practices. |
-| [`size`](/docs/reference/analyzers/size) | Analyzes image size and layer distribution for optimization. |
-| [`versioning`](/docs/reference/analyzers/versioning) | Ensures semantic versioning consistency and tag validation. |
-| [`popularity`](/docs/reference/analyzers/popularity) | Registry metrics and community adoption analysis (optional). |
-| [`scorecarddev`](/docs/reference/analyzers/scorecarddev) | OpenSSF Scorecard integration for supply chain security. |
+| Analyzer                                                 | Description                                                                            |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| [`skopeo`](/docs/reference/analyzers/skopeo)             | Extracts multi-arch metadata, OS/Architecture labels, layers, and root user detection. |
+| [`trivy`](/docs/reference/analyzers/trivy)               | Performs vulnerability scanning and generates Software Bill of Materials (SBOM).       |
+| [`sbom`](/docs/reference/analyzers/sbom)                 | Dedicated SBOM analysis and CycloneDX/SPDX generation.                                 |
+| [`provenance`](/docs/reference/analyzers/provenance)     | Verifies image build provenance and SLSA metadata.                                     |
+| [`endoflife`](/docs/reference/analyzers/endoflife)       | Checks for End-Of-Life (EOL) status of base images using `endoflife.date`.             |
+| [`freshness`](/docs/reference/analyzers/freshness)       | Calculates image age and identifies potential maintenance risks.                       |
+| [`hadolint`](/docs/reference/analyzers/hadolint)         | Lints Dockerfiles for security and best practice violations.                           |
+| [`dockle`](/docs/reference/analyzers/dockle)             | Container image linter for security and best practices.                                |
+| [`size`](/docs/reference/analyzers/size)                 | Analyzes image size and layer distribution for optimization.                           |
+| [`versioning`](/docs/reference/analyzers/versioning)     | Ensures semantic versioning consistency and tag validation.                            |
+| [`popularity`](/docs/reference/analyzers/popularity)     | Registry metrics and community adoption analysis (optional).                           |
+| [`scorecarddev`](/docs/reference/analyzers/scorecarddev) | OpenSSF Scorecard integration for supply chain security.                               |
 
 ---
 

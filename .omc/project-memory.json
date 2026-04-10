@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1774933776871,
+  "lastScanned": 1775812262301,
   "projectRoot": "/Users/tristan/Documents/Workspaces/ttc/regis-cli",
   "techStack": {
     "languages": [
@@ -8,17 +8,13 @@
         "name": "JavaScript/TypeScript",
         "version": null,
         "confidence": "high",
-        "markers": [
-          "package.json"
-        ]
+        "markers": ["package.json"]
       },
       {
         "name": "Python",
         "version": null,
         "confidence": "high",
-        "markers": [
-          "pyproject.toml"
-        ]
+        "markers": ["pyproject.toml"]
       }
     ],
     "frameworks": [
@@ -37,10 +33,10 @@
     "lintCommand": "ruff check",
     "devCommand": "pnpm dev",
     "scripts": {
-      "build:ui": "pnpm --filter @regis-cli/ui build",
-      "build:viewer": "pnpm --filter @regis-cli/report-viewer build",
+      "build:ui": "pnpm --filter @regis/ui build",
+      "build:viewer": "pnpm --filter @regis/report-viewer build",
       "build": "pnpm run build:ui && pnpm run build:viewer",
-      "dev": "pnpm --filter @regis-cli/report-viewer dev",
+      "dev": "pnpm --filter @regis/report-viewer dev",
       "typecheck": "pnpm -r typecheck"
     }
   },
@@ -53,11 +49,7 @@
   "structure": {
     "isMonorepo": true,
     "workspaces": [],
-    "mainDirectories": [
-      "docs",
-      "scripts",
-      "tests"
-    ],
+    "mainDirectories": ["docs", "scripts", "tests"],
     "gitBranches": {
       "defaultBranch": "main",
       "branchingStrategy": null
@@ -69,49 +61,59 @@
       "path": "apps",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1774933776839,
+      "lastAccessed": 1775812262220,
       "keyFiles": []
     },
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
       "fileCount": 0,
-      "lastAccessed": 1774933776843,
+      "lastAccessed": 1775812262233,
       "keyFiles": []
     },
-    "regis_cli": {
-      "path": "regis_cli",
+    "regis": {
+      "path": "regis",
       "purpose": null,
       "fileCount": 4,
-      "lastAccessed": 1774933776843,
+      "lastAccessed": 1775812262234,
+      "keyFiles": ["__init__.py", "cli.py", "github_cli.py", "gitlab_cli.py"]
+    },
+    "regis.egg-info": {
+      "path": "regis.egg-info",
+      "purpose": null,
+      "fileCount": 6,
+      "lastAccessed": 1775812262278,
       "keyFiles": [
-        "__init__.py",
-        "cli.py",
-        "github_cli.py",
-        "gitlab_cli.py"
+        "PKG-INFO",
+        "SOURCES.txt",
+        "dependency_links.txt",
+        "entry_points.txt",
+        "requires.txt"
       ]
     },
     "reports": {
       "path": "reports",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1774933776844,
+      "lastAccessed": 1775812262288,
       "keyFiles": []
     },
     "scripts": {
       "path": "scripts",
       "purpose": "Build/utility scripts",
-      "fileCount": 1,
-      "lastAccessed": 1774933776844,
+      "fileCount": 3,
+      "lastAccessed": 1775812262288,
       "keyFiles": [
-        "generate_whats_new.py"
+        "generate_examples.sh",
+        "generate_whats_new.py",
+        "update_example_links.sh"
       ]
     },
     "tests": {
       "path": "tests",
       "purpose": "Test files",
       "fileCount": 44,
-      "lastAccessed": 1774933776845,
+      "lastAccessed": 1775812262289,
       "keyFiles": [
         "__init__.py",
         "test_analyzer_dockle.py",
@@ -124,7 +126,7 @@
       "path": "tmp-archive",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1774933776846,
+      "lastAccessed": 1775812262289,
       "keyFiles": []
     }
   },

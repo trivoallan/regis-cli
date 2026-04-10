@@ -16,9 +16,11 @@ Additionally, examples should be versioned to align with Docusaurus versioned do
 ## Implementation Plan
 
 ### Phase 1: Fix Current Broken Example
+
 **Goal**: Regenerate the Alpine example with correct baseUrl
 
 **Steps**:
+
 1. Regenerate the Alpine example with explicit `--base-url` parameter:
    ```bash
    pipenv run regis analyze alpine:latest \
@@ -26,19 +28,21 @@ Additionally, examples should be versioned to align with Docusaurus versioned do
      --base-url "/regis/examples/playbooks/default/alpine/" \
      --output-dir docs/website/static/examples/playbooks/default/alpine
    ```
-   
 2. Verify the generated HTML at `docs/website/static/examples/playbooks/default/alpine/index.html` shows correct baseUrl in error banner
 
 3. Test the link in `docs/website/docs/reference/playbooks/default/examples/alpine.md` works correctly
 
 **Files to modify**:
+
 - `docs/website/static/examples/playbooks/default/alpine/` — regenerated output
 - Potentially `alpine.md` if the pathname URL needs adjustment
 
 ### Phase 2: Add Versioning Infrastructure
+
 **Goal**: Create versioned examples structure and documentation
 
 **Steps**:
+
 1. Create script: `scripts/generate_examples.sh`
    - Generates all playbook examples (alpine, regis-cli, etc.)
    - Takes version name as parameter (e.g., "1.0.0" or "main")
@@ -55,9 +59,11 @@ Additionally, examples should be versioned to align with Docusaurus versioned do
    - Example links will auto-resolve to correct versioned paths
 
 ### Phase 3: Integrate into Release Workflow
+
 **Goal**: Regenerate examples at release time
 
 **Steps**:
+
 1. Add GitHub Actions workflow step in release process:
    - Trigger after Release Please creates version tag
    - Run example generation script for the new version
@@ -66,10 +72,12 @@ Additionally, examples should be versioned to align with Docusaurus versioned do
 2. Update `.release-please-manifest.json` or Release Please config if needed to support this workflow
 
 **Files to create/modify**:
+
 - `.github/workflows/release.yml` or similar — add example generation step
 - `scripts/generate_examples.sh` — the example generation script
 
 ### Phase 4: Verification
+
 **Goal**: Ensure all examples work correctly
 
 1. **Immediate verification** (Phase 1):
@@ -90,19 +98,23 @@ Additionally, examples should be versioned to align with Docusaurus versioned do
 ## Critical Files
 
 **Current Example Documentation**:
+
 - `docs/website/docs/reference/playbooks/default/examples/alpine.md` — contains broken link
 - `docs/website/static/examples/playbooks/default/alpine/` — generated output directory
 
 **Report Generation Code**:
+
 - `regis/utils/report.py` — handles report generation
 - `regis/report/docusaurus.py` — manages Docusaurus report viewer build
 - `apps/report-viewer/docusaurus.config.ts` — baseUrl configuration
 
 **Documentation Configuration**:
+
 - `docs/website/docusaurus.config.ts` — main docs baseUrl and versioning config
 - `docs/website/versioned_docs/` — where versioned examples should go
 
 **Release Configuration**:
+
 - `.github/workflows/` — release and CI workflows
 - Release Please manifest/config
 

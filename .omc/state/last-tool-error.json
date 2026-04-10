@@ -1,7 +1,7 @@
 {
   "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"pipenv run regis --version\",\"description\":\"Verify regis CLI is available\"}",
-  "error": "Exit code 2\nUsage: regis [OPTIONS] COMMAND [ARGS]...\nTry 'regis --help' for help.\n\nError: No such option: --version Did you mean --verbose?",
-  "timestamp": "2026-04-10T09:08:59.892Z",
-  "retry_count": 1
+  "tool_input_preview": "{\"command\":\"gh pr create --title \\\"build: update report-viewer launch config\\\" --body \\\"$(cat <<'EOF'\\n## Summary\\n- Update launch.json to use `@regis/report-viewer` filter instead of `@regis/dashboar...",
+  "error": "Exit code 1\nWarning: 3 uncommitted changes\naborted: you must first push the current branch to a remote, or use the --head flag",
+  "timestamp": "2026-04-10T09:12:10.309Z",
+  "retry_count": 2
 }
