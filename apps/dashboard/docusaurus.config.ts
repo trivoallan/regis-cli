@@ -18,8 +18,10 @@ const config: Config = {
   favicon: "img/favicon.ico",
   staticDirectories: ["static"],
 
-  // These are overridden at build time via env vars
-  url: process.env.ARCHIVE_URL || process.env.REPORT_URL || "http://localhost",
+  // Overridden at build time via env vars; default to relative paths for
+  // portable builds that work on any host (GitHub Pages, local file serving, …).
+  url:
+    process.env.ARCHIVE_URL || process.env.REPORT_URL || "https://example.com",
   baseUrl: process.env.ARCHIVE_BASE_URL || process.env.REPORT_BASE_URL || "/",
 
   onBrokenLinks: "warn",
