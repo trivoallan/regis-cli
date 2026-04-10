@@ -120,7 +120,7 @@ Finally, we analyze [regis](https://github.com/trivoallan/regis) itself. As a to
 
 :::tip
 You can view the live result of this analysis here:
-[**Live `regis:latest` Benchmark Report**](pathname:///regis/examples/playbooks/default/regis/index.html)
+[**Live `regis:latest` Benchmark Report**](/docs/examples/playbooks/default/regis/)
 
 ```bash
 regis analyze ghcr.io/trivoallan/regis:latest -s -D docs/website/static/examples/regis

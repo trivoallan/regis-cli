@@ -51,6 +51,17 @@ jobs:
       - name: Install docs dependencies
         run: pnpm install --filter docs
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Install Python dependencies
+        run: pipenv install --deploy
+
       - name: Create version snapshot
         working-directory: docs/website
         run: |
@@ -61,6 +72,18 @@ jobs:
             echo "Snapshot for ${VERSION} already exists, skipping."
           fi
 
+      - name: Generate example reports for version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "Generating examples for version: $VERSION"
+          ./scripts/generate_examples.sh "$VERSION"
+
+      - name: Update example links in documentation
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "Updating example links for version: $VERSION"
+          ./scripts/update_example_links.sh "$VERSION"
+
       - name: Commit snapshot to release PR branch
         run: |
           git config user.name "regis-ci[bot]"
@@ -68,10 +91,11 @@ jobs:
           git add \
             docs/website/versioned_docs/ \
             docs/website/versioned_sidebars/ \
-            docs/website/versions.json
+            docs/website/versions.json \
+            docs/website/static/examples/
           if git diff --staged --quiet; then
             echo "No snapshot changes to commit."
           else
-            git commit -m "docs: add Docusaurus version snapshot for ${{ steps.version.outputs.version }}"
+            git commit -m "docs: add Docusaurus version snapshot and regenerate examples for ${{ steps.version.outputs.version }}"
             git push
           fi

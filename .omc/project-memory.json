@@ -1,0 +1,158 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1774933776871,
+  "projectRoot": "/Users/tristan/Documents/Workspaces/ttc/regis-cli",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "pyproject.toml"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "pytest",
+        "version": null,
+        "category": "testing"
+      }
+    ],
+    "packageManager": "pnpm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "pnpm build",
+    "testCommand": "pytest",
+    "lintCommand": "ruff check",
+    "devCommand": "pnpm dev",
+    "scripts": {
+      "build:ui": "pnpm --filter @regis-cli/ui build",
+      "build:viewer": "pnpm --filter @regis-cli/report-viewer build",
+      "build": "pnpm run build:ui && pnpm run build:viewer",
+      "dev": "pnpm --filter @regis-cli/report-viewer dev",
+      "typecheck": "pnpm -r typecheck"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": true,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs",
+      "scripts",
+      "tests"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "apps": {
+      "path": "apps",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1774933776839,
+      "keyFiles": []
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 0,
+      "lastAccessed": 1774933776843,
+      "keyFiles": []
+    },
+    "regis_cli": {
+      "path": "regis_cli",
+      "purpose": null,
+      "fileCount": 4,
+      "lastAccessed": 1774933776843,
+      "keyFiles": [
+        "__init__.py",
+        "cli.py",
+        "github_cli.py",
+        "gitlab_cli.py"
+      ]
+    },
+    "reports": {
+      "path": "reports",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1774933776844,
+      "keyFiles": []
+    },
+    "scripts": {
+      "path": "scripts",
+      "purpose": "Build/utility scripts",
+      "fileCount": 1,
+      "lastAccessed": 1774933776844,
+      "keyFiles": [
+        "generate_whats_new.py"
+      ]
+    },
+    "tests": {
+      "path": "tests",
+      "purpose": "Test files",
+      "fileCount": 44,
+      "lastAccessed": 1774933776845,
+      "keyFiles": [
+        "__init__.py",
+        "test_analyzer_dockle.py",
+        "test_analyzer_freshness.py",
+        "test_analyzer_hadolint.py",
+        "test_analyzer_popularity.py"
+      ]
+    },
+    "tmp-archive": {
+      "path": "tmp-archive",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1774933776846,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "docs/website/docs/reference/playbooks/default/examples/regis-cli.md",
+      "accessCount": 2,
+      "lastAccessed": 1775812159104,
+      "type": "file"
+    },
+    {
+      "path": "docs/website/docs/reference/playbooks/default/index.md",
+      "accessCount": 2,
+      "lastAccessed": 1775812159718,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1775812131015,
+      "type": "file"
+    },
+    {
+      "path": "docs/website/docs/reference/playbooks/default/examples/alpine.md",
+      "accessCount": 1,
+      "lastAccessed": 1775812148014,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
