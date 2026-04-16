@@ -265,7 +265,9 @@ def bootstrap_archive(
         )
     except Exception as exc:
         detail = str(exc) or repr(exc)
-        raise click.ClickException(f"Failed to bootstrap archive site: {detail}") from exc
+        raise click.ClickException(
+            f"Failed to bootstrap archive site: {detail}"
+        ) from exc
 
     project_path = Path(project_dir)
     click.echo(f"  ✓ Site scaffolded at {project_path}.", err=True)
