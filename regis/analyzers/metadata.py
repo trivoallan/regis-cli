@@ -10,7 +10,7 @@ from typing import Any
 
 import jsonschema
 
-from regis.analyzers.base import BaseAnalyzer
+from regis.analyzers.base import AnalyzerError, BaseAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -91,6 +91,7 @@ class MetadataAnalyzer(BaseAnalyzer):
                 for missing in error.validator_value:
                     if missing not in self._metadata:
                         field_errors[missing] = error.message
+                        break
                 continue
             else:
                 continue
@@ -163,7 +164,12 @@ class MetadataAnalyzer(BaseAnalyzer):
     @staticmethod
     def _load_well_known_schema() -> dict[str, Any]:
         """Load ``regis/schemas/meta/well-known.schema.json`` via importlib.resources."""
-        schema_ref = resources.files("regis.schemas").joinpath(
-            "meta/well-known.schema.json"
-        )
-        return json.loads(schema_ref.read_text(encoding="utf-8"))  # type: ignore[no-any-return]
+        try:
+            schema_ref = resources.files("regis.schemas").joinpath(
+                "meta/well-known.schema.json"
+            )
+            return json.loads(schema_ref.read_text(encoding="utf-8"))  # type: ignore[no-any-return]
+        except Exception as exc:
+            raise AnalyzerError(
+                f"Failed to load well-known metadata schema: {exc}"
+            ) from exc

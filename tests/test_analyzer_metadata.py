@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from unittest.mock import MagicMock
 
 from regis.analyzers.metadata import MetadataAnalyzer
 
@@ -56,8 +57,6 @@ class TestMetadataAnalyzerWellKnownOnly:
 
     def test_analyze_ignores_positional_args(self):
         """analyze() should work when called with client/repo/tag args (BaseAnalyzer compat)."""
-        from unittest.mock import MagicMock
-
         analyzer = MetadataAnalyzer(metadata={"ci.job.id": "123"})
         client = MagicMock()
         result = analyzer.analyze(client, "repo/name", "latest", "linux/amd64")

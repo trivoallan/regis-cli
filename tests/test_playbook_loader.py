@@ -10,7 +10,6 @@ import yaml
 
 from regis.playbook.engine import bundle_meta_schema_path, is_bundle, load_playbook
 
-
 MINIMAL_PLAYBOOK = {
     "name": "Bundle Playbook",
     "sections": [
