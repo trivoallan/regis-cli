@@ -122,9 +122,9 @@ jobs:
               print("pip-audit found HIGH/CRITICAL vulnerabilities:")
               for vulnerability in high_or_critical:
                   print(
-                      "- {package}=={version}: {id} ({ghsa}, severity={severity}) {summary}".format(
-                          **vulnerability
-                      )
+                      f"- {vulnerability['package']}=={vulnerability['version']}: "
+                      f"{vulnerability['id']} ({vulnerability['ghsa']}, "
+                      f"severity={vulnerability['severity']}) {vulnerability['summary']}"
                   )
               sys.exit(1)
 
