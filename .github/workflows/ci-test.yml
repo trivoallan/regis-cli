@@ -25,7 +25,7 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ secrets.REGIS_CI_APP_ID }}
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
           private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
 
       - name: Checkout repository
@@ -69,7 +69,7 @@ jobs:
 
           if not os.path.exists("pip-audit-report.json") or os.path.getsize("pip-audit-report.json") == 0:
               print(
-                  "pip-audit report was not generated or is empty; "
+                  "ERROR: pip-audit report was not generated or is empty; "
                   "verify the gh-action-pip-audit run and output path."
               )
               sys.exit(1)
@@ -96,7 +96,7 @@ jobs:
 
           token = os.environ.get("GITHUB_TOKEN", "")
           if not token:
-              print("GITHUB_TOKEN is required for advisory severity lookups.")
+              print("ERROR: GITHUB_TOKEN is required for advisory severity lookups.")
               sys.exit(1)
 
           high_or_critical = []
