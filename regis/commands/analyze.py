@@ -229,12 +229,15 @@ def analyze(
 
     # --rerun: patch an existing report and replay playbook evaluation
     if rerun and report_dir:
-        all_analyzers = _discover_analyzers()
-        if rerun not in all_analyzers:
-            available = ", ".join(sorted(all_analyzers))
-            raise click.ClickException(
-                f"Unknown analyzer '{rerun}'. Available: {available}"
-            )
+        from regis.analyzers.metadata import MetadataAnalyzer
+
+        if rerun != MetadataAnalyzer.name:
+            all_analyzers = _discover_analyzers()
+            if rerun not in all_analyzers:
+                available = ", ".join(sorted(all_analyzers))
+                raise click.ClickException(
+                    f"Unknown analyzer '{rerun}'. Available: {available}"
+                )
 
         report_path = (report_dir / "report.json").resolve()
         if not report_path.exists():
@@ -244,12 +247,8 @@ def analyze(
 
         metadata_dict = _parse_meta(meta)
 
-        if rerun == "metadata":
-            from regis.analyzers.metadata import MetadataAnalyzer
-
-            meta_analyzer = MetadataAnalyzer(
-                metadata=metadata_dict, meta_schema_path=None
-            )
+        if rerun == MetadataAnalyzer.name:
+            meta_analyzer = MetadataAnalyzer(metadata=metadata_dict)
             result = meta_analyzer.analyze()
         else:
             from regis.registry.auth import resolve_credentials

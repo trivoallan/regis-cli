@@ -68,14 +68,9 @@ class MetadataAnalyzer(BaseAnalyzer):
         """
         combined_schema = self._build_combined_schema()
         schema_properties: dict[str, Any] = {}
-
-        # Collect all properties defined across allOf sub-schemas.
-        for sub in combined_schema.get("allOf", []):
-            schema_properties.update(sub.get("properties", {}))
-
-        # Collect all required fields across allOf sub-schemas.
         required_fields: set[str] = set()
         for sub in combined_schema.get("allOf", []):
+            schema_properties.update(sub.get("properties", {}))
             required_fields.update(sub.get("required", []))
 
         # Build per-field error map from jsonschema.
