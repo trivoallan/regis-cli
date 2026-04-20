@@ -124,8 +124,8 @@ def evaluate_playbooks(
     if not playbook_paths:
         import importlib.resources
 
-        default_pb = importlib.resources.files("regis") / "playbooks" / "default.yaml"
-        if default_pb.is_file():
+        default_pb = importlib.resources.files("regis") / "playbooks" / "default"
+        if default_pb.is_dir():
             playbook_paths = (str(default_pb),)
 
     if playbook_paths:
