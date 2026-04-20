@@ -5,63 +5,161 @@ tags:
   - rules
 ---
 
-# Playbook Customisation
+# Playbook customisation
 
-Playbooks allow you to define your own security policies and customize the structure of your reports. While the [Default Playbook](../reference/playbooks/default/index.md) covers many best practices, you may want to create a custom one tailored to your organization's specific needs.
+Playbooks let you define your own security policies and customise the structure of your reports.
+While the [Default Playbook](../reference/playbooks/default/index.md) covers many best practices,
+you may want to create one tailored to your organisation's needs.
 
-## 1. Bootstrapping a Playbook
+## Create a playbook with the AI assistant
 
-The easiest way to start is by using the `bootstrap` command. This creates a new directory with a skeleton playbook and necessary configuration files.
+If you use [Claude Code](https://claude.ai/code) with the
+[oh-my-claudecode](https://github.com/vibeeval/vibecosystem) plugin, the `create-playbook` skill
+ships with this repository and is available automatically when you open it as your working
+directory.
+
+### Prerequisites
+
+1. Install [Claude Code](https://claude.ai/code):
+
+   ```bash
+   npm install -g @anthropic-ai/claude-code
+   ```
+
+2. Install the oh-my-claudecode plugin:
+
+   ```bash
+   omc install
+   ```
+
+3. Open this repository as your working directory in Claude Code.
+
+### Invoke the skill
+
+Type the following in Claude Code:
+
+```text
+/create-playbook
+```
+
+Alternatively, describe what you need and Claude will offer to use the skill:
+
+```text
+Create a security playbook for my production images — trivy CVE checks,
+Dockerfile linting, and GitLab CI integration.
+```
+
+### What the assistant does
+
+The assistant guides you through six interactive stages:
+
+| Stage             | What it covers                                                                                           |
+| ----------------- | -------------------------------------------------------------------------------------------------------- |
+| 1. Context        | Playbook name, description, target CI system (GitLab / GitHub / standalone)                              |
+| 2. Rules          | Provider selection (trivy, hadolint, sbom, freshness, scorecarddev, skopeo…) and threshold configuration |
+| 3. Tiers          | Gold / Silver / Bronze scoring thresholds                                                                |
+| 4. CI integration | GitLab badges and checklists, or GitHub Actions                                                          |
+| 5. Inputs schema  | _(Optional)_ Validate non-image inputs such as project IDs or security document URLs                     |
+| 6. Output         | Writes the playbook bundle to your chosen directory                                                      |
+
+### Output
+
+The skill writes a ready-to-use playbook bundle:
+
+```text
+my-policy/
+├── playbook.yaml          # Rules, tiers, badges, CI integration
+├── README.md              # Generated documentation
+└── inputs.schema.json     # Only if non-image inputs were configured
+```
+
+Run your new playbook immediately:
+
+```bash
+regis analyze nginx:latest --playbook my-policy/ --site
+```
+
+---
+
+## Bootstrap a skeleton manually
+
+To start from a minimal skeleton without the AI assistant, use the `bootstrap` command:
 
 ```bash
 regis bootstrap playbook my-security-policy
 ```
 
-This command will prompt you for:
+This creates a `my-security-policy/` directory with a `playbook.yaml` stub. The command prompts
+you for:
 
-- **Name**: The display name of your playbook (e.g., "Corporate Security Policy").
-- **Slug**: A unique identifier used for file generation (e.g., `corp-security`).
+- **Name**: The display name of your playbook (for example, "Corporate Security Policy").
+- **Slug**: A short identifier used for file generation (for example, `corp-security`).
 
-## 2. Understanding the Structure
+---
 
-A basic playbook (`playbook.yaml`) looks like this:
+## Understand the playbook structure
+
+A minimal playbook requires only a `name`. Rules reference provider templates by slug:
 
 ```yaml
 name: My Security Policy
-slug: corp-security
-sections:
-  - name: Critical Checks
-    scorecards:
-      - name: no-root
-        title: Image must not run as root
-        condition:
-          "!=": [{ var: results.skopeo.platforms.0.user }, root]
+
+tiers:
+  - name: Gold
+    condition: { ">": [{ var: rules_summary.score }, 90] }
+  - name: Silver
+    condition: { ">": [{ var: rules_summary.score }, 70] }
+
+rules:
+  - provider: trivy
+    rule: cve-count
+    slug: cve-critical
+    level: critical
+    options:
+      level: critical
+      max_count: 0
+
+  - provider: hadolint
+    rule: severity-count
+    slug: hadolint-errors
+    level: warning
+    options:
+      level: error
+      max_count: 0
 ```
 
-- **Scorecards**: Individual rules tied to a **condition**.
-- **Conditions**: Logic defined using [JSON Logic](https://jsonlogic.com/). They evaluate against the raw analysis data.
-- **Results Path**: Data is accessed via dot-notation (e.g., `results.trivy.critical_count`).
+Key concepts:
 
-## 3. Running your Playbook
+- **Rules**: Each rule references a provider template (`rule:`) with a unique `slug`, a `level`
+  that affects scoring, and provider-specific `options`.
+- **Tiers**: Named compliance levels resolved from `rules_summary.score` using JSON Logic
+  conditions.
+- **Results path**: Raw analyser data is accessible via dot-notation
+  (for example, `results.trivy.critical_count`).
 
-To analyze an image using your newly created playbook, use the `--playbook` (or `-p`) flag:
+---
+
+## Run your playbook
 
 ```bash
-regis analyze nginx:latest -p my-security-policy/playbook.yaml --site
+regis analyze nginx:latest --playbook my-policy/ --site
 ```
 
-## 4. Local Iteration (Dry-run)
+## Iterate locally (dry-run)
 
-If you already have a report from a previous analysis, you can iterate on your playbook rules without re-analyzing the image:
+Iterate on rules without re-analysing the image:
 
 ```bash
-# 1. Save analysis results to a file
+# 1. Save analysis results
 regis analyze nginx:latest -o report.json
 
-# 2. Test your playbook against the saved report
-regis evaluate report.json -p my-security-policy/playbook.yaml --site
+# 2. Re-evaluate against the saved report
+regis evaluate report.json --playbook my-policy/ --site
 ```
 
 :::tip
-For a full list of available fields and advanced configurations like GitLab integration, check the [Playbook Schema Reference](../reference/schemas/playbook/definition.schema.md) and the [Playbooks](../concepts/playbooks.md).
+For the full list of available rule templates, providers, and advanced options (badges, GitLab
+checklists, inputs schema), see the
+[Playbook Schema Reference](../reference/schemas/playbook/definition.schema.md) and the
+[Playbooks concept guide](../concepts/playbooks.md).
 :::
