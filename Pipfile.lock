@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9fac6c27b1ec89abfbf7d9bd8f07d2d0448421ab5a001048ae42f9cf596195e2"
+            "sha256": "b9974edb9e36a5ee9fac361836d96b851e52b3d266cc2a82d689814a406bf7bf"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -426,6 +426,14 @@
             "markers": "python_version >= '3.8'",
             "version": "==0.16.0"
         },
+        "httpcore": {
+            "hashes": [
+                "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55",
+                "sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==1.0.9"
+        },
         "httptools": {
             "hashes": [
                 "sha256:04c6c0e6c5fb0739c5b8a9eb046d298650a0ff38cf42537fc372b28dc7e4472c",
@@ -474,6 +482,14 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==0.7.1"
+        },
+        "httpx": {
+            "hashes": [
+                "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc",
+                "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==0.28.1"
         },
         "idna": {
             "hashes": [
@@ -670,11 +686,11 @@
         },
         "packaging": {
             "hashes": [
-                "sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4",
-                "sha256:b36f1fef9334a5588b4166f8bcd26a14e521f2b55e6b9de3aaa80d3ff7a37529"
+                "sha256:5d9c0669c6285e491e0ced2eee587eaf67b670d94a19e94e3984a481aba6802f",
+                "sha256:f042152b681c4bfac5cae2742a55e103d27ab2ec0f3d88037136b6bfe7c9c5de"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==26.0"
+            "version": "==26.1"
         },
         "pillow": {
             "hashes": [
@@ -1104,11 +1120,11 @@
         },
         "rich": {
             "hashes": [
-                "sha256:793431c1f8619afa7d3b52b2cdec859562b950ea0d4b6b505397612db8d5362d",
-                "sha256:b8daa0b9e4eef54dd8cf7c86c03713f53241884e814f4e2f5fb342fe520f639b"
+                "sha256:33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb",
+                "sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36"
             ],
-            "markers": "python_full_version >= '3.8.0'",
-            "version": "==14.3.3"
+            "markers": "python_full_version >= '3.9.0'",
+            "version": "==15.0.0"
         },
         "rpds-py": {
             "hashes": [
