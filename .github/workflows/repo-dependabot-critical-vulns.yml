@@ -1,0 +1,44 @@
+name: Repo / Dependabot critical vulns
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  filter-dependabot-prs:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        continue-on-error: true
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
+      - name: Fetch Dependabot metadata
+        id: dependabot-metadata
+        continue-on-error: true
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ steps.generate-token.outputs.token || github.token }}
+          alert-lookup: true
+
+      - name: Close non-critical Dependabot PRs
+        if: >-
+          steps.dependabot-metadata.outcome == 'success' &&
+          fromJSON(steps.dependabot-metadata.outputs.cvss) < 9
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token || github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr close "$PR_NUMBER" --comment "Closing automatically: only critical vulnerability updates (CVSS >= 9.0) are kept open."
