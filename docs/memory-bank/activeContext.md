@@ -110,6 +110,7 @@ This is NOT a decision to make now — it's a structured reflection for later. K
 - **Trade-offs**: Atomicity vs. flexibility; shared tooling vs. polyglot overhead
 
 **To explore before deciding**:
+
 1. Test contributor workflows (naive PR on dashboard/docs)
 2. Project post-v1 evolution (dashboard vs. CLI cadence)
 3. Consult with potential multi-team contributors
