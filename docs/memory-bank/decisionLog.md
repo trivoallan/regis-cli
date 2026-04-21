@@ -1,5 +1,13 @@
 # Decision Log
 
+> Supplemental file: this records historical decisions that complement the core Memory Bank files.
+
+## 2026-04-21: Consolidate Memory Bank Under `docs/memory-bank/`
+
+- **Decision**: Keep `docs/memory-bank/` as the single source of truth for Memory Bank content.
+- **Rationale**: The repository already stores active context, progress, and planning history under `docs/memory-bank/`, so consolidating there avoids duplicated state.
+- **Follow-up**: Maintain `RULES.md`, `activeContext.md`, `progress.md`, and related files under `docs/memory-bank/`.
+
 ## 2026-02-20: Handle Skopeo Architecture Mismatch
 
 - **Decision**: Avoid high-level `skopeo inspect` on image indexes when the local architecture doesn't match the remote index.

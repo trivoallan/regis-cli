@@ -2,6 +2,9 @@
 
 ## Completed
 
+- Memory Bank source of truth consolidated under `docs/memory-bank/`.
+- Supplemental planning history retained in `docs/memory-bank/decisionLog.md` and `docs/memory-bank/roadmap.md`.
+
 - Core CLI functionality.
 - Key analyzers (Skopeo, Trivy, Hadolint, etc.).
 - Playbook evaluation with JSON logic.
@@ -38,6 +41,11 @@
   - All analyzer sections homogenized: StatCards + Tremor Tables.
   - TrivySection: paginated Critical/High CVE tables sorted by most recent date.
   - Analyzer badges in rules tables link to their respective analyzer page.
+
+## In Progress
+
+- Keep `docs/memory-bank/` as the single source of truth for ongoing updates.
+- Capture future code or workflow changes in this memory bank as they land.
 
 ## Future Roadmap
 
