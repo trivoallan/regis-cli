@@ -2,10 +2,16 @@
 
 ## Current Objective
 
+Memory Bank source of truth moved to `docs/memory-bank/`.
+
+Keep `docs/memory-bank/` as the single source of truth for cross-session context.
+
 Documentation update following the pipeline refactoring and checklist enhancement.
 
 ## Recent Changes
 
+- [2026-04-21] Memory Bank update requested; no new application code changes were detected during the scan.
+- [2026-04-21] Supplemental planning files (`decisionLog.md`, `roadmap.md`) reviewed and kept alongside the core memory bank.
 - Refactored `.gitlab-ci.yml` (consumer cookiecutter): split monolithic `analyze_image` into four independent jobs:
   - `analyze_image` — runs `regis analyze`, produces `reports/` artifacts.
   - `push_results` — commits report to branch, prepends report URL to MR description, posts MR comment.
@@ -101,3 +107,4 @@ GitHub Actions authentication centralization complete.
   - **`viewer-publish.yml`** and **`docs-publish.yml`**: Changed `github_token:` to `personal_token:` for `peaceiris/actions-gh-pages` (required for non-GITHUB_TOKEN).
   - **`trunk.yml`**: Uses App token so auto-committed formatting fixes trigger downstream CI runs (GITHUB_TOKEN commits don't trigger).
   - **Motivation**: Centralized auth mechanism ensures bot-created PRs and auto-commits trigger proper CI/CD workflows.
+- [2026-04-21] Migrated Memory Bank protocol to point at `docs/memory-bank/` and deprecated the root-level duplicate.
