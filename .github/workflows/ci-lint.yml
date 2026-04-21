@@ -63,8 +63,11 @@ jobs:
           echo "::error::Formatting issues were auto-fixed and committed to your branch. A new CI run will start — no action needed."
           exit 1
 
-      - name: Trunk Check
-        uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b # v1.2.4
+      - name: Ensure main is fetched for diff
+        run: git fetch origin main:refs/remotes/origin/main
+
+      - name: Trunk Check (robuste PR)
+        run: ${{ env.TRUNK_PATH }} check --base origin/main
 
   docs-links:
     name: Docs Link Check

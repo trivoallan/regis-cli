@@ -24,7 +24,7 @@ jobs:
       actions: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
         with:
           token: "{% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}"
 
@@ -49,7 +49,7 @@ jobs:
         run: sudo chown -R $USER:$USER .
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v7
         with:
           token: "{% raw %}${{ secrets.REGIS_BOT_TOKEN || secrets.GITHUB_TOKEN }}{% endraw %}"
           commit-message: "chore: archive report for {% raw %}${{ github.event.inputs.image }}{% endraw %}"
