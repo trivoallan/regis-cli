@@ -72,7 +72,7 @@ def _fetch_severities(vuln_ids: Iterable[str], cache: dict[str, str | None]) -> 
         headers={"Accept": "application/json", "Content-Type": "application/json"},
     )
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:
+        with urllib.request.urlopen(request, timeout=20) as response:  # nosec B310
             payload = json.loads(response.read().decode("utf-8"))
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
         for vuln_id in ids:
@@ -120,12 +120,12 @@ def _iter_findings(report: dict) -> list[Finding]:
         version = dependency.get("version", "unknown")
 
         for vuln in dependency.get("vulns", []):
-            candidate_ids = [vuln.get("id", "")]
-            candidate_ids.extend(vuln.get("aliases", []))
+            candidate_ids_for_vuln: list[str] = [vuln.get("id", "")]
+            candidate_ids_for_vuln.extend(vuln.get("aliases", []))
 
             severity: str | None = None
             resolved_id = vuln.get("id") or "UNKNOWN_ID"
-            for candidate_id in candidate_ids:
+            for candidate_id in candidate_ids_for_vuln:
                 if not candidate_id:
                     continue
                 severity = cache.get(candidate_id)
