@@ -96,7 +96,6 @@
 
 ## Current Objective
 
-
 ## Recent Changes (main branch)
 
 - **GitHub Actions Auth Unification**: All 6 workflows migrated to use `actions/create-github-app-token@v1` with `REGIS_CI_APP_ID` + `REGIS_CI_APP_PRIVATE_KEY` secrets.
