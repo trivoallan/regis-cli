@@ -1,1 +1,123 @@
-<--DIFF-APPLIED-->
+name: CI / Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  trunk:
+    name: Trunk Check
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      statuses: write
+      checks: write
+
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        continue-on-error: true
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          token: ${{ steps.generate-token.outputs.token || github.token }}
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Trunk Install
+        uses: trunk-io/trunk-action/setup@75699af9e26881e564e9d832ef7dc3af25ec031b # v1.2.4
+
+      - name: Trunk Format
+        run: ${{ env.TRUNK_PATH }} fmt
+
+      - name: Commit and Push Formatting Fixes
+        if: github.event_name == 'pull_request'
+        id: commit
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
+        with:
+          branch: ${{ github.head_ref }}
+          commit_message: "style: apply automated trunk fmt"
+          commit_options: "--no-verify"
+          commit_user_name: regis-ci[bot]
+          commit_user_email: regis-ci[bot]@users.noreply.github.com
+          commit_author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
+
+      - name: Fail if formatting fixes were needed
+        if: steps.commit.outputs.changes_detected == 'true'
+        run: |
+          echo "::error::Formatting issues were auto-fixed and committed to your branch. A new CI run will start — no action needed."
+          exit 1
+
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@75699af9e26881e564e9d832ef7dc3af25ec031b # v1.2.4
+
+  docs-links:
+    name: Docs Link Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Detect docs changes
+        id: docs_changes
+        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3.0.3
+        with:
+          filters: |
+            docs:
+              - docs/website/docs/**
+
+      - name: Check markdown links
+        if: steps.docs_changes.outputs.docs == 'true'
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
+        with:
+          args: >-
+            --no-progress
+            --exclude-path docs/website/versioned_docs
+            --exclude-path docs/website/node_modules
+            --exclude 'pathname:///'
+            --exclude 'http://localhost'
+            --exclude 'https://example.com'
+            --exclude 'regis\.example\.com'
+            --exclude 'my-private-registry\.example\.com'
+            --exclude 'host\.example\.com'
+            --exclude '\.schema\.md'
+            docs/website/docs/
+          fail: true
+
+  workflow-action-pinning:
+    name: Workflow Action Pinning Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Ensure actions are pinned by SHA
+        run: |
+          set -euo pipefail
+
+          if grep -RInE 'uses:\s*[^[:space:]]+@(v[0-9]+|main|master|latest)\b' .github/workflows/*.yml; then
+            echo "::error::Found non-pinned action reference in top-level workflows. Pin all actions to full commit SHA."
+            exit 1
+          fi
+
+          echo "All top-level workflow actions are pinned by SHA."

@@ -1,1 +1,69 @@
-<--DIFF-APPLIED-->
+name: CI / Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  test:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: generate-token
+        continue-on-error: true
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3
+        with:
+          app-id: ${{ secrets.REGIS_CI_APP_ID }}
+          private-key: ${{ secrets.REGIS_CI_APP_PRIVATE_KEY }}
+
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          token: ${{ steps.generate-token.outputs.token || github.token }}
+
+      - name: Setup Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.13"
+          cache: pipenv
+
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          pipenv sync --dev
+
+      - name: Diagnostic - check environment
+        run: |
+          pipenv run pip list
+          pipenv run python -c "import cookiecutter; print('cookiecutter import ok')"
+
+      - name: Run pytest
+        run: pipenv run pytest
+
+      - name: Generate coverage badge
+        if: always()
+        continue-on-error: true
+        run: pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: coverage-report
+          path: |
+            htmlcov/
+            coverage-badge.svg
+          retention-days: 14
+          if-no-files-found: warn
