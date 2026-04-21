@@ -1,10 +1,17 @@
 # Regis Roadmap
 
+> Supplemental file: this is a planning artifact that complements the core Memory Bank files.
+
 > Last updated: 2026-04-21 · Current version: v0.28.6
 
 ## Status Overview
 
 v0.28.6 shipped · Chemin v1.0.0-alpha défini · Cible : pilote équipes internes
+
+## Memory Bank Alignment
+
+- Keep roadmap items synchronized with `docs/memory-bank/projectbrief.md` and `docs/memory-bank/progress.md`.
+- Treat `decisionLog.md` and `roadmap.md` as supplemental planning history, not the primary operational context.
 
 ---
 
