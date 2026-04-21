@@ -50,7 +50,9 @@ def _fetch_severity(vuln_id: str, cache: dict[str, str | None]) -> str | None:
     if vuln_id in cache:
         return cache[vuln_id]
 
-    request = urllib.request.Request(f"{OSV_VULN_URL}{vuln_id}", headers={"Accept": "application/json"})
+    request = urllib.request.Request(
+        f"{OSV_VULN_URL}{vuln_id}", headers={"Accept": "application/json"}
+    )
     try:
         with urllib.request.urlopen(request, timeout=20) as response:
             payload = json.loads(response.read().decode("utf-8"))
@@ -125,7 +127,9 @@ def main() -> int:
     findings = _iter_findings(report)
 
     min_rank = SEVERITY_RANK[args.min_severity]
-    blocking = [finding for finding in findings if SEVERITY_RANK[finding.severity] >= min_rank]
+    blocking = [
+        finding for finding in findings if SEVERITY_RANK[finding.severity] >= min_rank
+    ]
 
     if not blocking:
         print("No pip-audit findings met the configured severity threshold.")
