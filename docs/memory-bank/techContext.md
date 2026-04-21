@@ -3,6 +3,7 @@
 ## Tech Stack
 
 ### Core
+
 - Python 3.10+ in `pyproject.toml`
 - `click`
 - `requests`
@@ -17,21 +18,25 @@
 - `uvicorn`
 
 ### Styling
+
 - Docusaurus-based docs/dashboard app
 - Tailwind CSS in the dashboard app
 
 ### State & Data
+
 - JSON schema validation
 - JSON Logic rule evaluation
 - Schema-driven analyzer and report payloads
 
 ### Testing
+
 - `pytest`
 - `pytest-cov`
 - `responses`
 - `httpx`
 
 ### Dev Tools
+
 - `ruff`
 - `trunk`
 - `pipenv`
@@ -40,11 +45,13 @@
 ## Development Environment
 
 ### Prerequisites
+
 - Python 3.10+
 - `pipenv`
 - Node toolchain for docs/dashboard work
 
 ### Setup Commands
+
 ```bash
 # Install
 pipenv install --dev
@@ -62,9 +69,11 @@ pipenv run pytest --no-cov
 ```
 
 ### Environment Variables
+
 - Not documented in the inspected files
 
 ## Project Structure
+
 ```text
 project-root/
 ├── regis/
@@ -75,9 +84,11 @@ project-root/
 ```
 
 ## Import Aliases
+
 - No import alias mapping was found in the inspected files
 
 ## Build & Deploy
+
 - GitHub Actions workflows in `.github/workflows/`
 - Release Please for releases
 - SBOM generation and provenance attestation in CD

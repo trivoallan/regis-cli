@@ -3,23 +3,27 @@
 This project uses a Memory Bank system in `docs/memory-bank/` for cross-session context continuity.
 
 ### At Session Start - ALWAYS:
+
 1. Read `docs/memory-bank/RULES.md` - all rules are there
 2. Read `docs/memory-bank/activeContext.md` - current work and decisions
 3. Read `docs/memory-bank/progress.md` - current status
 4. Read other files as needed (`systemPatterns.md`, `techContext.md`, `productContext.md`, `projectbrief.md`)
 
 ### During Work - Update When:
+
 - Feature completed -> update `docs/memory-bank/activeContext.md` + `docs/memory-bank/progress.md`
 - Architecture decision made -> update `docs/memory-bank/systemPatterns.md`
 - New dependency added -> update `docs/memory-bank/techContext.md`
 - User preference learned -> update `docs/memory-bank/activeContext.md`
 
 ### Special Commands:
+
 - `memory bank update` / `memory bank güncelle` -> Review and update ALL memory bank files
 - `memory bank status` / `memory bank durumu` -> Show current status summary
 - `memory bank read` / `memory bank oku` -> Read all files and present context
 
 ### NEVER:
+
 - Modify `docs/memory-bank/RULES.md` (it's immutable)
 - Write secrets (API keys, tokens, passwords) to memory bank files
 - Skip reading memory bank at session start
