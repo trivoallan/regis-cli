@@ -22,11 +22,16 @@ This project uses a Memory Bank system in `docs/memory-bank/` for cross-session 
 - `memory bank status` / `memory bank durumu` -> Show current status summary
 - `memory bank read` / `memory bank oku` -> Read all files and present context
 
+### Plans
+
+All implementation plans live in `docs/memory-bank/plans/`. This overrides any global skill default (`plans/` at project root). When creating a plan file, always use `docs/memory-bank/plans/<task-slug>-plan.md`.
+
 ### NEVER:
 
 - Modify `docs/memory-bank/RULES.md` (it's immutable)
 - Write secrets (API keys, tokens, passwords) to memory bank files
 - Skip reading memory bank at session start
+- Create plan files outside `docs/memory-bank/plans/`
 
 # CLAUDE.md
 
