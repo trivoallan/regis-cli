@@ -2,11 +2,9 @@
 
 ## Current Objective
 
-Memory Bank source of truth moved to `docs/memory-bank/`.
+**Primary**: Memory Bank source of truth consolidated under `docs/memory-bank/`.
 
-Keep `docs/memory-bank/` as the single source of truth for cross-session context.
-
-Documentation update following the pipeline refactoring and checklist enhancement.
+**Secondary (reflection in progress)**: Pre-v1 architecture decision — exploring whether to keep monorepo structure vs. split before v1. This is NOT a decision yet, just structured thinking space. Key unknowns: future contributor patterns, post-v1 release cadence, governance at scale. To explore: test contributor workflows, project post-v1 evolution, consult multi-team contributors, document constraints (Harbor integration, JSON schemas, regis-specific rules).
 
 ## Recent Changes
 
@@ -97,8 +95,6 @@ Documentation update following the pipeline refactoring and checklist enhancemen
 - Merge PR for `feat/dashboard-tremor`.
 
 ## Current Objective
-
-GitHub Actions authentication centralization complete.
 
 ## Recent Changes (main branch)
 
