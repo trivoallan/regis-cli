@@ -9,8 +9,12 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
+
+concurrency:
+  group: release-snapshot-${{ github.event.release.tag_name || github.ref || github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   snapshot-pending:
@@ -77,8 +81,21 @@ jobs:
           version: 10
           run_install: false
 
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install docs dependencies
-        run: pnpm install --filter docs
+        run: pnpm install --filter docs --frozen-lockfile
 
       - name: Create version snapshot
         working-directory: docs/website

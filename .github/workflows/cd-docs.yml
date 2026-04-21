@@ -1,33 +1,38 @@
 name: CD / Docs
 
 on:
-  release:
-    types: [published]
   push:
     branches: [main]
     paths:
       - docs/website/**
+      - regis/**
+      - scripts/generate_whats_new.py
+      - CHANGELOG.md
+      - Pipfile
+      - pyproject.toml
+      - package.json
+      - pnpm-lock.yaml
+      - .github/pages-root/**
       - .github/workflows/cd-docs.yml
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
-  id-token: write
-  actions: write
 
 concurrency:
-  group: docs-publish
+  group: docs-publish-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-      id-token: write
-      actions: write
     steps:
       - name: Generate GitHub App token
         id: generate-token
@@ -43,15 +48,53 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Classify docs work
+        id: changes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before || '' }}
+        run: |
+          set -euo pipefail
+
+          generate_reference=false
+          refresh_badge=false
+          refresh_archive=false
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] || [ -z "$BEFORE_SHA" ]; then
+            generate_reference=true
+            refresh_badge=true
+            refresh_archive=true
+          else
+            CHANGED_FILES=$(git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA")
+            printf '%s\n' "$CHANGED_FILES"
+
+            if printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(regis/|scripts/generate_whats_new\.py$|CHANGELOG\.md$|Pipfile$|pyproject\.toml$|package\.json$|pnpm-lock\.yaml$|\.github/workflows/cd-docs\.yml$)'; then
+              generate_reference=true
+            fi
+
+            if printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(regis/|tests/|Pipfile$|pyproject\.toml$|\.github/workflows/cd-docs\.yml$)'; then
+              refresh_badge=true
+            fi
+
+            if printf '%s\n' "$CHANGED_FILES" | grep -Eq '^(regis/|Pipfile$|pyproject\.toml$|package\.json$|pnpm-lock\.yaml$|\.github/workflows/cd-docs\.yml$)'; then
+              refresh_archive=true
+            fi
+          fi
+
+          echo "generate_reference=$generate_reference" >> "$GITHUB_OUTPUT"
+          echo "refresh_badge=$refresh_badge" >> "$GITHUB_OUTPUT"
+          echo "refresh_archive=$refresh_archive" >> "$GITHUB_OUTPUT"
+
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Install pipenv
-        run: pip install pipenv
+          cache: pipenv
 
       - name: Install Python dependencies
-        run: pipenv sync --dev
+        run: |
+          pip install pipenv
+          pipenv sync --dev
 
       - name: Install Hadolint
         run: |
@@ -100,9 +143,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Schema Docs
+        if: steps.changes.outputs.generate_reference == 'true'
         run: |
           # Copy all schemas first to allow cross-category resolution
           mkdir -p docs/website/static/schemas
@@ -117,9 +161,11 @@ jobs:
           done
 
       - name: Generate Rules Reference
+        if: steps.changes.outputs.generate_reference == 'true'
         run: pipenv run regis rules list -f markdown -D docs/website/docs/reference/rules
 
       - name: Ensure whats-new label exists
+        if: steps.changes.outputs.generate_reference == 'true'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
@@ -130,23 +176,27 @@ jobs:
             2>/dev/null || true
 
       - name: Generate What's New page
+        if: steps.changes.outputs.generate_reference == 'true'
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: python scripts/generate_whats_new.py
 
       - name: Generate coverage badge
+        if: steps.changes.outputs.refresh_badge == 'true'
         continue-on-error: true
         run: |
           pipenv run pytest --cov --cov-report=xml -q --no-header
           pipenv run genbadge coverage -i coverage.xml -o coverage-badge.svg
 
       - name: Generate Default Archive
+        if: steps.changes.outputs.refresh_archive == 'true'
         run: |
           mkdir -p docs/website/static/archives/default
           pipenv run regis analyze --evaluate alpine:latest -A docs/website/static/archives/default/
           pipenv run regis analyze --evaluate ghcr.io/trivoallan/regis:latest -A docs/website/static/archives/default/
 
       - name: Validate Default Archive
+        if: steps.changes.outputs.refresh_archive == 'true'
         run: |
           if [ ! -d "docs/website/static/archives/default" ] || [ -z "$(ls -A docs/website/static/archives/default)" ]; then
             echo "::error::Default archive directory is empty — archive generation failed"
@@ -159,23 +209,25 @@ jobs:
         working-directory: docs/website
 
       - name: Create Pull Request for documentation updates
+        if: steps.changes.outputs.generate_reference == 'true' || steps.changes.outputs.refresh_badge == 'true'
         id: cpr
         continue-on-error: true
         uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ steps.generate-token.outputs.token }}
-          commit-message: "docs: update documentation reference and snapshots"
+          commit-message: "docs: refresh generated latest documentation assets"
           author: regis-ci[bot] <regis-ci[bot]@users.noreply.github.com>
-          branch: docs/automated-updates
+          branch: docs/latest-generated
           delete-branch: true
-          title: "docs: update documentation reference and snapshots"
+          title: "docs: refresh generated latest documentation assets"
           body: |
-            Automated documentation updates:
-            - Generated latest JSON Schema reference
-            - Generated latest Rules reference
+            Automated latest-documentation updates:
+            - Generated the current JSON Schema reference when source inputs changed
+            - Generated the current Rules reference when source inputs changed
+            - Refreshed the repository coverage badge when test-affecting code changed
 
-            This PR ensures the documentation reflects the latest codebase.
-            What's New page is generated at deploy time only (not committed).
+            This PR keeps the mutable latest docs in sync with main.
+            Versioned Docusaurus snapshots are handled separately by the release-snapshot workflow.
           add-paths: |
             coverage-badge.svg
             docs/website/docs/reference/rules/**
