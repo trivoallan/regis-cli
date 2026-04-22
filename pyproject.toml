@@ -63,6 +63,7 @@ regis = [
   "cookiecutters/**/*",
   "dashboard_assets/**/*",
   "playbooks/**/*",
+  "data/*.json",
 ]
 
 [tool.setuptools_scm]
