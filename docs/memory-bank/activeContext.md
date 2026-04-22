@@ -104,7 +104,7 @@
   - **`trunk.yml`**: Uses App token so auto-committed formatting fixes trigger downstream CI runs (GITHUB_TOKEN commits don't trigger).
   - **Motivation**: Centralized auth mechanism ensures bot-created PRs and auto-commits trigger proper CI/CD workflows.
 - [2026-04-21] Migrated Memory Bank protocol to point at `docs/memory-bank/` and deprecated the root-level duplicate.
-- [2026-04-22] **Claude Workflows CI/CD Fixes**: 
+- [2026-04-22] **Claude Workflows CI/CD Fixes**:
   - SHA-pinned all GitHub Actions in `claude-code-review.yml` and `claude.yml` workflows to comply with lint pipeline requirements.
   - Resolved Checkov CKV2_GHA_1 security check by adding workflow-level default permissions.
   - Fixed YAML linting issues (redundantly quoted strings).

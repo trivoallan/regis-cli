@@ -49,7 +49,7 @@
 
 ## Completed (Recent)
 
-- **Claude Workflows CI/CD Fixes (2026-04-22)**: 
+- **Claude Workflows CI/CD Fixes (2026-04-22)**:
   - SHA-pinned GitHub Actions to commit SHAs (`actions/checkout` and `anthropics/claude-code-action`)
   - Added workflow-level permissions block to satisfy security checks
   - Fixed YAML linting issues
