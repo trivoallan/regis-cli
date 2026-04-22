@@ -1,7 +1,7 @@
 [
   {
-    "id": "ghcr.io/trivoallan/regis/latest/2026-04-21T03-13-42",
-    "timestamp": "2026-04-21T03:13:42.809445+00:00",
+    "id": "ghcr.io/trivoallan/regis/latest/2026-04-22T05-56-13",
+    "timestamp": "2026-04-22T05:56:13.584418+00:00",
     "registry": "ghcr.io",
     "repository": "trivoallan/regis",
     "tag": "latest",
@@ -11,18 +11,18 @@
     "rules_passed": 11,
     "rules_total": 18,
     "cve_critical": 2,
-    "cve_high": 49,
-    "cve_medium": 100,
-    "cve_low": 130,
-    "age_days": 4,
+    "cve_high": 54,
+    "cve_medium": 102,
+    "cve_low": 131,
+    "age_days": 5,
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "critical",
-    "path": "ghcr.io/trivoallan_regis/latest/2026-04-21T03-13-42Z/report.json"
+    "path": "ghcr.io/trivoallan_regis/latest/2026-04-22T05-56-13Z/report.json"
   },
   {
-    "id": "registry-1.docker.io/library/alpine/latest/2026-04-21T03-13-29",
-    "timestamp": "2026-04-21T03:13:29.126323+00:00",
+    "id": "registry-1.docker.io/library/alpine/latest/2026-04-22T05-55-59",
+    "timestamp": "2026-04-22T05:55:59.775984+00:00",
     "registry": "registry-1.docker.io",
     "repository": "library/alpine",
     "tag": "latest",
@@ -35,10 +35,10 @@
     "cve_high": 0,
     "cve_medium": 0,
     "cve_low": 0,
-    "age_days": 5,
+    "age_days": 6,
     "sbom_component_count": null,
     "scorecard_score": null,
     "status": "warning",
-    "path": "registry-1.docker.io/library_alpine/latest/2026-04-21T03-13-29Z/report.json"
+    "path": "registry-1.docker.io/library_alpine/latest/2026-04-22T05-55-59Z/report.json"
   }
 ]
