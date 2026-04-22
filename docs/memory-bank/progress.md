@@ -47,6 +47,14 @@
 - Keep `docs/memory-bank/` as the single source of truth for ongoing updates.
 - Capture future code or workflow changes in this memory bank as they land.
 
+## Completed (Recent)
+
+- **Claude Workflows CI/CD Fixes (2026-04-22)**: 
+  - SHA-pinned GitHub Actions to commit SHAs (`actions/checkout` and `anthropics/claude-code-action`)
+  - Added workflow-level permissions block to satisfy security checks
+  - Fixed YAML linting issues
+  - All trunk checks passing, PR merged to main
+
 ## Future Roadmap
 
 - Additional analyzers (e.g., custom compliance checks).
