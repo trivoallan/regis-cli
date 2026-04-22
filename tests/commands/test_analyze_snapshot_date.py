@@ -1,7 +1,6 @@
 """Unit tests for snapshot_date injection in analyze.py."""
 
 import json
-from io import StringIO
 from unittest.mock import MagicMock, patch
 
 
