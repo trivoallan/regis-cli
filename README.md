@@ -98,6 +98,23 @@ These artifacts are uploaded by the release/CD workflow as GitHub Actions workfl
 
 ---
 
+## GitHub Action
+
+The [**regis-security-analysis**](https://github.com/marketplace/actions/regis-security-analysis) GitHub Action runs a full Regis security analysis on any OCI image and uploads the HTML report as a workflow artifact.
+
+### Usage
+
+```yaml
+- uses: trivoallan/regis@main
+  with:
+    image-url: ghcr.io/your-org/your-image:latest
+    # github-token is required only if you want PR comments
+    # (needs `pull-requests: write` permission)
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+---
+
 ## License
 
 MIT
