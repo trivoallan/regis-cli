@@ -1,16 +1,13 @@
 name: CI / Action dogfood
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
   contents: read
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true@
 
 jobs:
   dogfood:
@@ -18,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Analyze ghcr.io/trivoallan/regis:latest
-        uses: trivoallan/regis@main
+        uses: trivoallan/regis@v0.29.0
         with:
           image-url: ghcr.io/trivoallan/regis:latest
-          version: main
+          version: v0.29.0
