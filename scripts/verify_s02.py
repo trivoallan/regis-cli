@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Verify S02 snapshot publication date acceptance criteria."""
+
 import json
 import sys
 from pathlib import Path
@@ -50,7 +51,7 @@ check(
     "--markdown" in analyze_src,
 )
 check(
-    "regis/commands/analyze.py: formats.append(\"md\") present",
+    'regis/commands/analyze.py: formats.append("md") present',
     'formats.append("md")' in analyze_src,
 )
 

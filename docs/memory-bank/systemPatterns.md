@@ -17,6 +17,7 @@
 New report output formats in `regis/utils/report.py` follow the `elif fmt == '<ext>':` pattern in `render_and_save_reports()`, delegating to a dedicated `_render_<fmt>()` helper.
 
 Adding a format requires:
+
 1. New `_render_<fmt>()` helper function in `report.py`
 2. `elif fmt == '<ext>':` branch in `render_and_save_reports()`
 3. CLI flag in `analyze.py` wired into both the main analysis path and the `--rerun` path

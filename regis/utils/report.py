@@ -270,7 +270,9 @@ def _render_markdown(report: dict[str, Any]) -> str:
     if timestamp:
         lines += [f"**Analysis date:** {timestamp}", ""]
 
-    snapshot_date = report.get("snapshot_date") or report.get("request", {}).get("snapshot_date")
+    snapshot_date = report.get("snapshot_date") or report.get("request", {}).get(
+        "snapshot_date"
+    )
     if snapshot_date:
         lines += [f"**Snapshot date:** {snapshot_date}", ""]
 
@@ -281,9 +283,7 @@ def _render_markdown(report: dict[str, Any]) -> str:
         for pb in playbooks:
             name = pb.get("name", "")
             verdict = pb.get("verdict", "")
-            failing = sum(
-                1 for r in pb.get("rules", []) if r.get("result") is False
-            )
+            failing = sum(1 for r in pb.get("rules", []) if r.get("result") is False)
             lines.append(f"| {name} | {verdict} | {failing} |")
         lines.append("")
 

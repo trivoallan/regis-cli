@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Verify S01 snapshot retention policy acceptance criteria."""
+
 import json
 import re
 import sys
