@@ -17,9 +17,11 @@ version we ship is clean.
 
 1. **`apk` on a Debian image (apply_validation)** — the regis Docker image is
    `python:3.14-slim` (`Dockerfile:13`), not Alpine. The line
+
    ```
    apk add --no-cache jq curl 2>/dev/null || true
    ```
+
    silently no-ops. `curl` is baked in (`Dockerfile:34`) but **`jq` is not
    installed**, so every subsequent `jq` call in `apply_validation` fails. The
    `|| true` above masks the root cause; the job dies on the first `jq` line.
@@ -75,8 +77,8 @@ version we ship is clean.
     allow-list of approvers checked in `apply_validation`.
 
 11. **Informal `.validations/*.yaml` marker** — no schema, parsed with `grep`
-    + `sed`. Any malformed marker crashes `apply_validation` with a cryptic
-    error.
+    - `sed`. Any malformed marker crashes `apply_validation` with a cryptic
+      error.
 
 12. **`REGIS_CI_TOKEN` is a group-level Maintainer token** with
     `api + write_repository`. Could be scoped to the single repo.
@@ -88,7 +90,7 @@ version we ship is clean.
     single-source lookup.
 
 14. `MR_DESC` for DEA/POC only differs by the emoji/prefix. A single template
-    + one variable would remove the whole `if/else` block.
+    - one variable would remove the whole `if/else` block.
 
 15. `[skip ci]` in commit messages is redundant with `-o ci.skip`. Pick one.
 
@@ -109,14 +111,14 @@ version we ship is clean.
 - **Fix the `pages` staleness.** Make `apply_validation` declare the updated
   `report.json` (or the full `static/archives/…` subtree) as an artifact and
   add `needs: [apply_validation]` on `pages` with `dependencies:
-  [apply_validation]`. Then `cp -r` in `pages` overwrites the old files with
+[apply_validation]`. Then `cp -r` in `pages` overwrites the old files with
   the artifact before zipping. This removes the dependency on the git state.
 
 - **Tighten the `apply_validation` rule.** Replace the `=~ /validation\//`
   check with an API lookup: the job still runs on every `main` push, but
   exits `0` immediately if the associated MR's `source_branch` does not start
   with `validation/`. This is already partially implemented lower in the job
-  — move the check *before* the `case` and remove the message-regex rule.
+  — move the check _before_ the `case` and remove the message-regex rule.
 
 - **Retry `git push` with exponential backoff** (2s, 4s, 8s, 16s) in both
   `archive_report` and `apply_validation`, matching the repo convention.
@@ -125,7 +127,7 @@ version we ship is clean.
   nanoseconds). `validation/<archive>/<timestamp>-<job_id>`.
 
 - **Clean up the marker** — in `apply_validation`, `git rm
-  .validations/${TIMESTAMP}.yaml` before committing the rerun, so merged
+.validations/${TIMESTAMP}.yaml` before committing the rerun, so merged
   validations don't leave residue.
 
 - **De-duplicate `ARCHIVE_NAME` and `MR_DESC`.** Add YAML anchors / `.hidden`
@@ -193,14 +195,14 @@ These are optional but remove significant shell complexity and eliminate the
 
 ## Critical files
 
-| File | Role in this plan |
-|---|---|
-| `.gitlab-ci.yml` (downstream consumer pipeline) | Primary target for patches A |
-| `regis/commands/analyze.py` (L56-64, 232-301) | Home of `--merge-meta` and `--meta-file` (B.1 + B.2) |
-| `regis/commands/archive.py` (L45-67) | Home of `--json` output (B.3) |
-| `regis/schemas/` | New `validation_marker.schema.json` (B.4, phase 2) |
+| File                                                                         | Role in this plan                                             |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `.gitlab-ci.yml` (downstream consumer pipeline)                              | Primary target for patches A                                  |
+| `regis/commands/analyze.py` (L56-64, 232-301)                                | Home of `--merge-meta` and `--meta-file` (B.1 + B.2)          |
+| `regis/commands/archive.py` (L45-67)                                         | Home of `--json` output (B.3)                                 |
+| `regis/schemas/`                                                             | New `validation_marker.schema.json` (B.4, phase 2)            |
 | `regis/cookiecutters/gitlab-ci/{{cookiecutter.project_slug}}/.gitlab-ci.yml` | Target for the eventual backport (out of scope for this plan) |
-| `docs/website/docs/usage/integrations/gitlab.md` | Document scoped labels + approver allow-list (C) |
+| `docs/website/docs/usage/integrations/gitlab.md`                             | Document scoped labels + approver allow-list (C)              |
 
 ## Recommended sequencing
 
