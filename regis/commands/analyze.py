@@ -198,6 +198,13 @@ def _parse_meta(meta: tuple[str, ...]) -> dict[str, Any]:
     default=False,
     help="Also emit a Markdown summary report (report.md).",
 )
+@click.option(
+    "--merge-meta",
+    "merge_meta",
+    is_flag=True,
+    default=False,
+    help="Merge --meta values into existing metadata instead of replacing (only with --rerun).",
+)
 def analyze(
     url: str,
     analyzer_names: tuple[str, ...],
@@ -221,6 +228,7 @@ def analyze(
     rerun: str | None = None,
     report_dir: Path | None = None,
     markdown: bool = False,
+    merge_meta: bool = False,
 ) -> None:
     """Analyze a Docker image and evaluate playbooks.
 
@@ -281,6 +289,8 @@ def analyze(
 
         existing_report.setdefault("results", {})[rerun] = result
         if metadata_dict:
+            if merge_meta and existing_report.get("metadata"):
+                metadata_dict = {**existing_report["metadata"], **metadata_dict}
             existing_report["metadata"] = metadata_dict
             existing_report.setdefault("request", {})["metadata"] = metadata_dict
 
