@@ -7,22 +7,27 @@ from click.testing import CliRunner
 from regis.cli import main
 
 
+def _make_report_file(tmp_path):
+    report_file = tmp_path / "report.json"
+    report_file.write_text(
+        json.dumps(
+            {
+                "request": {
+                    "registry": "docker.io",
+                    "repository": "library/nginx",
+                    "tag": "latest",
+                    "timestamp": "2024-01-15T10:00:00+00:00",
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    return report_file
+
+
 class TestArchiveAdd:
     def test_happy_path(self, tmp_path):
-        report_file = tmp_path / "report.json"
-        report_file.write_text(
-            json.dumps(
-                {
-                    "request": {
-                        "registry": "docker.io",
-                        "repository": "library/nginx",
-                        "tag": "latest",
-                        "timestamp": "2024-01-15T10:00:00+00:00",
-                    }
-                }
-            ),
-            encoding="utf-8",
-        )
+        report_file = _make_report_file(tmp_path)
         archive_dir = tmp_path / "archive"
         archive_dir.mkdir()
 
@@ -35,6 +40,30 @@ class TestArchiveAdd:
         assert result.exit_code == 0, result.output
         assert "Archived to" in result.output
         assert "Manifest updated" in result.output
+        assert (archive_dir / "manifest.json").exists()
+
+    def test_print_path(self, tmp_path):
+        report_file = _make_report_file(tmp_path)
+        archive_dir = tmp_path / "archive"
+        archive_dir.mkdir()
+
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            [
+                "archive",
+                "add",
+                str(report_file),
+                "-A",
+                str(archive_dir),
+                "--print-path",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        assert "Archived to" not in result.output
+        path = result.output.strip()
+        assert path.endswith("report.json")
         assert (archive_dir / "manifest.json").exists()
 
     def test_invalid_json_fails(self, tmp_path):

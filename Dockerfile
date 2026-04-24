@@ -36,6 +36,7 @@ RUN apt-get update && \
     gnupg \
     skopeo \
     git \
+    jq \
     && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user with a home directory and ensure it's writable

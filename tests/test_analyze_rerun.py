@@ -217,3 +217,89 @@ class TestRerunReplaysPlaybookEvaluation:
 
             assert result.exit_code == 0, result.output
             mock_run_playbooks.assert_called_once()
+
+
+class TestRerunMergeMeta:
+    """--merge-meta merges new keys into existing metadata instead of replacing."""
+
+    def _write_report(self, report_dir: Path, metadata: dict) -> None:
+        report = {
+            "version": "0.1.0",
+            "request": {
+                "registry": "r",
+                "repository": "repo",
+                "tag": "latest",
+                "timestamp": "2024-01-01T00:00:00+00:00",
+            },
+            "metadata": metadata,
+            "results": {},
+        }
+        (report_dir / "report.json").write_text(json.dumps(report), encoding="utf-8")
+
+    @patch("regis.commands.analyze.validate_report")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_merge_meta_preserves_existing_keys(self, mock_discover, mock_validate):
+        mock_discover.return_value = {"metadata": MetadataAnalyzer}
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            report_dir = Path("my_report")
+            report_dir.mkdir()
+            self._write_report(
+                report_dir, {"EXISTING_KEY": "kept", "SHARED_KEY": "old"}
+            )
+
+            result = runner.invoke(
+                main,
+                [
+                    "analyze",
+                    "--rerun",
+                    "metadata",
+                    "--report",
+                    str(report_dir),
+                    "--merge-meta",
+                    "-m",
+                    "SHARED_KEY=new",
+                    "-m",
+                    "NEW_KEY=added",
+                ],
+            )
+
+            assert result.exit_code == 0, result.output
+            updated = json.loads(
+                (report_dir / "report.json").read_text(encoding="utf-8")
+            )
+            assert updated["metadata"]["EXISTING_KEY"] == "kept"
+            assert updated["metadata"]["SHARED_KEY"] == "new"
+            assert updated["metadata"]["NEW_KEY"] == "added"
+
+    @patch("regis.commands.analyze.validate_report")
+    @patch("regis.commands.analyze._discover_analyzers")
+    def test_without_merge_meta_replaces_metadata(self, mock_discover, mock_validate):
+        mock_discover.return_value = {"metadata": MetadataAnalyzer}
+
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            report_dir = Path("my_report")
+            report_dir.mkdir()
+            self._write_report(report_dir, {"EXISTING_KEY": "lost"})
+
+            result = runner.invoke(
+                main,
+                [
+                    "analyze",
+                    "--rerun",
+                    "metadata",
+                    "--report",
+                    str(report_dir),
+                    "-m",
+                    "NEW_KEY=only",
+                ],
+            )
+
+            assert result.exit_code == 0, result.output
+            updated = json.loads(
+                (report_dir / "report.json").read_text(encoding="utf-8")
+            )
+            assert "EXISTING_KEY" not in updated["metadata"]
+            assert updated["metadata"]["NEW_KEY"] == "only"

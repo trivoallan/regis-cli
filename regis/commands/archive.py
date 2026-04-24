@@ -53,7 +53,13 @@ def archive():
     required=True,
     help="Archive directory to add the report to.",
 )
-def archive_add(report_file: Path, archive_dir: Path):
+@click.option(
+    "--print-path",
+    is_flag=True,
+    default=False,
+    help="Print only the archived report path to stdout (machine-readable).",
+)
+def archive_add(report_file: Path, archive_dir: Path, print_path: bool) -> None:
     """Add an existing report JSON file to the archive."""
     from regis.archive.store import add_to_archive
 
@@ -63,8 +69,11 @@ def archive_add(report_file: Path, archive_dir: Path):
         raise click.ClickException(f"Could not read {report_file}: {exc}") from exc
 
     dest = add_to_archive(report, archive_dir)
-    click.echo(f"Archived to {dest}")
-    click.echo(f"Manifest updated: {archive_dir / 'manifest.json'}")
+    if print_path:
+        click.echo(dest)
+    else:
+        click.echo(f"Archived to {dest}", err=True)
+        click.echo(f"Manifest updated: {archive_dir / 'manifest.json'}", err=True)
 
 
 @archive.command("configure")
