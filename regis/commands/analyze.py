@@ -527,7 +527,7 @@ def analyze(
 
         add_to_archive(final_report, archive_dir)
     else:
-        render_and_save_reports(
+        render_and_save_reports(  # type: ignore[call-arg]
             final_report,
             formats,
             output_template,
@@ -669,7 +669,7 @@ def evaluate_cmd(
     final_report = run_playbooks(playbook_paths, analysis_report, formats)
     validate_report(final_report)
 
-    render_and_save_reports(
+    render_and_save_reports(  # type: ignore[call-arg]
         final_report,
         formats,
         output_template,
