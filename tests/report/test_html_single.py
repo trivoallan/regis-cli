@@ -36,6 +36,8 @@ class TestRenderHtmlSingle:
         # Must not reference external URLs in link/script/img tags
         assert 'href="http' not in html
         assert 'src="http' not in html
+        assert "href='http" not in html
+        assert "src='http" not in html
 
     def test_no_javascript(self):
         html = render_html_single(_minimal_report())
@@ -87,6 +89,7 @@ class TestRenderHtmlSingle:
         html = render_html_single(report, sections="summary")
         # score scalar shown, but CVE table detail not shown
         assert "trivy" in html
+        assert "80" in html  # scalar score should be visible in summary
         assert "CVE-2023-1234" not in html
 
     def test_sections_filter_by_slug(self):
@@ -97,11 +100,22 @@ class TestRenderHtmlSingle:
         assert "trivy" in html
         assert "hadolint" not in html
 
-    def test_unknown_slug_warns_and_continues(self, capsys):
+    def test_unknown_slug_does_not_raise(self):
         report = _minimal_report(results={"trivy": {"score": 80}})
-        # Should not raise even with unknown slug
         html = render_html_single(report, sections="unknown_analyzer")
         assert isinstance(html, str)
+
+    def test_unknown_slug_warns_to_stderr(self, capsys):
+        report = _minimal_report(results={"trivy": {"score": 80}})
+        render_html_single(report, sections="unknown_analyzer")
+        captured = capsys.readouterr()
+        assert "unknown_analyzer" in captured.err
+
+    def test_sections_defaults_to_all(self):
+        report = _minimal_report(results={"trivy": {"score": 80}})
+        html_default = render_html_single(report)
+        html_explicit = render_html_single(report, sections="all")
+        assert html_default == html_explicit
 
     def test_footer_contains_generated_by(self):
         html = render_html_single(_minimal_report())

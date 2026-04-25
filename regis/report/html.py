@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import importlib.metadata
+import json
 from datetime import datetime, timezone
 from importlib import resources
 from typing import Any
@@ -33,18 +34,13 @@ def render_html_single(report: dict[str, Any], sections: str = "all") -> str:
         filter_slugs = {s.strip() for s in sections.split(",") if s.strip()}
         available = set(report.get("results", {}).keys())
         for slug in sorted(filter_slugs - available):
-            click.echo(
-                f"  Warning: unknown section '{slug}' (ignored)", err=True
-            )
+            click.echo(f"  Warning: unknown section '{slug}' (ignored)", err=True)
 
     # Load template from package resources
     tmpl_path = resources.files("regis") / "templates" / "html" / "report.html.j2"
     tmpl_content = tmpl_path.read_text(encoding="utf-8")
 
-    import json
-
     env = Environment(autoescape=True, loader=BaseLoader())
-    env.filters["to_json"] = lambda v: json.dumps(v, ensure_ascii=False)
 
     template = env.from_string(tmpl_content)
 
