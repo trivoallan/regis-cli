@@ -348,7 +348,7 @@ def analyze(
     if not archive_dir:
         formats.append("json")
     if site:
-        formats.append("html")
+        formats.append("html-site")
     if markdown:
         formats.append("md")
 
@@ -621,7 +621,7 @@ def evaluate_cmd(
 
     formats = ["json"]
     if site:
-        formats.append("html")
+        formats.append("html-site")
 
     final_report = run_playbooks(playbook_paths, analysis_report, formats)
     validate_report(final_report)

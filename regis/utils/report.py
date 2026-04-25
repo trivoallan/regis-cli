@@ -141,7 +141,7 @@ def evaluate_playbooks(
             )
             playbook_results.append(pb_result)
 
-            if "html" not in formats or len(formats) > 1:
+            if "html-site" not in formats or len(formats) > 1:
                 summary_parts = []
                 for section in pb_result.get("sections", []):
                     for lv_name, stats in section.get("levels_summary", {}).items():
@@ -302,7 +302,7 @@ def render_and_save_reports(
 ) -> None:
     """Render and save reports in requested formats."""
     for fmt in formats:
-        if fmt == "html":
+        if fmt == "html-site":
             from regis.report.docusaurus import build_report_site
 
             out_dir = format_output_path(output_dir_template or ".", report, "json")
